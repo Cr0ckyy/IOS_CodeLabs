@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-05-17T21:09:27Z",
+  "id": "04-ios-autolayout",
+  "duration": 285,
+  "title": "Adaptable Interfaces - Autolayout",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1z-BZeub3KsgvWQAJqTTmy08T7OQiQcXTPte1dJ2Xdy8",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "04-ios-autolayout"
+}

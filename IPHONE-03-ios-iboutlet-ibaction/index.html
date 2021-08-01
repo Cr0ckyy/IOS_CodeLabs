@@ -1,0 +1,387 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>IBOutlet and IBAction</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="03-ios-iboutlet-ibaction"
+                  title="IBOutlet and IBAction"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Add user interface objects to the user interface file</li>
+<li>Use code and IDE to configure user interface objects</li>
+<li>Create and use properties to access user interface objects</li>
+<li>Create and use methods to respond to user actions</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Create an Xcode project" duration="5">
+        <ol type="1" start="1">
+<li>Start Xcode, select <code>Create a new Xcode project</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/4ef026659215f562.png"></p>
+<ol type="1" start="2">
+<li>Select <code>iOS</code> and <code>App</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/d2f82b21fe59b885.png"></p>
+<ol type="1" start="3">
+<li>Enter the <code>Product Name</code>. Follow the rest of the settings shown in the screenshot but update with your student number for the <code>Organization Identifier</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/7149cc9c938bfab4.png"></p>
+<ol type="1" start="4">
+<li>Click on <strong>Main.storyboard</strong>, click on <code>View as:</code> and choose <strong>iPhone 8 Plus</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/bdcfa12cde1a9b7a.png"></p>
+<ol type="1" start="5">
+<li>Click on the <strong>SampleProject</strong> scheme and set the simulator as <strong>iPhone 8 Plus</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/1f037c9e48d2fb83.png"></p>
+<ol type="1" start="6">
+<li>Press the <strong>Run</strong> button (keyboard shortcut is <strong>CMD-R</strong>) and the simulator will launch.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/dd895f0da52c0468.png"></p>
+<p class="image-container"><img style="width: 486.00px" src="img/d1f701ed2312f021.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Xcode workspace" duration="5">
+        <p><a href="https://developer.apple.com/documentation/xcode/creating_an_xcode_project_for_an_app" target="_blank">https://developer.apple.com/documentation/xcode/creating_an_xcode_project_for_an_app</a></p>
+<aside class="special"><p>The Xcode workspace is divided into the following areas</p>
+<ul>
+<li><strong>Navigator</strong> - provides quick access to different parts of the project</li>
+<li><strong>Editor</strong> - edit the object selected in the navigator</li>
+<li><strong>Inspector</strong> - view and edit information for an object selected in the navigator or editor area</li>
+<li><strong>Toolbar</strong> - used to build and run the app, view the progress of running tasks, and configure the work environment</li>
+<li><strong>Debug</strong> - used to control the execution of your app and inspect variables</li>
+</ul>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/6e01026759a94440.png"></p>
+<p>The navigator bar at the top of the navigator area has icons for the different navigators, while the inspector bar at the top of the inspector area has icons for the different inspectors. Mouse over the icons to discover the various <strong>navigators</strong> and <strong>inspectors</strong>.</p>
+<p><strong>Navigator Bar : </strong><img style="width: 272.00px" src="img/74d3e88e93b69509.png"></p>
+<p>The <strong>Project navigator</strong> allows you to navigate the files in the project.</p>
+<p><strong>Inspector Bar (for ViewController.swift) : </strong><img style="width: 260.00px" src="img/33447586eece07a.png"></p>
+<p><strong>Inspector Bar (for Main.storyboard) : </strong><img style="width: 260.00px" src="img/7ca3b99324a22268.png"></p>
+<p>The available inspectors depends on the file being edited and which item is currently highlighted in the editor window. The inspectors which will be used for this lesson include the <strong>Attributes inspector</strong> and the <strong>Connections inspector</strong>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Main.storyboard and Interface Builder" duration="5">
+        <p><a href="https://help.apple.com/xcode/mac/current/#/dev31645f17f" target="_blank">https://help.apple.com/xcode/mac/current/#/dev31645f17f</a></p>
+<aside class="special"><p><strong>Main.storyboard</strong> - the user interface file</p>
+<p><strong>Interface Builder (IB)</strong> - the editor for the user interface file</p>
+<p><strong>Object Library</strong> - contains objects which can be dragged to the canvas</p>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/eada68e9799f807e.png"></p>
+<p><strong>Interface Builder (IB)</strong></p>
+<p>When <strong>Main.storyboard</strong> is selected, the editor shows the <strong>Interface Builder (IB)</strong> which allows you to build the user interface for your application in the <strong>Canvas</strong>.</p>
+<p><strong>Document Outline</strong></p>
+<p>The Document Outline / outline view provides an alternative view of the canvas. To hide or show the outline view, use the <strong>Document Outline button</strong> to show or hide the outline view.</p>
+<p><strong>Object Library</strong></p>
+<p>Click the <strong>+</strong> button in the toolbar to open the <strong>Objects Library</strong>, then drag the desired objects from the library to the canvas.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/343f9a2a57543fa9.png"></p>
+<p><strong>Layout rectangles and Bounds rectangles</strong></p>
+<p>When working with Main.storyboard, it is very useful to show the <strong>Layout Rectangles</strong> and <strong>Bounds Rectangles</strong>. This can be configured via the Editor menu item in the menu bar.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/a51d5f721bbe009b.png"></p>
+<p><strong>Setting the position and size of an object</strong></p>
+<p>In the canvas, drag the objects to change their position, and use the <a href="https://www.computerhope.com/jargon/s/sizehand.htm" target="_blank">sizing handles</a> to change the size of the objects. </p>
+<p><strong>Setting the attributes of an object</strong></p>
+<p>In the canvas, select the object, and use the <strong>Attributes inspector</strong> to set the attributes for that object.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ViewController and the source editor" duration="5">
+        <p><strong>Source editor</strong></p>
+<p>When a swift file is selected from the Project navigator, that file can be edited using the <a href="https://help.apple.com/xcode/mac/current/#/devfdbf4c94e" target="_blank">source editor</a></p>
+<p class="image-container"><img style="width: 624.00px" src="img/c54509ec9b13061.png"></p>
+<p><strong>ViewController.swift</strong></p>
+<ul>
+<li>ViewController is a subclass of <code>UIViewController</code> which is the default view controller class</li>
+<li>Overridden method <code>viewDidLoad()</code> is called when the view is first loaded</li>
+</ul>
+<pre><code>import UIKit
+// ViewController is a subclass of UIViewController which is the default view controller class
+class ViewController: UIViewController {
+  // Overridden method viewDidLoad() is called when the view is first loaded
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}</code></pre>
+<p><strong>Showing line numbers</strong></p>
+<p>Click the <strong>Xcode</strong> menu item and select <strong>Preferences...</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/889ac8031923fe5.png"></p>
+<p>Under <strong>Text Editing</strong>, check <strong>Line numbers</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/1e2049e0ec979455.png"></p>
+<p><strong>Code formatting / indentation</strong></p>
+<p>In the swift file, select all code (<strong>CMD-A</strong>) and indent the code (<strong>CTRL-I</strong>)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UILabel" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uilabel" target="_blank">https://developer.apple.com/documentation/uikit/uilabel</a></p>
+<aside class="special"><p>A view that displays one or more lines of read-only text</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uilabel#topics" target="_blank"><strong>Properties / Attributes</strong></a></p>
+<ul>
+<li><code>text : String?</code> - The current text that is displayed by the label.</li>
+</ul>
+<p class="image-container"><img style="width: 486.00px" src="img/a245a80ca946bba.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Assistant Editor" duration="5">
+        <p>From the <strong>Project navigator</strong>, select <strong>Main.storyboard</strong>.</p>
+<p>Click on the <strong>Adjust Editor Options</strong> button and select <strong>Assistant</strong>.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/26dec1fdd907baf7.png"></p>
+<p>The <strong>Assistant Editor</strong> shows Main.storyboard and ViewController.swift side-by-side to allow creation of <code>IBOutlet</code> properties and <code>IBAction</code> methods.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/9ebab99833b763ad.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="IBOutlet properties" duration="5">
+        <p><a href="https://help.apple.com/xcode/mac/current/#/devc06f7ee11" target="_blank">https://help.apple.com/xcode/mac/current/#/devc06f7ee11</a></p>
+<aside class="special"><p><strong>IBOutlet properties</strong> in the view controller are used to access user interface objects in Main.storyboard.</p>
+</aside>
+<ol type="1" start="1">
+<li>Select <strong>Main.storyboard</strong></li>
+<li>Show the <strong>Assistant Editor</strong></li>
+<li><strong>Right-click drag</strong> from the user interface object in Main.storyboard (via the <strong>Document Outline</strong>) to ViewController.swift</li>
+<li>In the Connection dialog, provide a <strong>name</strong> for the IBOutlet property and click <strong>Connect</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a32dc0346fe04674.png"></p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  // Put IBOutlet properties at the start of the class
+  @IBOutlet weak var outLabel: UILabel!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}</code></pre>
+<aside class="special"><p><strong>Notes</strong></p>
+<ul>
+<li>Starting all IBOutlet property names with <strong>out</strong> helps narrow the autocomplete suggestions when we write our code</li>
+<li>Provide a name for the IBOutlet property which can be easily understood by anyone reading your code about which user interface object is connected to that property</li>
+<li>Right-click drag from the user interface object via the Document Outline; it is quite easy to select the wrong item from the canvas</li>
+<li>Double-check the type from the Connection dialog; if it shows a different type from what you expected, the wrong item may have been selected</li>
+<li>Put IBOutlet properties at the start of the class</li>
+<li>Create IBOutlet properties for user interface objects which will have their attributes read or updated when the application is executed</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - IBOutlet properties" duration="10">
+        <p>Watch the video <strong>IBOutlet.mov.</strong></p>
+<ol type="1" start="1">
+<li>Create a project called <strong>Activity02</strong></li>
+<li>Select <strong>Main.storyboard</strong></li>
+<li>Show the Object Library</li>
+<li>Add a UILabel to Main.storyboard from the Object Library</li>
+<li>Show the <strong>Assistant Editor</strong></li>
+<li><strong>Right-click drag</strong> from the user interface object in Main.storyboard (via the <strong>Document Outline</strong>) to ViewController.swift</li>
+<li>In the Connection dialog, provide a <strong>name</strong> for the IBOutlet property and click <strong>Connect</strong></li>
+</ol>
+<p class="image-container"><img style="width: 506.00px" src="img/9aa76f7149da3e8b.png"></p>
+<ol type="1" start="8">
+<li>Add a line of code to <code>viewDidLoad()</code> to set the text on the UILabel object.</li>
+</ol>
+<pre><code>import UIKit
+// ViewController is a subclass of UIViewController which is the default view controller class
+class ViewController: UIViewController {
+  
+  @IBOutlet weak var outLabel: UILabel!
+  // Overridden method viewDidLoad() is called when the view is first loaded
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // set the text for the label
+    outLabel.text = &#34;Hello&#34;
+  }
+
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. Observe the text in the UILabel object.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISlider" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uislider" target="_blank">https://developer.apple.com/documentation/uikit/uislider</a></p>
+<aside class="special"><p>A control used to select a single value from a continuous range of values.</p>
+</aside>
+<p><strong>Responding to User Interaction</strong></p>
+<ul>
+<li>Sliders use the Target-Action design pattern to notify your app when the user moves the slider. To be notified when the slider&#39;s value changes, register your action method with the <strong>valueChanged</strong> event. At runtime, the slider calls your method in response to the user changing the slider&#39;s value.</li>
+</ul>
+<p><a href="https://developer.apple.com/documentation/uikit/uislider#topics" target="_blank"><strong>Properties / Attributes</strong></a></p>
+<ul>
+<li><code>value: Float</code> - slider&#39;s current value</li>
+<li><code>minimumValue: Float</code> - minimum value of the slider</li>
+<li><code>maximumValue: Float</code> - maximum value of the slider</li>
+</ul>
+<p class="image-container"><img style="width: 486.00px" src="img/7b5af81ebb4f8cd4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="IBAction methods" duration="5">
+        <p><a href="https://help.apple.com/xcode/mac/current/#/dev9662c7670" target="_blank">https://help.apple.com/xcode/mac/current/#/dev9662c7670</a></p>
+<aside class="special"><p><strong>IBAction methods</strong> in the view controller are used to respond to user events experienced by user interface objects in Main.storyboard.</p>
+</aside>
+<ol type="1" start="1">
+<li>Select Main.storyboard</li>
+<li>Show the Assistant Editor</li>
+<li>Right-click drag from the user interface object in Main.storyboard to ViewController.swift</li>
+<li>In the Connection dialog, select the <strong>type</strong>, the <strong>event</strong> to respond to and provide a <strong>name</strong> for the IBAction method and click <strong>Connect</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/e9e31d716364d75e.png"></p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // Put IBAction methods at the end of the class
+  @IBAction func actSlider(_ sender: UISlider) {
+  }  
+}</code></pre>
+<aside class="special"><p><strong>Notes</strong></p>
+<ul>
+<li>Provide a name for the IBAction method which can be easily understood by anyone reading your code about which user interface object is connected to that method and what event causes that method to be executed</li>
+<li>Only user interface objects which can respond to user events can be connected to an IBAction method</li>
+<li>Double-check the type from the Connection dialog; if it shows a different type from what you expected, the wrong item may have been selected</li>
+<li>The parameter in the IBAction method is the object that experienced the event</li>
+<li>Put IBAction methods at the end of the class</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connections Inspector" duration="5">
+        <aside class="special"><p><strong>Connections inspector</strong> is used to view and delete the IBOutlet properties and IBAction methods associated with a user interface object in Main.storyboard.</p>
+</aside>
+<aside class="warning"><p><strong>Caution:</strong> To remove an IBOutlet property or IBAction method, delete the code from ViewController.swift and break the connection by clicking on the x next to the IBOutlet property or IBAction method in the connections inspector. If there is an inconsistency between the information in Main.storyboard and ViewController.swift, the application is likely to crash.</p>
+</aside>
+<p>Connections between user interface objects in Main.storyboard and<strong> IBOutlet properties</strong> in ViewController.swift appear under <strong>Referencing Outlets</strong></p>
+<p class="image-container"><img style="width: 514.00px" src="img/bf1a378ba816cac2.png"></p>
+<p>Connections between user interface objects in Main.storyboard and <strong>IBAction methods</strong> in ViewController.swift appear under <strong>Sent Events</strong></p>
+<p class="image-container"><img style="width: 514.00px" src="img/875fb6e1f81945f6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - IBAction methods" duration="10">
+        <p>Watch the video <strong>IBAction.mov.</strong></p>
+<ol type="1" start="1">
+<li>Continue from the project called <strong>Activity02</strong></li>
+<li>Select Main.storyboard</li>
+<li>Show the object library</li>
+<li>Add a UISlider to Main.storyboard from the object library</li>
+<li>Show the assistant editor</li>
+<li>Right-click drag from user interface object in Main.storyboard to ViewController.swift</li>
+<li>In the Connection dialog, set the type to UISlider, provide a name for the IBAction method and click Connect</li>
+</ol>
+<p class="image-container"><img style="width: 506.00px" src="img/b06f90bafdc835e4.png"></p>
+<ol type="1" start="8">
+<li>In the IBAction method, set the text property of the UILabel with the value property of the UISilder.</li>
+</ol>
+<pre><code>import UIKit
+// ViewController is a subclass of UIViewController which is the default view controller class
+class ViewController: UIViewController {
+  
+  // Put IBOutlet properties at the start of the class
+  @IBOutlet weak var outLabel: UILabel!
+  
+  // Overridden method viewDidLoad() is called when the view is first loaded
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // set the text for the label
+    outLabel.text = &#34;Hello&#34;
+  }
+  
+  // Put IBAction methods at the end of the class
+  @IBAction func actSlider(_ sender: UISlider) {
+    // set the text for the label with the value of the slider
+    outLabel.text = &#34;\(sender.value)&#34;
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. Move the slider and observe the text in the UILabel object.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Swift classes in swift files" duration="5">
+        <ol type="1" start="1">
+<li>Continue from the project called <strong>Activity02</strong></li>
+<li>Right click on the <strong>project folder</strong> in the <strong>Project Navigator</strong> and select <strong>New File...</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/2011150d23f0eca7.png"></p>
+<ol type="1" start="3">
+<li>In the template selection screen, choose <code>iOS</code>, <code>Swift File</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/1bace37d5e6bdff0.png"></p>
+<ol type="1" start="4">
+<li>Set the filename to be the same as the name of the class to be created. The file should be saved in the project folder (which is the default). Do not change the location.</li>
+<li>Add the class definition inside the file.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UITextField and UITextFieldDelegate</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

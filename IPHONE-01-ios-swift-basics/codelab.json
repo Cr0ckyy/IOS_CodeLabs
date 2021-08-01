@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-16T21:54:42Z",
+  "id": "01-ios-swift-basics",
+  "duration": 220,
+  "title": "Swift - Basics",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn the basics of the Swift language",
+  "source": "1867DULQYWWXz6OFCjsp-DIBprVDxn6YkiVpH_Q406qM",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "01-ios-swift-basics"
+}

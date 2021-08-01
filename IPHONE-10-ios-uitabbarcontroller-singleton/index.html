@@ -1,0 +1,794 @@
+
+<!doctype html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <meta name="theme-color" content="#4F7DC9">
+        <meta charset="UTF-8">
+        <title>UITabBarController and singleton pattern</title>
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+        <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+        <style>
+            .success {
+                color: #1e8e3e;
+            }
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+    <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+    <google-codelab codelab-gaid=""
+                    id="10-ios-uitabbarcontroller-singleton"
+                    title="UITabBarController and singleton pattern"
+                    environment="web"
+                    feedback-link="mailto:ryan_low@rp.edu.sg">
+
+        <google-codelab-step label="Introduction" duration="0">
+            <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+            <ul class="checklist">
+                <li>use a UITabBarController to manage a set of view controller objects</li>
+                <li>customise the UITabBarItem object for a view controller</li>
+                <li>use the viewWillAppear(_:) method to update user interface objects for a view controller</li>
+                <li>define and use a class with the Singleton pattern</li>
+                <li>use a WKWebView object to display HTML file</li>
+                <li>create and use a tuple to store multiple pieces of data</li>
+                <li>create and use a struct to store multiple pieces of data</li>
+            </ul>
+            <h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+            <ul>
+                <li>Mac running macOS Catalina</li>
+                <li>Xcode 12</li>
+            </ul>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="UITabBarController" duration="5">
+            <p><a href="https://developer.apple.com/documentation/uikit/uitabbarcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uitabbarcontroller</a></p>
+            <p>A UITabBarController object manages a set of view controllers, with each view controller represented by a tab bar item. Each view controller provides information about its tab bar item and supplies the view to be displayed when the item is selected. The figure below shows an example of a tab bar with 3 tabs; each tab has a title and an image.</p>
+            <p class="image-container"><img style="width: 624.00px" src="img/fae9189b80f3093a.png"></p>
+            <p>In Main.storyboard, one or more selected view controller objects can be embedded in a UITabBarController via the <code>Embed in</code> button.</p>
+            <p class="image-container"><img style="width: 388.00px" src="img/2cb29c0a280ccb0.png"></p>
+            <p class="image-container"><img style="width: 402.00px" src="img/d227bde274ed0c40.png"></p>
+            <p>To add a view controller to an existing UITabBarController object, right-click-drag from the UITabBarController object to the view controller object to be added. In the dialog box which appears, select <code>view controllers</code>.</p>
+            <p class="image-container"><img style="width: 348.00px" src="img/563abe07c4d3fc07.png"></p>
+            <p>To customise the tab bar item, select the UITabBarItem belonging to the view controller, and use the attributes inspector to set the title and image.</p>
+            <p class="image-container"><img style="width: 582.00px" src="img/aad763a52522e545.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 1 - UITabBarController" duration="10">
+            <ol type="1" start="1">
+                <li>Create project <strong>SampleProject01</strong></li>
+            </ol>
+            <p><strong>In Main.storyboard</strong></p>
+            <ol type="1" start="2">
+                <li>Add a label to ViewController with the text <strong>ViewController</strong></li>
+                <li>Select <strong>ViewController</strong>, then click the <strong>Embed In</strong> button and select <strong>Tab Bar Controller</strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 388.00px" src="img/2cb29c0a280ccb0.png"></p>
+            <p class="image-container"><img style="width: 400.00px" src="img/e5dc9ae8ef07358c.png"></p>
+            <ol type="1" start="4">
+                <li>From the <strong>Document Outline</strong>, click on <strong>Tab Bar Item</strong> in the <strong>View Controller Scene</strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 534.00px" src="img/cf031cd96145d679.png"></p>
+            <ol type="1" start="5">
+                <li>From the <strong>Attributes Inspector</strong>, change the <strong>System Item</strong> type to <strong>More</strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 514.00px" src="img/591c4e47dad12fee.png"></p>
+            <ol type="1" start="6">
+                <li>Run the project. ViewController is shown, and at the bottom of the screen is a tab bar with 1 item.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/bbc6f1fca17ad81d.png"></p>
+            <ol type="1" start="7">
+                <li>Create <code>ViewControllerX : UIViewController</code></li>
+            </ol>
+            <p><strong>In Main.storyboard</strong></p>
+            <ol type="1" start="8">
+                <li>Add a view controller and use the <strong>Identity Inspector</strong> to set the class as <strong>ViewControllerX</strong></li>
+                <li>Add a label to <strong>ViewControllerX</strong> with the text <strong>ViewControllerX</strong></li>
+                <li>Right-click-drag from the tab bar controller to <strong>ViewControllerX</strong>, then in the dialog box which appears, select <strong>view controllers</strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 348.00px" src="img/563abe07c4d3fc07.png"></p>
+            <ol type="1" start="11">
+                <li>For the <strong>Tab Bar Item</strong> for <strong>ViewControllerX</strong>, set the <strong>System Item</strong> type to <strong>Favorites</strong></li>
+            </ol>
+            <ol type="1" start="12">
+                <li>Run the project. ViewController is shown, and at the bottom of the screen is a tab bar with 2 items. Click on the second item in the tab bar. ViewControllerX is now shown. You can switch between the two view controllers via the tab bar.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/618bd2c366c97d47.png"></p>
+            <ol type="1" start="13">
+                <li>We will now customise the title and image for the tab bar item.</li>
+                <li>Add the images from the <strong>resources/images</strong> folder from your learning package to <strong>Assets.xcassets</strong>.</li>
+                <li>For the <strong>Tab Bar Item</strong> for <strong>ViewControllerX</strong>, set the <strong>System Item</strong> type to <strong>Custom</strong>, set the <strong>Title</strong> to <strong>ViewControllerX</strong>, set the <strong>Image</strong> to <strong>game</strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 514.00px" src="img/cb3fbf1db86debc8.png"></p>
+            <ol type="1" start="16">
+                <li> Run the project. The tab bar item for ViewControllerX has been customised.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/a4376dd45b6e9075.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="viewDidLoad() and viewWillAppear(_:)" duration="5">
+            <p><a href="https://developer.apple.com/documentation/uikit/uiviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uiviewcontroller</a></p>
+            <p><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html" target="_blank">https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html</a></p>
+            <p class="image-container"><img style="width: 624.00px" src="img/50a991ebdbbcc3ec.png"></p>
+            <table>
+                <tr><td colspan="1" rowspan="1"><p>Managing the View</p>
+                    </td><td colspan="1" rowspan="1"><p>viewDidLoad()</p>
+                    </td><td colspan="1" rowspan="1"><p>Called after the controller&#39;s view is loaded into memory.</p>
+                    </td></tr>
+                <tr><td colspan="1" rowspan="1"><p>Responding to View Events</p>
+                    </td><td colspan="1" rowspan="1"><p>viewWillAppear(Bool)</p>
+                    </td><td colspan="1" rowspan="1"><p>Notifies the view controller that its view is about to be added to a view hierarchy.</p>
+                    </td></tr>
+            </table>
+            <p>The <code>viewDidLoad()</code> method is called only once when the controller&#39;s view is loaded into memory. We have been adding code to that method to initialise variables or update the user interface objects belonging to that view controller.</p>
+            <p>View controller objects have another method called <code>viewWillAppear(_:)</code>. The <code>viewWillAppear(_:)</code> method is called every time the view is about to appear. When view controller objects are managed by a <code>UITabBarController</code>:</p>
+            <ul>
+                <li>code to update the user interface objects should be added to <code>viewWillAppear(_:)</code> instead of <code>viewDidLoad()</code></li>
+                <li>code for initialisation of properties should be in <code>viewDidLoad()</code> or <code>viewWillAppear(_:)</code> depending on the requirements of the application.</li>
+            </ul>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 2 - viewDidLoad() and viewWillAppear(_:)" duration="10">
+            <ol type="1" start="1">
+                <li>Continue with <strong>SampleProject01</strong></li>
+                <li>Modify <strong>ViewController</strong> to add the <code>viewWillAppear(_:)</code> method and add some debug statements.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function)
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    print(#file, #function)
+  }
+}</code></pre>
+            <ol type="1" start="3">
+                <li>Modify <strong>ViewControllerX</strong> to add the <code>viewWillAppear(_:)</code> method and add some debug statements.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewControllerX: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function)
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    print(#file, #function)
+  }
+}</code></pre>
+            <ol type="1" start="4">
+                <li>Run the project. Switch between the 2 view controllers. Note that <code>viewDidLoad()</code> is only called once when the view is first loaded whereas <code>viewWillAppear(_:)</code> is called every time the view for that controller appears on the screen. Sample debug output is shown below for the following scenario:</li>
+            </ol>
+            <ul>
+                <li>Run the project (<strong>viewDidLoad</strong> and <strong>viewWillAppear</strong> are called on <strong>ViewController</strong>)</li>
+                <li>Click on the second tab (<strong>viewDidLoad</strong> and <strong>viewWillAppear</strong> are called on <strong>ViewControllerX</strong>)</li>
+                <li>Click on the first tab (<strong>viewWillAppear</strong> is called on <strong>ViewController</strong>)</li>
+                <li>Click on the second tab (<strong>viewWillAppear</strong> is called on <strong>ViewControllerX</strong>)</li>
+            </ul>
+            <pre>/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewController.swift viewDidLoad()
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewController.swift viewWillAppear(_:)
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewControllerX.swift viewDidLoad()
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewControllerX.swift viewWillAppear(_:)
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewController.swift viewWillAppear(_:)
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/ViewControllerX.swift viewWillAppear(_:)</pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Singleton pattern" duration="5">
+            <aside class="special"><p>A singleton pattern is a way to ensure that only one instance of a class exists during the lifetime of the application.</p>
+            </aside>
+            <p>To use the singleton pattern to ensure that only one instance of a class exists during the lifetime of the application:</p>
+            <ol type="1" start="1">
+                <li>Initialise a static instance of the class (this will be the only instance of that class) inside the class</li>
+                <li>Make the initializer private (this prevents creation of other instances of that class)</li>
+            </ol>
+            <pre><code>class SingletonClass {
+  // Initialise a static instance of the class (this will be the
+  // only instance of that class) inside the class
+  static var sharedInstance = SingletonClass()
+  
+  // Make the initializer private (this prevents creation of other
+  // instances of that class)
+  private init() {
+  }
+}</code></pre>
+            <p>The singleton pattern can be used in the <strong>DataController</strong> class to ensure that the entire application uses the same DataController instance; in such a case, there is no requirement to pass the DataController from one view controller to another - the view controllers simply need to get the singleton DataController as shown below.</p>
+            <pre><code>class DataController {
+  // Initialise a static instance of the class (this will be the
+  // only instance of that class) inside the class
+  static var sharedInstance = DataController()
+  
+  // Make the initializer private (this prevents creation of other
+  // instances of that class)
+  private init() {
+  }
+
+  // remaining DataController code is not shown
+}</code></pre>
+            <pre><code>import UIKit
+class ViewControllerX: UIViewController {
+  let dc = DataController.sharedInstance
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}</code></pre>
+            <pre><code>import UIKit
+class ViewControllerY: UIViewController {
+  let dc = DataController.sharedInstance
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 3 - Singleton pattern" duration="10">
+            <ol type="1" start="1">
+                <li>Continue with <strong>SampleProject01</strong></li>
+                <li>Create a <strong>DataController</strong> class with the code shown below</li>
+            </ol>
+            <pre><code>class DataController {
+  // Initialise a static instance of the class (this will be the
+  // only instance of that class) inside the class
+  static var sharedInstance = DataController()
+  
+  // Make the initializer private (this prevents creation of other
+  // instances of that class)
+  private init() {
+  }
+
+  private var items : [String] = []
+  
+  var count : Int {
+    return items.count
+  }
+
+  func add(item:String) {
+    items.append(item)
+  }
+  
+  func retrieve(index:Int) -&gt; String {
+    if (index &lt; count) {
+      return items[index]
+    }
+    return &#34;&#34;
+  }
+}</code></pre>
+            <ol type="1" start="3">
+                <li>In Main.storyboard, for <strong>ViewController</strong>, add a text field (<code>IBOutlet</code> <strong>outTextField</strong>) and a button (<code>IBAction</code> <strong>actAdd</strong>, <code>title</code> <strong>Add</strong>).</li>
+                <li>Declare a property for the <strong>DataController</strong> object.</li>
+                <li>In <code>actAdd</code>, dismiss the keyboard and add the text from the keyboard to the DataController.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+
+  let dc = DataController.sharedInstance
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function)
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    print(#file, #function)
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    outTextField.resignFirstResponder()
+    dc.add(item: outTextField.text!)
+  }
+}</code></pre>
+            <ol type="1" start="6">
+                <li>In <strong>ViewControllerX</strong>, add an <code>IBOutlet</code> <strong>outLabel</strong> for the label.</li>
+                <li>Declare a property for the <strong>DataController</strong> object.</li>
+                <li>In the <code>viewWillAppear</code> method, display the last item from the <strong>DataController</strong> in the label.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewControllerX: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+ 
+  let dc = DataController.sharedInstance
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function)
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    print(#file, #function)
+    let count = dc.count
+    if (count &gt; 0) {
+      outLabel.text = dc.retrieve(index: count-1)
+    }
+  }
+}</code></pre>
+            <ol type="1" start="9">
+                <li>Run the application. Enter text in the text field and press <strong>Add</strong>. Switch over to <strong>ViewControllerX</strong> and the last text saved to the <strong>DataController</strong> is displayed in the label. Repeat a few times to verify that is the case.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="WKWebView" duration="5">
+            <p><a href="https://developer.apple.com/documentation/webkit/wkwebview" target="_blank">https://developer.apple.com/documentation/webkit/wkwebview</a></p>
+            <aside class="special"><p>An object that displays interactive web content, such as for an in-app browser.</p>
+            </aside>
+            <ul>
+                <li>Need to add <strong>WebKit.framework</strong> to the project.</li>
+                <li>Need to add an <code>import WebKit</code> statement in the view controller file</li>
+            </ul>
+            <p>Sample code to load a HTML file which exists in the project</p>
+            <pre><code>import UIKit
+import WebKit
+class ViewController: UIViewController {
+
+  @IBOutlet weak var outWebView: WKWebView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    if let filePath = Bundle.main.url(forResource: &#34;about&#34;,
+                                      withExtension: &#34;html&#34;) {
+      let myRequest = URLRequest(url: filePath)
+      outWebView.load(myRequest)
+    }
+  }
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 4 - WKWebView" duration="10">
+            <ol type="1" start="1">
+                <li>Create project <strong>SampleProject02</strong></li>
+                <li>Add the 2 files (<strong>about.html</strong> and <strong>logo.jpg</strong>) from the <strong>resources/html</strong> folder from your learning package to your project. Drag and drop the files into the <strong>Project Navigator</strong>; check the <strong>Copy items if needed</strong> checkbox.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/14b78ca68db74aff.png"></p>
+            <ol type="1" start="3">
+                <li>In the <strong>Project Navigator</strong>, select <strong>SampleProject02.xcodeproj</strong> (the first file in the list), then in the editor window, select <strong>General</strong> and scroll down to <strong>Frameworks, Libraries and Embedded Content</strong></li>
+                <li>Click on the <strong>+</strong> button</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/fa63adb8ceb2a432.png"></p>
+            <ol type="1" start="5">
+                <li>In the dialog which appears, search for <strong>WebKit.framework</strong>, select <strong>WebKit.framework</strong>, click <strong>Add        </strong></li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/b0c400e3160abbc8.png"></p>
+            <ol type="1" start="6">
+                <li>In <strong>Main.storyboard</strong>, add a <strong>WebKit View</strong> to <strong>ViewController</strong>. </li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/70ca2e82b362ae7e.png"></p>
+            <ol type="1" start="7">
+                <li>Stretch the WebKit View to fit the top, left, bottom and right guides.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/a01394e1de9a26bd.png"></p>
+            <ol type="1" start="8">
+                <li>Create an <code>IBOutlet</code> for the WebKit View as <strong>outWebView</strong></li>
+                <li>Modify <strong>ViewController</strong></li>
+            </ol>
+            <pre><code>import UIKit
+import WebKit
+class ViewController: UIViewController {
+
+  @IBOutlet weak var outWebView: WKWebView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    if let filePath = Bundle.main.url(forResource: &#34;about&#34;,
+                                      withExtension: &#34;html&#34;) {
+      let myRequest = URLRequest(url: filePath)
+      outWebView.load(myRequest)
+    }
+  }
+}</code></pre>
+            <ol type="1" start="10">
+                <li>Run the project. Content of <strong>about.html</strong> is loaded in the WKWebView in ViewController</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/dce0bf5ccd9e0028.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Tuple" duration="5">
+            <p><a href="https://docs.swift.org/swift-book/ReferenceManual/Types.html" target="_blank">https://docs.swift.org/swift-book/ReferenceManual/Types.html</a></p>
+            <p>A tuple type is a comma-separated list of types, enclosed in parentheses.</p>
+            <pre><code>let result = (4.0, &#34;A&#34;)</code></pre>
+            <p>A tuple groups multiple values into a single compound value. You can create a tuple from any permutation of types, and they can contain as many different types as you like; for example:</p>
+            <pre><code>let tupleVar1 = (53, 59, 61)    // (Int, Int, Int)
+let tupleVar2 = (&#34;Rich&#34;, true)  // (String, Bool)</code></pre>
+            <p>Tuple definition with unnamed individual elements; access elements via index.</p>
+            <pre><code>let resultX = (4.0, &#34;A&#34;)
+print(&#34;resultX The gpa is \(resultX.0)&#34;)    // prints &#34;The gpa is 4.0&#34;
+print(&#34;resultX The grade is \(resultX.1)&#34;)  // prints &#34;The grade is A&#34;</code></pre>
+            <p>Tuple definition with named individual elements; access elements via index or name.</p>
+            <pre><code>let resultY = (gpa:4.0, grade:&#34;A&#34;)
+print(&#34;resultY The gpa is \(resultY.0)&#34;)        // prints &#34;The gpa is 4.0&#34;
+print(&#34;resultY The gpa is \(resultY.gpa)&#34;)      // prints &#34;The gpa is 4.0&#34;
+print(&#34;resultY The grade is \(resultY.1)&#34;)      // prints &#34;The grade is A&#34;
+print(&#34;resultY The grade is \(resultY.grade)&#34;)  // prints &#34;The grade is A&#34;</code></pre>
+            <p>Decomposing a tuple&#39;s contents into separate constants or variables:</p>
+            <pre><code>let resultZ = (4.0, &#34;A&#34;)
+
+let (gpa, grade) = resultZ
+print(&#34;resultZ The gpa is \(gpa)&#34;)      // prints &#34;The gpa is 4.0&#34;
+print(&#34;resultZ The grade is \(grade)&#34;)  // prints &#34;The grade is A&#34;
+
+let (gpaOnly, _) = resultZ
+print(&#34;resultZ The gpa is \(gpaOnly)&#34;)  // prints &#34;The gpa is 4.0&#34;</code></pre>
+            <p>When decomposing a tuple, use an underscore for the values that do not need to be retrieved into separate constants or variables.</p>
+            <p>Typically, a function is only able to return a single value. By returning a tuple, a function is able to return multiple values. </p>
+            <p>The example below shows the syntax for defining a function which returns a tuple.</p>
+            <pre><code>func getGrade() -&gt; (gpa:Double, grade:String) {
+  return (2.0, &#34;C&#34;)
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 5 - Tuple" duration="10">
+            <ol type="1" start="1">
+                <li>Create project <strong>SampleProject03</strong></li>
+                <li>Modify <strong>ViewController</strong></li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    let resultX = (4.0, &#34;A&#34;)
+    print(&#34;resultX The gpa is \(resultX.0)&#34;)    // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultX The grade is \(resultX.1)&#34;)  // prints &#34;The grade is A&#34;
+    
+    let resultY = (gpa: 4.0, grade: &#34;A&#34;)
+    print(&#34;resultY The gpa is \(resultY.0)&#34;)        // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultY The gpa is \(resultY.gpa)&#34;)      // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultY The grade is \(resultY.1)&#34;)      // prints &#34;The grade is A&#34;
+    print(&#34;resultY The grade is \(resultY.grade)&#34;)  // prints &#34;The grade is A&#34;
+    
+    let resultZ = (gpa: 4.0, grade: &#34;A&#34;)
+    
+    let (gpa, grade) = resultZ
+    print(&#34;resultZ The gpa is \(gpa)&#34;)         // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultZ The grade is \(grade)&#34;)     // prints &#34;The grade is A&#34;
+    
+    let (gpaOnly, _) = resultZ
+    print(&#34;resultZ The gpa is \(gpaOnly)&#34;)     // prints &#34;The gpa is 4.0&#34;
+  }
+}</code></pre>
+            <ol type="1" start="3">
+                <li>Run the application and investigate the output.</li>
+            </ol>
+            <ol type="1" start="4">
+                <li>Modify <strong>ViewController</strong>. This example shows the syntax for writing a function which returns a tuple.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let resultX = getGrade()
+    print(&#34;resultX The gpa is \(resultX.0)&#34;)    // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultX The grade is \(resultX.1)&#34;)  // prints &#34;The grade is A&#34;
+    
+    let resultY = getGrade()
+    print(&#34;resultY The gpa is \(resultY.0)&#34;)        // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultY The gpa is \(resultY.gpa)&#34;)      // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultY The grade is \(resultY.1)&#34;)      // prints &#34;The grade is A&#34;
+    print(&#34;resultY The grade is \(resultY.grade)&#34;)  // prints &#34;The grade is A&#34;
+    
+    let resultZ = getGrade()
+    
+    let (gpa, grade) = resultZ
+    print(&#34;resultZ The gpa is \(gpa)&#34;)      // prints &#34;The gpa is 4.0&#34;
+    print(&#34;resultZ The grade is \(grade)&#34;)  // prints &#34;The grade is A&#34;
+    
+    let (gpaOnly, _) = resultZ
+    print(&#34;resultZ The gpa is \(gpaOnly)&#34;)  // prints &#34;The gpa is 4.0&#34;
+  }
+  
+  func getGrade() -&gt; (gpa:Double, grade:String) {
+    return (4.0, &#34;A&#34;)
+  }
+}</code></pre>
+            <ol type="1" start="5">
+                <li>Run the application and investigate the output.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Struct" duration="5">
+            <p><a href="https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html</a></p>
+            <p>Structures are very similar to classes in that it also has properties, methods and initialisers. </p>
+            <pre><code>struct Car {
+  var speed = 50.0
+  
+  init(speed:Double) {
+    self.speed = speed
+  }
+  
+  var isStationary : Bool {
+    if (speed == 0) {
+      return true
+    }
+    return false
+  }
+  
+  func printSpeed() {
+    print(speed)
+  }
+}</code></pre>
+            <p>The key difference is that structures are value types whereas classes are reference types. The meaning of this is illustrated by the sample code shown below:</p>
+            <pre><code>struct StructExample {
+  var value = 0.0
+
+  init(value:Double) {
+    self.value = value
+  }
+}
+
+class ClassExample {
+  var value = 0.0
+
+  init(value:Double) {
+    self.value = value
+  }
+}
+
+// ===============================================================
+// classes are reference types
+var classExample1 = ClassExample(value: 1.0)
+
+// classExample1 and classExample2 reference the same instance
+var classExample2 = classExample1
+
+print(&#34;classExample1.value is \(classExample1.value)&#34;)
+print(&#34;classExample2.value is \(classExample2.value)&#34;)
+// classExample1.value is 1.0
+// classExample2.value is 1.0
+
+classExample2.value = 2.0
+print(&#34;classExample1.value is \(classExample1.value)&#34;)
+print(&#34;classExample2.value is \(classExample2.value)&#34;)
+// classExample1.value is 2.0
+// classExample2.value is 2.0
+
+// classExample2.value = 2.0 sets the value of the instance to 2.0
+// reading the value via classExample1 is the same as
+// reading the value via classExample2
+
+// ===============================================================
+// structs are value types
+var structExample1 = StructExample(value: 1.0)
+
+// the values from the instance in structExample1 are copied
+// to a new instance in structExample2
+var structExample2 = structExample1
+
+print(&#34;structExample1.value is \(structExample1.value)&#34;)
+print(&#34;structExample2.value is \(structExample2.value)&#34;)
+// structExample1.value is 1.0
+// structExample2.value is 1.0
+
+structExample2.value = 2.0
+print(&#34;structExample1.value is \(structExample1.value)&#34;)
+print(&#34;structExample2.value is \(structExample2.value)&#34;)
+// structExample1.value is 1.0
+// structExample2.value is 2.0
+
+// structExample2.value = 2.0 sets the value of the instance to 2.0
+// structExample1 has no relationship to structExample2
+// they are two different instances</code></pre>
+            <p>For this module, just be aware of the existence of structs, and that structs are value types whereas classes are reference types.</p>
+            <p>Read the documentation for more information about structs.</p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 6 - Struct" duration="10">
+            <ol type="1" start="1">
+                <li>Create <strong>SampleProject04</strong></li>
+                <li>Create a swift file for <code>StructExample</code> and add the following code:</li>
+            </ol>
+            <pre><code>struct StructExample {
+  var value = 0.0
+
+  init(value:Double) {
+    self.value = value
+  }
+}</code></pre>
+            <ol type="1" start="3">
+                <li>Create a swift file for <code>ClassExample</code> and add the following code:</li>
+            </ol>
+            <pre><code>class ClassExample {
+  var value = 0.0
+
+  init(value:Double) {
+    self.value = value
+  }
+}</code></pre>
+            <ol type="1" start="4">
+                <li>Modify <strong>ViewController</strong></li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // ===============================================================
+    // classes are reference types
+    var classExample1 = ClassExample(value: 1.0)
+
+    // classExample1 and classExample2 reference the same instance
+    var classExample2 = classExample1
+
+    print(&#34;classExample1.value is \(classExample1.value)&#34;)
+    print(&#34;classExample2.value is \(classExample2.value)&#34;)
+    // classExample1.value is 1.0
+    // classExample2.value is 1.0
+
+    classExample2.value = 2.0
+    print(&#34;classExample1.value is \(classExample1.value)&#34;)
+    print(&#34;classExample2.value is \(classExample2.value)&#34;)
+    // classExample1.value is 2.0
+    // classExample2.value is 2.0
+
+    // classExample2.value = 2.0 sets the value of the instance to 2.0
+    // reading the value via classExample1 is the same as
+    // reading the value via classExample2
+
+    // ===============================================================
+    // structs are value types
+    var structExample1 = StructExample(value: 1.0)
+
+    // the values from the instance in structExample1 are copied
+    // to a new instance in structExample2
+    var structExample2 = structExample1
+
+    print(&#34;structExample1.value is \(structExample1.value)&#34;)
+    print(&#34;structExample2.value is \(structExample2.value)&#34;)
+    // structExample1.value is 1.0
+    // structExample2.value is 1.0
+
+    structExample2.value = 2.0
+    print(&#34;structExample1.value is \(structExample1.value)&#34;)
+    print(&#34;structExample2.value is \(structExample2.value)&#34;)
+    // structExample1.value is 1.0
+    // structExample2.value is 2.0
+
+    // structExample2.value = 2.0 sets the value of the instance to 2.0
+    // structExample1 has no relationship to structExample2
+    // they are two different instances
+  }
+}</code></pre>
+            <ol type="1" start="5">
+                <li>Run the project. Analyse the code and observe the output.</li>
+            </ol>
+            <pre>classExample1.value is 1.0
+classExample2.value is 1.0
+classExample1.value is 2.0
+classExample2.value is 2.0
+structExample1.value is 1.0
+structExample2.value is 1.0
+structExample1.value is 1.0
+structExample2.value is 2.0</pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Random numbers generation" duration="5">
+            <p>The code below shows how to generate a random number between a specified range.</p>
+            <pre><code>// generates a random number between 0 (inclusive) and 10 (inclusive)
+var random1 = Int.random(in: 0...10)
+print(random1)
+
+// generates a random number between 10 (inclusive) and 20 (inclusive)
+var random2 = Int.random(in: 10...20)
+print(random2)</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 7 - Random number generation" duration="5">
+            <ol type="1" start="1">
+                <li>Create project <strong>SampleProject05</strong></li>
+                <li>Modify ViewController.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    // generates a random number between 0 (inclusive) and 10 (inclusive)
+    var random1 = Int.random(in: 0...10)
+    print(random1)
+
+    // generates a random number between 10 (inclusive) and 20 (inclusive)
+    var random2 = Int.random(in: 10...20)
+    print(random2)
+  }
+}</code></pre>
+            <ol type="1" start="3">
+                <li>Run the project several times and observe the output.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Exercise 1" duration="15">
+            <p><strong>Create an app with the following software requirements:</strong></p>
+            <p>The application has one view controller as shown below.</p>
+            <ul>
+                <li>ViewController displays a list of names in a UIPickerView; the list of names are stored in a DataController which uses the singleton pattern</li>
+                <li>ViewController has a <strong>Select Random Name</strong> button which will cause the UIPickerView to scroll to a random name in the UIPickerView</li>
+            </ul>
+            <p class="image-container"><img style="width: 624.00px" src="img/7256b95a2c47c6f3.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Exercise 2" duration="15">
+            <p><strong>Create an app with the following software requirements:</strong></p>
+            <p>The application has three view controllers as shown below.</p>
+            <ul>
+                <li>ViewController and AddViewController are in a UITabBarController</li>
+                <li>ViewController displays a list of names in a UIPickerView (Screenshot 1); the list of names are stored in a DataController</li>
+                <li>ViewController has an Edit button which has a modal segue to EditViewController; the name which is currently selected in the UIPickerView will be edited in EditViewController</li>
+                <li>EditViewController (Screenshot 2) has a Cancel and Save button; pressing Save saves the edited value to the DataController and returns to ViewController; pressing Cancel does not save the edited value to the DataController and returns to ViewController</li>
+                <li>AddViewController (Screenshot 3) has a Cancel and Save button; pressing Save saves the new value to the DataController and clears the text field; pressing Cancel does not save the new value to the DataController and clears the text field</li>
+            </ul>
+            <p><strong>Screenshot 1 - ViewController shows a list of names</strong></p>
+            <p class="image-container"><img style="width: 624.00px" src="img/144a2320601f954.png"></p>
+            <p><strong>Screenshot 2 - EditViewController edits the selected name in ViewController</strong></p>
+            <p class="image-container"><img style="width: 624.00px" src="img/143aca5945a356fe.png"></p>
+            <p><strong>Screenshot 3 - AddViewController allows adding values to DataController</strong></p>
+            <p class="image-container"><img style="width: 624.00px" src="img/7b4b63773816364d.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Next" duration="0">
+            <ul>
+                <li>UITableViewController</li>
+            </ul>
+            <h2 is-upgraded><strong>Reference docs</strong></h2>
+            <ul>
+                <li><a href="https://developer.apple.com/documentation/uikit/uitabbarcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uitabbarcontroller</a></li>
+                <li><a href="https://developer.apple.com/documentation/uikit/uiviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uiviewcontroller</a></li>
+                <li><a href="https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html" target="_blank">https://developer.apple.com/library/archive/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html</a></li>
+                <li><a href="https://developer.apple.com/documentation/webkit/wkwebview" target="_blank">https://developer.apple.com/documentation/webkit/wkwebview</a></li>
+                <li><a href="https://docs.swift.org/swift-book/ReferenceManual/Types.html" target="_blank">https://docs.swift.org/swift-book/ReferenceManual/Types.html</a></li>
+                <li><a href="https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html</a></li>
+            </ul>
+
+
+        </google-codelab-step>
+
+    </google-codelab>
+
+    <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+    <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

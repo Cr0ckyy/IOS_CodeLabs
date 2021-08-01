@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-05-03T13:16:50Z",
+  "id": "03-uisplitviewcontroller",
+  "duration": 180,
+  "title": "UISplitViewController",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "17zqgdJzb9kbgMGytcTNBqVNyBZVNcKlQl7LVk7ZsuJU",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "03-uisplitviewcontroller"
+}

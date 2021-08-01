@@ -1,0 +1,1101 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>iOS Networking</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="10-ios-networking"
+                  title="iOS Networking"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Use JSONEncoder to encode a Swift object to JSON and JSONDecoder to decode JSON to a Swift object.</li>
+<li>Use closure syntax to provide self-contained blocks of functionality as a method parameter.</li>
+<li>Create and configure Swift classes (URL, URLRequest, URLSession and URLSessionTask) to communicate with a server and process the response.</li>
+<li>Force code which runs on a separate thread to be executed on the main thread.</li>
+<li>Configure a cloud service to provide a REST API for communication with iOS applications.</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="JavaScript Object Notation (JSON) and Swift" duration="10">
+        <p><a href="http://www.elated.com/articles/json-basics/" target="_blank">http://www.elated.com/articles/json-basics/</a></p>
+<p>The JavaScript Object Notation (JSON) format is commonly used when exchanging data between a client and a server.</p>
+<aside class="special"><p><strong>Basic rules</strong></p>
+<ul>
+<li>A JSON string contains either an <strong>array</strong> of values, or an <strong>object</strong> (an associative array of name / value pairs)</li>
+<li>An <strong>array</strong> is surrounded by square brackets <strong><code>[ ]</code></strong> and contains a comma-separated list of values</li>
+<li>An <strong>object</strong> is surrounded by curly brackets <strong><code>{ }</code></strong> and contains a comma-separated list of name / value pairs</li>
+<li>A name / value pair consists of a field name in double quotes <strong><code>&#34; &#34;</code></strong> followed by a colon <strong><code>:</code></strong> followed by the field value</li>
+</ul>
+</aside>
+<aside class="special"><p><strong>A value in an array or object can be:</strong></p>
+<ul>
+<li>A number  - integer or floating point</li>
+<li>A string - in double quotes <strong><code>&#34; &#34;</code></strong></li>
+<li>A boolean - <code>true</code> or <code>false</code></li>
+<li>An array - surrounded by square brackets <strong><code>[ ]</code></strong></li>
+<li>An object - surrounded by curly brackets <strong><code>{ }</code></strong></li>
+<li>The value <code>null</code></li>
+</ul>
+</aside>
+<p><strong>Example #1</strong></p>
+<pre>{
+  &#34;name&#34;: &#34;John&#34;,
+  &#34;friends&#34;: [&#34;Lucy&#34;, &#34;Ben&#34;],
+  &#34;job&#34;: {
+    &#34;company&#34;: &#34;Google&#34;,
+    &#34;title&#34;: &#34;UX Engineer&#34;
+  }
+}</pre>
+<p><strong>Description of Example #1</strong></p>
+<ul>
+<li>The JSON string contains an object (surrounded by curly brackets)</li>
+<li>The object has 3 name-value pairs (the names are <strong>name</strong>, <strong>friends</strong> and <strong>job</strong>)</li>
+<li>The value for <strong>name</strong> is a String (John)</li>
+<li>The value for <strong>friends</strong> is an array of Strings (Lucy and Ben)</li>
+<li>The value for <strong>job</strong> is an object with 2 name-value pairs (the names are <strong>company</strong> and <strong>title</strong>)</li>
+<li>The value for <strong>company</strong> is a String (Google)</li>
+<li>The value for <strong>title</strong> is a String (UX Engineer)</li>
+</ul>
+<p><strong>Example #2</strong></p>
+<pre>[
+  {
+    &#34;name&#34;: &#34;John&#34;,
+    &#34;friends&#34;: [&#34;Lucy&#34;, &#34;Ben&#34;]
+  },
+  {
+    &#34;name&#34;: &#34;Lucy&#34;,
+    &#34;friends&#34;: [&#34;John&#34;]
+  }
+]</pre>
+<p><strong>Description of Example #2</strong></p>
+<ul>
+<li>The JSON string contains an array (surrounded by square brackets)</li>
+<li>Each item is an object with 2 name-value pairs (the names are <strong>name</strong> and <strong>friends</strong>)</li>
+<li>Item #1 - the value for <strong>name</strong> is a String (John) and the value for <strong>friends</strong> is an array of Strings (Lucy and Ben)</li>
+<li>Item #2 - the value for <strong>name</strong> is a String (Lucy) and the value for <strong>friends</strong> is an array of Strings (John)</li>
+</ul>
+<p><strong>JSONEncoder, JSONDecoder and Codable</strong></p>
+<ul>
+<li>The <code>JSONEncoder</code> class can be used to encode a Swift object to JSON.</li>
+<li>The <code>JSONDecoder</code> class can be used to decode JSON to a Swift object.</li>
+<li>The Swift object must adopt <code>Codable</code>.</li>
+</ul>
+<aside class="special"><p>When designing the Swift object:</p>
+<ul>
+<li>Design the Swift object to encode to the desired JSON, or</li>
+<li>Design the Swift object to decode from the desired JSON</li>
+</ul>
+</aside>
+<p><strong>Example #1</strong></p>
+<pre>{
+  &#34;name&#34;: &#34;John&#34;,
+  &#34;friends&#34;: [&#34;Lucy&#34;, &#34;Ben&#34;],
+  &#34;job&#34;: {
+    &#34;company&#34;: &#34;Google&#34;,
+    &#34;title&#34;: &#34;UX Engineer&#34;
+  }
+}</pre>
+<p><strong>Swift object for Example #1</strong></p>
+<pre>class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+  var job : [String : String] = [:]
+}</pre>
+<p><strong>Swift object for Example #1</strong></p>
+<pre>class MyJob : Codable {
+  var company : String = &#34;&#34;
+  var title : String = &#34;&#34;
+}
+class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+  var job : MyJob!
+}</pre>
+<p><strong>Example #2</strong></p>
+<pre>[
+  {
+    &#34;name&#34;: &#34;John&#34;,
+    &#34;friends&#34;: [&#34;Lucy&#34;, &#34;Ben&#34;]
+  },
+  {
+    &#34;name&#34;: &#34;Lucy&#34;,
+    &#34;friends&#34;: [&#34;John&#34;]
+  }
+]</pre>
+<p><strong>Swift object for Example #2</strong></p>
+<pre>class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+}
+
+var myDataArray : [MyData] = []</pre>
+<p><strong>JSONEncoder</strong></p>
+<pre><code>// assume myData is the Swift object to be encoded
+// JSON encoding which converts a Swift object to a JSON object
+// Step 1 - create the JSONEncoder object
+let encoder = JSONEncoder()
+// Step 2 - encode the Swift object into a JSON object
+if let encodedJSON = try? encoder.encode(myData) {
+}</code></pre>
+<p><strong>JSONDecoder</strong></p>
+<ul>
+<li>Note that the first parameter of decode is the Swift object that you want to decode to; this could be a class or struct, an array, a dictionary, etc.</li>
+</ul>
+<pre><code>// assume jsonData contains the JSON data to be decoded
+// assume MyData matches the structure of jsonData
+// JSON decoding which converts a JSON object to a Swift object
+// Step 1 - create the JSONDecoder object
+let decoder = JSONDecoder()
+// Step 2 - decode the JSON object into a Swift object
+if let myData = try? decoder.decode(MyData.self, from: jsonData) {
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - JavaScript Object Notation (JSON) and Swift" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject01</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+
+class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+  var job : [String : String] = [:]
+}
+
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // create a MyData object with some values
+    var myData = MyData()
+    myData.name = &#34;John&#34;
+    myData.friends = [&#34;Lucy&#34;, &#34;Ben&#34;]
+    myData.job = [&#34;company&#34;: &#34;Google&#34;, &#34;title&#34;: &#34;UX Engineer&#34;]
+    
+    // create a variable to hold the JSON data for later use
+    var jsonData : Data! = nil
+    
+    // JSON encoding which converts a Swift object to a JSON object
+    // Step 1 - create the JSONEncoder object
+    let encoder = JSONEncoder()
+    // Step 2 - encode the Swift object into a JSON object
+    if let encodedJSON = try? encoder.encode(myData) {
+      // encodedJSON now contains the JSON object
+      // save a copy to jsonData so we can use it later
+      jsonData = encodedJSON
+      // this part is just for debugging, we want to see the
+      // jsonData as a String and print it to the debug area
+      if let stringData = String(data: encodedJSON, encoding: .utf8) {
+        print(&#34;=============================&#34;)
+        print(&#34;Debugging to view JSON string&#34;)
+        print(&#34;=============================&#34;)
+        print(stringData)
+      }
+    }
+    
+    // JSON decoding which converts a JSON object to a Swift object
+    // Step 1 - create the JSONDecoder object
+    let decoder = JSONDecoder()
+    // Step 2 - decode the JSON object into a Swift object
+    if let myDecodedData = try? decoder.decode(MyData.self, from: jsonData) {
+      // this part is just for debugging, we want to print the
+      // data from the Swift object to the debug area
+      print(&#34;==============================&#34;)
+      print(&#34;Debugging to view Swift object&#34;)
+      print(&#34;==============================&#34;)
+      print(myDecodedData.name)
+      print(myDecodedData.friends)
+      print(myDecodedData.job)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application. You should see the following output:</li>
+</ol>
+<pre>=============================
+Debugging to view JSON string
+=============================
+{&#34;name&#34;:&#34;John&#34;,&#34;friends&#34;:[&#34;Lucy&#34;,&#34;Ben&#34;],&#34;job&#34;:{&#34;company&#34;:&#34;Google&#34;,&#34;title&#34;:&#34;UX Engineer&#34;}}
+==============================
+Debugging to view Swift object
+==============================
+John
+[&#34;Lucy&#34;, &#34;Ben&#34;]
+[&#34;title&#34;: &#34;UX Engineer&#34;, &#34;company&#34;: &#34;Google&#34;]</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - JavaScript Object Notation (JSON) and Swift" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject02</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+
+class MyJob : Codable {
+  var company : String = &#34;&#34;
+  var title : String = &#34;&#34;
+}
+
+class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+  var job : MyJob!
+}
+
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // create a MyData object with some values
+    var myData = MyData()
+    myData.name = &#34;John&#34;
+    myData.friends = [&#34;Lucy&#34;, &#34;Ben&#34;]
+    myData.job = MyJob()
+    myData.job.company = &#34;Google&#34;
+    myData.job.title = &#34;UX Engineer&#34;
+
+    // create a variable to hold the JSON data for later use
+    var jsonData : Data! = nil
+    
+    // JSON encoding which converts a Swift object to a JSON object
+    // Step 1 - create the JSONEncoder object
+    let encoder = JSONEncoder()
+    // Step 2 - encode the Swift object into a JSON object
+    if let encodedJSON = try? encoder.encode(myData) {
+      // encodedJSON now contains the JSON object
+      // save a copy to jsonData so we can use it later
+      jsonData = encodedJSON
+      // this part is just for debugging, we want to see the
+      // jsonData as a String and print it to the debug area
+      if let stringData = String(data: encodedJSON, encoding: .utf8) {
+        print(&#34;=============================&#34;)
+        print(&#34;Debugging to view JSON string&#34;)
+        print(&#34;=============================&#34;)
+        print(stringData)
+      }
+    }
+    
+    // JSON decoding which converts a JSON object to a Swift object
+    // Step 1 - create the JSONDecoder object
+    let decoder = JSONDecoder()
+    // Step 2 - decode the JSON object into a Swift object
+    if let myDecodedData = try? decoder.decode(MyData.self, from: jsonData) {
+      // this part is just for debugging, we want to print the
+      // data from the Swift object to the debug area
+      print(&#34;==============================&#34;)
+      print(&#34;Debugging to view Swift object&#34;)
+      print(&#34;==============================&#34;)
+      print(myDecodedData.name)
+      print(myDecodedData.friends)
+      print(myDecodedData.job.company)
+      print(myDecodedData.job.title)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application. You should see the following output:</li>
+</ol>
+<pre>=============================
+Debugging to view JSON string
+=============================
+{&#34;name&#34;:&#34;John&#34;,&#34;friends&#34;:[&#34;Lucy&#34;,&#34;Ben&#34;],&#34;job&#34;:{&#34;company&#34;:&#34;Google&#34;,&#34;title&#34;:&#34;UX Engineer&#34;}}
+==============================
+Debugging to view Swift object
+==============================
+John
+[&#34;Lucy&#34;, &#34;Ben&#34;]
+Google
+UX Engineer</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - JavaScript Object Notation (JSON) and Swift" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject03</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+
+class MyData : Codable  {
+  var name : String = &#34;&#34;
+  var friends : [String] = []
+}
+
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // create a MyData object with some values
+    var myData1 = MyData()
+    myData1.name = &#34;John&#34;
+    myData1.friends = [&#34;Lucy&#34;, &#34;Ben&#34;]
+    var myData2 = MyData()
+    myData2.name = &#34;Lucy&#34;
+    myData2.friends = [&#34;John&#34;]
+
+    var myDataArray : [MyData] = [myData1, myData2]
+    
+    // create a variable to hold the JSON data for later use
+    var jsonData : Data! = nil
+    
+    // JSON encoding which converts a Swift object to a JSON object
+    // Step 1 - create the JSONEncoder object
+    let encoder = JSONEncoder()
+    // Step 2 - encode the Swift object into a JSON object
+    if let encodedJSON = try? encoder.encode(myDataArray) {
+      // encodedJSON now contains the JSON object
+      // save a copy to jsonData so we can use it later
+      jsonData = encodedJSON
+      // this part is just for debugging, we want to see the
+      // jsonData as a String and print it to the debug area
+      if let stringData = String(data: encodedJSON, encoding: .utf8) {
+        print(&#34;=============================&#34;)
+        print(&#34;Debugging to view JSON string&#34;)
+        print(&#34;=============================&#34;)
+        print(stringData)
+      }
+    }
+    
+    // JSON decoding which converts a JSON object to a Swift object
+    // Step 1 - create the JSONDecoder object
+    let decoder = JSONDecoder()
+    // Step 2 - decode the JSON object into a Swift object
+    if let myDecodedData = try? decoder.decode([MyData].self, from: jsonData) {
+      // this part is just for debugging, we want to print the
+      // data from the Swift object to the debug area
+      print(&#34;==============================&#34;)
+      print(&#34;Debugging to view Swift object&#34;)
+      print(&#34;==============================&#34;)
+      print(myDecodedData[0].name)
+      print(myDecodedData[0].friends)
+      print(myDecodedData[1].name)
+      print(myDecodedData[1].friends)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application. You should see the following output:</li>
+</ol>
+<pre>=============================
+Debugging to view JSON string
+=============================
+[{&#34;name&#34;:&#34;John&#34;,&#34;friends&#34;:[&#34;Lucy&#34;,&#34;Ben&#34;]},{&#34;name&#34;:&#34;Lucy&#34;,&#34;friends&#34;:[&#34;John&#34;]}]
+==============================
+Debugging to view Swift object
+==============================
+John
+[&#34;Lucy&#34;, &#34;Ben&#34;]
+Lucy
+[&#34;John&#34;]</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Closures" duration="5">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Closures.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Closures.html</a></p>
+<p>Closure expressions are self-contained blocks of functionality. Closure expression syntax:</p>
+<pre><code>{ (parameters) -&gt; returnType in
+  statements
+}</code></pre>
+<p>If the return type of a closure is Void (i.e. no return value), then -&gt; returnType can be omitted</p>
+<pre><code>{ (parameters) in
+  statements
+}</code></pre>
+<p>Example #1 - return type of closure is String</p>
+<pre><code>{ (name:String, age:Int) -&gt; String in
+  return &#34;\(name) is \(age)&#34;
+}</code></pre>
+<p>Example #2 - closure has no return value</p>
+<pre><code>{ (name:String, age:Int) in
+  print(&#34;\(name) is \(age)&#34;)
+}</code></pre>
+<p><strong>Trailing closure</strong></p>
+<p>The Swift language allows you to write a trailing closure if the final argument to a method is a closure. The argument label for the closure is omitted and the closure is written after the function call&#39;s parentheses.</p>
+<p>Syntax without trailing closure:</p>
+<pre><code>let task = session.dataTask(with: request, completionHandler: { (data, response, error) in
+  // do something
+})</code></pre>
+<p>Syntax with trailing closure:</p>
+<pre><code>let task = session.dataTask(with: request) { (data, response, error) in
+  // do something
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="URL, URLRequest, URLSession, and URLSessionTask" duration="15">
+        <p><strong>Hypertext Transfer Protocol (HTTP)</strong></p>
+<p><a href="https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html" target="_blank">https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html</a></p>
+<p class="image-container"><img style="width: 624.00px" src="img/8dc0666088aa2976.png"></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>HTTP</p>
+</td><td colspan="1" rowspan="1"><p>Used by a client to communicate with a server. The client constructs a HTTP request and sends it to the server; the server processes the request and returns a HTTP response.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>HTTPS</p>
+</td><td colspan="1" rowspan="1"><p>A more secure version of HTTP, which encrypts all the information that is sent in the request and received in the response.</p>
+</td></tr>
+</table>
+<p><strong>iOS device as a client</strong></p>
+<p>The iOS device acts as a client and constructs a HTTP request via several classes:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Class</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URL</code></p>
+</td><td colspan="1" rowspan="1"><p>Contains the URL of a resource</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URLRequest</code></p>
+</td><td colspan="1" rowspan="1"><p>Contains a HTTP request</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URLSession</code></p>
+</td><td colspan="1" rowspan="1"><p>A container for a HTTP session</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URLSessionTask</code></p>
+</td><td colspan="1" rowspan="1"><p>Tracks the state of a HTTP request and has methods to cancel, suspend, and resume the request. This is an abstract class.</p>
+</td></tr>
+</table>
+<p><strong>URLSessionTask</strong></p>
+<p>There are three types of concrete session tasks:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>URLSessionDataTask</code></p>
+</td><td colspan="1" rowspan="1"><p>Use this task for requests to retrieve data from servers to memory</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URLSessionUploadTask</code></p>
+</td><td colspan="1" rowspan="1"><p>Use this task to upload a file from disk to a web service</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>URLSessionDownloadTask</code></p>
+</td><td colspan="1" rowspan="1"><p>Use this task to download a file from a remote service to a temporary file location</p>
+</td></tr>
+</table>
+<p>For this module, we will only use <code>URLSessionDataTask</code>.</p>
+<p><strong>Creating and starting a URLSessionTask and processing the response</strong></p>
+<ol type="1" start="1">
+<li>Create a <code>URL</code> object</li>
+<li>Create a <code>URLRequest</code> object</li>
+<li>Create a <code>URLSession</code> object</li>
+<li>Create a <code>URLSessionDataTask</code> object</li>
+<li>Start / resume the task</li>
+<li>Process the response</li>
+</ol>
+<p>The code for the 6 steps is shown below:</p>
+<pre><code>// Step 1 - Create a URL object
+guard let url = URL(string: &#34;https://www.github.com/&#34;) else {
+  return
+}
+ 
+// Step 2 - Create a URLRequest object
+var request = URLRequest(url:url)
+ 
+// Step 3 - Create a URLSession object
+let session = URLSession.shared
+ 
+// Step 4 - Create a URLSessionDataTask object
+let task = session.dataTask(with: request) { (data, response, error) in
+  // Step 6 - Process the response
+}
+ 
+// Step 5 - Start / resume the task
+task.resume()</code></pre>
+<p><strong>dataTask(with:completionHandler:)</strong></p>
+<p>For step 4, URLSessionDataTask has a method called dataTask(with:completionHandler:). The argument for the completion handler is a closure. The syntax shown above uses a trailing closure, hence the argument label for the closure is omitted and the closure is written after the function call&#39;s parentheses.</p>
+<p>This method creates a task that sends a HTTP request and processes the HTTP response in the closure. The <code>URLRequest</code> parameter contains the URL to send the request to. The <code>completionHandler</code> closure has the following parameters:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Parameter name</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Parameter type</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>data</code></p>
+</td><td colspan="1" rowspan="1"><p>optional <code>Data</code></p>
+</td><td colspan="1" rowspan="1"><p>The data returned by the server</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>response</code></p>
+</td><td colspan="1" rowspan="1"><p>optional <code>URLResponse</code></p>
+</td><td colspan="1" rowspan="1"><p>An object that provides response metadata, such as HTTP headers and status code. If you are making a HTTP or HTTPS request, the returned object is actually a <code>HTTPURLResponse</code> object</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>error</code></p>
+</td><td colspan="1" rowspan="1"><p>optional <code>Error</code></p>
+</td><td colspan="1" rowspan="1"><p>An error object that indicates why the request failed, or nil if the request was successful</p>
+</td></tr>
+</table>
+<p><strong>HTTP response status code</strong></p>
+<p><a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">https://en.wikipedia.org/wiki/List_of_HTTP_status_codes</a></p>
+<p>For every HTTP transaction, the server sends back a response status code to indicate how the transaction was handled. The client should always check the response status code. A status code of 200 is the standard response for successful HTTP requests.</p>
+<p>The <code>HTTPURLResponse</code> class is a subclass of <code>URLResponse</code> that provides methods for accessing information specific to HTTP protocol responses, such as the HTTP response status code. Whenever you make HTTP URL load requests, the response object you get back from the <code>URLSession</code> class is a <code>HTTPURLResponse</code> object.</p>
+<p><strong>App Transport Security and HTTP request</strong></p>
+<p>App Transport Security (ATS) enforces best practices in the secure connections between an app and its back end. Connections must be made using HTTPS; HTTP connections will fail.</p>
+<p>To allow HTTP connections, you need to modify the App Transport Security Settings in Info.plist. Refer to this resource if you need to allow HTTP connections:</p>
+<p><a href="https://developer.apple.com/documentation/security/preventing_insecure_network_connections" target="_blank">https://developer.apple.com/documentation/security/preventing_insecure_network_connections</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Creating and starting a URLSessionTask and processing the response" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject04</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Step 1 - Create a URL object
+    guard let url = URL(string: &#34;https://postman-echo.com/get&#34;) else {
+      return
+    }
+    
+    // Step 2 - Create a URLRequest object
+    var request = URLRequest(url:url)
+    
+    // Step 3 - Create a URLSession object
+    let session = URLSession.shared
+    
+    // Step 4 - Create a URLSessionDataTask object
+    let task = session.dataTask(with: request) { (data, response, error) in
+      // Step 6 - Process the response
+      // check that the response status code is 200
+      if let httpResponse = response as? HTTPURLResponse {
+        // For debugging purposes, we convert the optional Data to a String
+        print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view status code&#34;)
+        print(&#34;httpResponse.statusCode is \(httpResponse.statusCode)&#34;)
+        if (httpResponse.statusCode == 200) {
+          // For debugging purposes, we convert the optional Data to a String
+          // so that it can be printed out in the debug area
+          if let data = data, let stringData = String(data: data, encoding: .utf8) {
+            print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data&#34;)
+            print(&#34;data is \(stringData)&#34;)
+          }
+        }
+      }
+    }
+    
+    // Step 5 - Start / resume the task
+    task.resume()
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. The debug area shows the returned data.</li>
+</ol>
+<pre>&lt;&lt;DEBUG&gt;&gt; Debugging to view status code
+httpResponse.statusCode is 200
+&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data
+data is {&#34;args&#34;:{},&#34;headers&#34;:{&#34;x-forwarded-proto&#34;:&#34;https&#34;,&#34;x-forwarded-port&#34;:&#34;443&#34;,&#34;host&#34;:&#34;postman-echo.com&#34;,&#34;x-amzn-trace-id&#34;:&#34;Root=1-5f15b6c6-502626d81e626ca067248b91&#34;,&#34;accept&#34;:&#34;*/*&#34;,&#34;if-none-match&#34;:&#34;W/\&#34;191-IGFXHtfB5eeeVnCoqYQBD+LpCyE\&#34;&#34;,&#34;user-agent&#34;:&#34;SampleProject04/1 CFNetwork/1128.0.1 Darwin/19.4.0&#34;,&#34;accept-language&#34;:&#34;en-us&#34;,&#34;accept-encoding&#34;:&#34;gzip, deflate, br&#34;},&#34;url&#34;:&#34;https://postman-echo.com/get&#34;}</pre>
+<ol type="1" start="4">
+<li>Change the URL to <code>https://postman-echo.com/unknown</code> and run the project. The debug area shows that the status code is 404, which indicates that the page could not be found.</li>
+</ol>
+<pre>&lt;&lt;DEBUG&gt;&gt; Debugging to view status code
+httpResponse.statusCode is 404</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Updating the UI on the main thread" duration="5">
+        <p>iOS devices have multi-core processors that allow an app to run concurrently on multiple threads. Every app has a main thread which is used primarily to update the user interface and handle user interaction. The completion handler for the <code>URLSessionDataTask</code> runs on a separate thread. Code in the completion handler which updates the user interface must be executed on the main thread. </p>
+<p>Force code to be executed on the main thread by using the following code:</p>
+<pre><code>DispatchQueue.main.async {
+  // code to be executed on the main thread
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Updating the UI on the main thread" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject04</strong>.</li>
+<li>Set simulator type as iPhone 8 or SE (2nd generation)</li>
+</ol>
+<p><strong>In Main.storyboard</strong></p>
+<ol type="1" start="3">
+<li>View as iPhone 8 or SE (2nd generation)</li>
+<li>Add a <code>UITextView</code> (IBOutlet <code>outTextView</code>, constraints top (20), left (16), right (16), bottom (20)).</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="5">
+<li>Update ViewController to change the URL back to <code>https://postman-echo.com/get</code>  and display the data in the text view.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Step 1 - Create a URL object
+    guard let url = URL(string: &#34;https://postman-echo.com/get&#34;) else {
+      return
+    }
+    
+    // Step 2 - Create a URLRequest object
+    var request = URLRequest(url:url)
+    
+    // Step 3 - Create a URLSession object
+    let session = URLSession.shared
+    
+    // Step 4 - Create a URLSessionDataTask object
+    let task = session.dataTask(with: request) { (data, response, error) in
+      // Step 6 - Process the response
+      // check that the response status code is 200
+      if let httpResponse = response as? HTTPURLResponse {
+        // For debugging purposes, we convert the optional Data to a String
+        print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view status code&#34;)
+        print(&#34;httpResponse.statusCode is \(httpResponse.statusCode)&#34;)
+        if (httpResponse.statusCode == 200) {
+          // For debugging purposes, we convert the optional Data to a String
+          // so that it can be printed out in the debug area
+          if let data = data, let stringData = String(data: data, encoding: .utf8) {
+            print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data&#34;)
+            print(&#34;data is \(stringData)&#34;)
+            self.outTextView.text = stringData
+          }
+        }
+      }
+    }
+    
+    // Step 5 - Start / resume the task
+    task.resume()
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the app. The app should crash and you should see an error in the debug area:</li>
+</ol>
+<pre>Main Thread Checker: UI API called on a background thread: -[UITextView setText:]</pre>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="7">
+<li>Modify ViewController to update the user interface object (the text view object) on the main thread.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Step 1 - Create a URL object
+    guard let url = URL(string: &#34;https://postman-echo.com/get&#34;) else {
+      return
+    }
+    
+    // Step 2 - Create a URLRequest object
+    var request = URLRequest(url:url)
+    
+    // Step 3 - Create a URLSession object
+    let session = URLSession.shared
+    
+    // Step 4 - Create a URLSessionDataTask object
+    let task = session.dataTask(with: request) { (data, response, error) in
+      // Step 6 - Process the response
+      // check that the response status code is 200
+      if let httpResponse = response as? HTTPURLResponse {
+        // For debugging purposes, we convert the optional Data to a String
+        print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view status code&#34;)
+        print(&#34;httpResponse.statusCode is \(httpResponse.statusCode)&#34;)
+        if (httpResponse.statusCode == 200) {
+          // For debugging purposes, we convert the optional Data to a String
+          // so that it can be printed out in the debug area
+          if let data = data, let stringData = String(data: data, encoding: .utf8) {
+            print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data&#34;)
+            print(&#34;data is \(stringData)&#34;)
+            DispatchQueue.main.async {
+              self.outTextView.text = stringData
+            }
+          }
+        }
+      }
+    }
+    
+    // Step 5 - Start / resume the task
+    task.resume()
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the app. The text view should show the retrieved data.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sending a GET request" duration="5">
+        <p>For a HTTP GET request, the client sends information to the server via a query string appended to the URL. For example:</p>
+<pre>https://postman-echo.com/get?foo1=bar1&amp;foo2=bar2</pre>
+<p>The query string is composed of a series of key-value pairs, where each key-value pair is separated from the next key-value pair by the &amp; character. The ? character is used as a separator between the path and the query string. </p>
+<p>To create the URL object, create and configure a <code>URLComponents</code> object which percent encodes any special characters in the key-value pairs. Each key-value pair is represented by a <code>URLQueryItem</code> object. The <code>URLQueryItem</code> objects are placed in an array and assigned to the <code>queryItems</code> property of the <code>URLComponents</code> object.</p>
+<p>The URL can be retrieved from the <code>url</code> property of the <code>URLComponents</code> object.</p>
+<p>Sample code is shown below:</p>
+<pre><code>// Step 1 - Create a URL object
+var urlComponents = URLComponents()
+urlComponents.scheme = &#34;https&#34;
+urlComponents.host = &#34;postman-echo.com&#34;
+urlComponents.path = &#34;/get&#34;
+ 
+let foo1Query = URLQueryItem(name: &#34;foo1&#34;, value: &#34;bar1&#34;)
+let foo2Query = URLQueryItem(name: &#34;foo2&#34;, value: &#34;bar2&#34;)
+urlComponents.queryItems = [foo1Query, foo2Query]
+ 
+guard let url = urlComponents.url else {
+  return
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - Sending a GET request" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject06</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Step 1 - Create a URL object
+    var urlComponents = URLComponents()
+    urlComponents.scheme = &#34;https&#34;
+    urlComponents.host = &#34;postman-echo.com&#34;
+    urlComponents.path = &#34;/get&#34;
+    
+    let foo1Query = URLQueryItem(name: &#34;foo1&#34;, value: &#34;bar1&#34;)
+    let foo2Query = URLQueryItem(name: &#34;foo2&#34;, value: &#34;bar2&#34;)
+    urlComponents.queryItems = [foo1Query, foo2Query]
+    
+    guard let url = urlComponents.url else {
+      return
+    }
+    
+    // Step 2 - Create a URLRequest object
+    var request = URLRequest(url:url)
+    
+    // Step 3 - Create a URLSession object
+    let session = URLSession.shared
+    
+    // Step 4 - Create a URLSessionDataTask object
+    let task = session.dataTask(with: request) { (data, response, error) in
+      // Step 6 - Process the response
+      // check that the response status code is 200
+      if let httpResponse = response as? HTTPURLResponse {
+        // For debugging purposes, we convert the optional Data to a String
+        print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view status code&#34;)
+        print(&#34;httpResponse.statusCode is \(httpResponse.statusCode)&#34;)
+        if (httpResponse.statusCode == 200) {
+          // For debugging purposes, we convert the optional Data to a String
+          // so that it can be printed out in the debug area
+          if let data = data, let stringData = String(data: data, encoding: .utf8) {
+            print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data&#34;)
+            print(&#34;data is \(stringData)&#34;)
+          }
+        }
+      }
+    }
+    
+    // Step 5 - Start / resume the task
+    task.resume()
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application. You should see the following output:</li>
+</ol>
+<pre>&lt;&lt;DEBUG&gt;&gt; Debugging to view status code
+httpResponse.statusCode is 200
+&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data
+data is {&#34;args&#34;:{&#34;foo1&#34;:&#34;bar1&#34;,&#34;foo2&#34;:&#34;bar2&#34;},&#34;headers&#34;:{&#34;x-forwarded-proto&#34;:&#34;https&#34;,&#34;x-forwarded-port&#34;:&#34;443&#34;,&#34;host&#34;:&#34;postman-echo.com&#34;,&#34;x-amzn-trace-id&#34;:&#34;Root=1-5f15bc87-69ab28ae398d3e00987631c8&#34;,&#34;accept&#34;:&#34;*/*&#34;,&#34;if-none-match&#34;:&#34;W/\&#34;1c0-kQuwbZI6p7aj1y3pnWFqM9eiz28\&#34;&#34;,&#34;user-agent&#34;:&#34;SampleProject06/1 CFNetwork/1128.0.1 Darwin/19.4.0&#34;,&#34;accept-language&#34;:&#34;en-us&#34;,&#34;accept-encoding&#34;:&#34;gzip, deflate, br&#34;},&#34;url&#34;:&#34;https://postman-echo.com/get?foo1=bar1&amp;foo2=bar2&#34;}</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sending a POST request" duration="5">
+        <p>For a HTTP POST request, the client sends information to the server via the request body.</p>
+<p>The information may be composed of a series of key-value pairs, where each key-value pair is separated from the next key-value pair by the &amp; character.</p>
+<p>To send a POST request:</p>
+<ul>
+<li>for the <code>URLRequest</code> object, set the <code>httpMethod</code> property to <code>POST</code></li>
+<li>for the <code>URLRequest</code> object, set the <code>httpBody</code> to the <code>Data</code> representation of the key-value pairs which need to be sent</li>
+</ul>
+<p>Sample code is shown below:</p>
+<pre><code>// Step 1 - Create a URL object
+guard let url = URL(string: &#34;https://postman-echo.com/post&#34;) else {
+  return
+}
+
+// Step 2 - Create a URLRequest object
+var request = URLRequest(url:url)
+request.httpMethod = &#34;POST&#34;
+let postString = &#34;foo1=bar1&amp;foo2=bar2&#34;
+request.httpBody = postString.data(using: .utf8)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 7 - Sending a POST request" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject07</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Step 1 - Create a URL object
+    guard let url = URL(string: &#34;https://postman-echo.com/post&#34;) else {
+      return
+    }
+    
+    // Step 2 - Create a URLRequest object
+    var request = URLRequest(url:url)
+    request.httpMethod = &#34;POST&#34;
+    let postString = &#34;foo1=bar1&amp;foo2=bar2&#34;
+    request.httpBody = postString.data(using: .utf8)
+
+    // Step 3 - Create a URLSession object
+    let session = URLSession.shared
+    
+    // Step 4 - Create a URLSessionDataTask object
+    let task = session.dataTask(with: request) { (data, response, error) in
+      // Step 6 - Process the response
+      // check that the response status code is 200
+      if let httpResponse = response as? HTTPURLResponse {
+        // For debugging purposes, we convert the optional Data to a String
+        print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view status code&#34;)
+        print(&#34;httpResponse.statusCode is \(httpResponse.statusCode)&#34;)
+        if (httpResponse.statusCode == 200) {
+          // For debugging purposes, we convert the optional Data to a String
+          // so that it can be printed out in the debug area
+          if let data = data, let stringData = String(data: data, encoding: .utf8) {
+            print(&#34;&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data&#34;)
+            print(&#34;data is \(stringData)&#34;)
+          }
+        }
+      }
+    }
+    
+    // Step 5 - Start / resume the task
+    task.resume()
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the app. You should see the following in the debug area:</li>
+</ol>
+<pre>&lt;&lt;DEBUG&gt;&gt; Debugging to view status code
+httpResponse.statusCode is 200
+&lt;&lt;DEBUG&gt;&gt; Debugging to view returned data
+data is {&#34;args&#34;:{},&#34;data&#34;:&#34;&#34;,&#34;files&#34;:{},&#34;form&#34;:{&#34;foo1&#34;:&#34;bar1&#34;,&#34;foo2&#34;:&#34;bar2&#34;},&#34;headers&#34;:{&#34;x-forwarded-proto&#34;:&#34;https&#34;,&#34;x-forwarded-port&#34;:&#34;443&#34;,&#34;host&#34;:&#34;postman-echo.com&#34;,&#34;x-amzn-trace-id&#34;:&#34;Root=1-5f15bd33-a1f9f49017e285a8d301c728&#34;,&#34;content-length&#34;:&#34;19&#34;,&#34;accept&#34;:&#34;*/*&#34;,&#34;content-type&#34;:&#34;application/x-www-form-urlencoded&#34;,&#34;accept-encoding&#34;:&#34;gzip, deflate, br&#34;,&#34;user-agent&#34;:&#34;SampleProject07/1 CFNetwork/1128.0.1 Darwin/19.4.0&#34;,&#34;accept-language&#34;:&#34;en-us&#34;},&#34;json&#34;:{&#34;foo1&#34;:&#34;bar1&#34;,&#34;foo2&#34;:&#34;bar2&#34;},&#34;url&#34;:&#34;https://postman-echo.com/post&#34;}</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 8 - Setting up Airtable" duration="20">
+        <aside class="special"><p>Airtable provides a REST API to create, read, update, and destroy records. We will also use Postman to test that our configuration for Airtable is working.</p>
+<p>If the screenshots in this codelab appear to be too small to view, increase the zoom for your browser or right-click on the screenshot and open the image in a new tab.</p>
+</aside>
+<ol type="1" start="1">
+<li>Click this link to sign up with Airtable (<a href="https://airtable.com/invite/r/uFDltIIQ" target="_blank">https://airtable.com/invite/r/uFDltIIQ</a>). Click<strong> Sign up with Google</strong> or create an account. The screenshots below have been tested with Sign up with Google.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/78b1c91a6f34a23f.png"></p>
+<ol type="1" start="2">
+<li>Enter your Google credentials.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/8dddda47392a6fb1.png"></p>
+<ol type="1" start="3">
+<li>This screen will ask to allow Airtable to see and download your contacts. <strong>Do not click Allow. Click Cancel.</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/99acebc4212e832b.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Or, sign in with Google without granting access to contacts</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/cc94a84a66233fd1.png"></p>
+<ol type="1" start="5">
+<li>Click on your Google account.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/160b7c9b9b8170a7.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>Skip</strong> on the next few screens until you get to the screen below. Click on your <strong>account icon</strong> in the top right corner, and click on <strong>Account</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/66d42d35693dec24.png"></p>
+<ol type="1" start="7">
+<li>Click on <strong>Generate API key</strong>. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c368872f66cc1dc7.png"></p>
+<ol type="1" start="8">
+<li>Copy the API key from the text field to any text editor you can retrieve from later.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/97f59f63a9febee3.png"></p>
+<ol type="1" start="9">
+<li>On the left side, under WORKSPACES, click on <strong>My First Workspace</strong>, then click <strong>Choose a plan</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/cbbe72655ab42f25.png"></p>
+<ol type="1" start="10">
+<li>Click on <strong>Choose</strong> located under the FREE column.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/30d875db790ff96c.png"></p>
+<ol type="1" start="11">
+<li>Check the box for <strong>Our project or trial period is over</strong>, in the text box, enter <strong>Testing for educational purposes</strong>. Click <strong>Downgrade</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c2743a520f7502da.png"></p>
+<ol type="1" start="12">
+<li>Click on the Airtable logo in the top left corner.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/19a8279f0915a148.png"></p>
+<ol type="1" start="13">
+<li>Click <strong>Add a base</strong> and <strong>Start from scratch</strong>. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/126fbe71366744b5.png"></p>
+<ol type="1" start="14">
+<li>Set the base name as <strong>Sample Base</strong> and press <strong>Enter</strong> on your keyboard.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/17a306d200ecda2a.png"></p>
+<ol type="1" start="15">
+<li>Click <strong>Sample Base</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/8c3e2ed94f64b0e9.png"></p>
+<ol type="1" start="16">
+<li>Click <strong>No thanks</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/849b1319c3029ff5.png"></p>
+<ol type="1" start="17">
+<li>Right-click <strong>Notes</strong>, select <strong>Delete field</strong>. Delete the fields for <strong>Attachments</strong> and <strong>Status</strong> (screenshots not shown).</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/348acebff13e822a.png"></p>
+<ol type="1" start="18">
+<li>Rename the field for <strong>Name</strong> to <strong>name</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/bd7421d2ba3d1e28.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/ca4702fe9106966c.png"></p>
+<ol type="1" start="19">
+<li>Click the + button at the field headers. Set the field name to <strong>contact</strong>, click <strong>Save</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/58dad291dfa1e6be.png"></p>
+<ol type="1" start="20">
+<li>Enter the data shown in the screenshot below:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/58e09eaef400ae98.png"></p>
+<ol type="1" start="21">
+<li>Open a new browser tab and enter the url <a href="https://airtable.com/api" target="_blank">https://airtable.com/api</a>. Click on <strong>Sample Base</strong>. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/74c863fba039a.png"></p>
+<ol type="1" start="22">
+<li>This page provides the API documentation for your Sample Base.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/19b36da00a752cf.png"></p>
+<ol type="1" start="23">
+<li>Download and install Postman on your macOS machine from <a href="https://www.postman.com/downloads/" target="_blank">https://www.postman.com/downloads/</a>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/2ad4a0839e125de6.png"></p>
+<ol type="1" start="24">
+<li>Use Spotlight to search for and start Postman. Sign in to Postman or click <strong>Skip signing in and take me straight to the app</strong>. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a5bc4ede612f71f.png"></p>
+<ol type="1" start="25">
+<li>Click on <strong>Collections</strong> and <strong>+ New Collection</strong>. Set the Name as <strong>C349 Sample Base</strong>. <strong>Do not click Create yet</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/e2b8290e5b1c9cb6.png"></p>
+<ol type="1" start="26">
+<li>Click on Authorization. Set the type as <strong>Bearer Token</strong>, under the Token field, enter the API key you generated in Airtable. Click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9ece88e7682606c8.png"></p>
+<ol type="1" start="27">
+<li>Click the disclosure triangle next to C349 Sample Base so that it points downwards. Click Add requests. Set the request name as <strong>List Table 1 records</strong>, click <strong>Save to C349 Sample Base</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f3fe33d036a6b4cb.png"></p>
+<ol type="1" start="28">
+<li>Click <strong>List Table 1 records</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/6ae0d1b2c23819c7.png"></p>
+<ol type="1" start="29">
+<li>Return to the Airtable API documentation, click on <strong>List records</strong>. Copy the URL.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/e1b46b61d1dfef55.png"></p>
+<ol type="1" start="30">
+<li>Return to Postman, paste the url. Click <strong>Send</strong>. You should see the data from Airtable presented as a JSON.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c7e4f95e24e02c67.png"></p>
+<aside class="warning"><p><strong>IMPORTANT</strong></p>
+<p>When the iOS client communicates with Airtable, the <code>URLRequest</code> object must provide your API key in the HTTP authorization bearer token header. Use the code shown below and remember to change the value of key to your specific API key.</p>
+<p><code>var request = URLRequest(url:url)</code></p>
+<p><code>var key = &#34;keyABcDEFghIjkLmn&#34;</code></p>
+<p><code>request.setValue(&#34;Bearer \(key)&#34;, forHTTPHeaderField: &#34;Authorization&#34;)</code></p>
+<p>When referencing the Airtable API documentation, note that you have to set the <code>httpMethod</code> to different values for different actions:</p>
+<p>List records - <code>request.httpMethod = &#34;GET&#34;</code></p>
+<p>Create record - <code>request.httpMethod = &#34;POST&#34;</code></p>
+<p>Update record - <code>request.httpMethod = &#34;PUT&#34;</code></p>
+<p>Delete record - <code>request.httpMethod = &#34;DELETE&#34;</code></p>
+</aside>
+<ol type="1" start="31">
+<li>Proceed to work on the problem statement.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Maps</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

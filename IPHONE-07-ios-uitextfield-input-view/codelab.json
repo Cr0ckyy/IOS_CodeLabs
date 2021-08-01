@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-01-01T23:02:38Z",
+  "id": "07-ios-uitextfield-input-view",
+  "duration": 90,
+  "title": "UITextField Input View",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to use UIDatePicker and UIPickerView as the input view for UITextField",
+  "source": "1SdG4zQlJIdURx4bETiawd-du-gK5fuZJouxOUyvLH10",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "07-ios-uitextfield-input-view"
+}

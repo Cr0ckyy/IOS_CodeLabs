@@ -1,0 +1,743 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>More on segues and data controller</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="09-ios-segue-datacontroller"
+                  title="More on segues and data controller"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>create and use multiple modal segues to display captive controllers</li>
+<li>create modal segues to be performed programmatically</li>
+<li>programmatically perform a segue</li>
+<li>create and use data controllers to manage data in an application</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dictionaries" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html</a></p>
+<p><a href="https://developer.apple.com/documentation/swift/dictionary" target="_blank">https://developer.apple.com/documentation/swift/dictionary</a></p>
+<aside class="special"><ul>
+<li>a dictionary is a data structure that stores<strong> key-value</strong> pairs in no particular sequence</li>
+<li>each <strong>value</strong> in the structure is accessed via a unique <strong>key</strong> (typically a <code>String</code>)</li>
+<li><strong>the retrieved value is an optional</strong></li>
+<li>the keys retrieved from a dictionary are <strong>unordered</strong>; call a <strong>sort</strong> method on the array of keys before use</li>
+</ul>
+</aside>
+<p>Visual representation of a dictionary (note that the key-value pairs are not stored in any particular sequence)</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Key</strong></p>
+</td><td colspan="1" rowspan="1"><p>firstname</p>
+</td><td colspan="1" rowspan="1"><p>lastname</p>
+</td><td colspan="1" rowspan="1"><p>postalcode</p>
+</td><td colspan="1" rowspan="1"><p>nric</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Value</strong></p>
+</td><td colspan="1" rowspan="1"><p>adam</p>
+</td><td colspan="1" rowspan="1"><p>tan</p>
+</td><td colspan="1" rowspan="1"><p>560501</p>
+</td><td colspan="1" rowspan="1"><p>S8012345A</p>
+</td></tr>
+</table>
+<pre><code>// Create (empty dictionary)
+var particulars_empty : [String : String] = [:]
+
+// Create (dictionary with values)
+var particulars = [&#34;firstname&#34;:&#34;John&#34;, &#34;lastname&#34;:&#34;Tan&#34;]
+
+// Add
+particulars[&#34;postalcode&#34;] = &#34;738964&#34;
+
+// Retrieve
+let firstname = particulars[&#34;firstname&#34;] ?? &#34;&#34;
+
+// Update
+particulars[&#34;firstname&#34;] = &#34;David&#34;
+
+// Remove
+particulars[&#34;lastname&#34;] = nil
+
+// Get count
+var count = particulars.count
+
+// Check for empty
+var isEmpty = particulars.isEmpty
+
+// Retrieve keys
+var keys = particulars.keys
+
+// Looping over a dictionary (sorted keys)
+for key in particulars.keys.sorted() {
+  if let value = particulars[key] {
+    print(&#34;\(key) \(value)&#34;)
+  }
+}</code></pre>
+<aside class="warning"><p><strong>Since the value is an optional, you must use one of the following when retrieving the value:</strong></p>
+<ul>
+<li>if statements and forced unwrapping, or</li>
+<li>optional binding, or</li>
+<li>nil-coalescing operator</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Dictionaries" duration="15">
+        <ol type="1" start="1">
+<li>Create a playground</li>
+<li>Examine the code and behaviour of dictionaries</li>
+</ol>
+<pre><code>// Create (empty dictionary)
+var particulars_empty : [String : String] = [:]
+
+// Create (dictionary with values)
+var particulars = [&#34;firstname&#34;:&#34;John&#34;, &#34;lastname&#34;:&#34;Tan&#34;]
+
+// Add (insert)
+particulars[&#34;postalcode&#34;] = &#34;738964&#34;
+
+// Retrieve
+let firstname = particulars[&#34;firstname&#34;] ?? &#34;&#34;
+
+// Update
+particulars[&#34;firstname&#34;] = &#34;David&#34;
+
+// Remove
+particulars[&#34;lastname&#34;] = nil
+
+// Get count
+var count = particulars.count
+
+// Check for empty
+var isEmpty = particulars.isEmpty
+
+// Retrieve keys
+var keys = particulars.keys
+
+// Looping over a dictionary (sorted keys)
+for key in particulars.keys.sorted() {
+  if let value = particulars[key] {
+    print(&#34;\(key) \(value)&#34;)
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the playground. The keys and values of the dictionary should be printed out.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Multiple modal segues" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></p>
+<ul>
+<li>A source view controller can have multiple segues to one or more destination view controllers</li>
+<li>Each segue must have a case-sensitive unique identifier, which is set via the <strong>Attributes Inspector</strong></li>
+<li>The <code>UIStoryboardSegue</code> parameter in the <code>prepare(for:sender:)</code> method has a property called <code>identifier</code> to indicate which segue is being performed</li>
+</ul>
+<pre><code>override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+  let identifier = segue.identifier
+  if (identifier == &#34;someIdentifier&#34;) {
+  } else if (identifier == &#34;someOtherIdentifier&#34;) {  
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Multiple modal segues" duration="10">
+        <ol type="1" start="1">
+<li>Create project <strong>SampleProject01</strong></li>
+<li>Create <code>ViewControllerX : UIViewController</code>, <code>ViewControllerY : UIViewController</code> </li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>Add a view controller (<strong>ViewControllerX</strong>) and a view controller (<strong>ViewControllerY</strong>)</li>
+<li>Add 3 buttons (<strong>Segue 1 to X</strong>, <strong>Segue 2 to X</strong> and <strong>Segue to Y</strong>) to <strong>ViewController</strong></li>
+</ol>
+<ul>
+<li>create a modal (full screen) segue to <strong>ViewControllerX</strong> from <strong>Segue 1 to X</strong>, select the segue and use the Attributes Inspector to set the <code>identifier</code> to <strong>segue1ToX</strong></li>
+<li>create a modal (full screen) segue to <strong>ViewControllerX </strong>from <strong>Segue 2 to X</strong>, select the segue and use the Attributes Inspector to set the <code>identifier</code> to <strong>segue2ToX</strong></li>
+<li>create a modal (full screen) segue to <strong>ViewControllerY</strong> from <strong>Segue to Y</strong>, select the segue and use the Attributes Inspector to set the <code>identifier</code> to <strong>segueToY</strong></li>
+</ul>
+<ol type="1" start="5">
+<li>Add a label (<code>IBOutlet</code> <strong>outLabel</strong>) to <strong>ViewControllerX</strong></li>
+<li>Add a button (<code>title</code> <strong>Dismiss</strong>, <code>IBAction</code> <strong>actDismiss</strong>) to <strong>ViewControllerX</strong></li>
+<li>Add a label (<code>IBOutlet</code> <strong>outLabel</strong>) to <strong>ViewControllerY</strong></li>
+<li>Add a button (<code>title</code> <strong>Dismiss</strong>, <code>IBAction</code> <strong>actDismiss</strong>) to <strong>ViewControllerY</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a4037cdb3939bf8a.png"></p>
+<ol type="1" start="9">
+<li>Modify <strong>ViewControllerX</strong></li>
+</ol>
+<pre><code>import UIKit
+class ViewControllerX: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var dataX : String!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outLabel.text = dataX
+  }
+  
+  @IBAction func actDismiss(_ sender: UIButton) {
+    dismiss(animated: true, completion: nil)
+  }
+}</code></pre>
+<ol type="1" start="10">
+<li>Modify <strong>ViewControllerY</strong></li>
+</ol>
+<pre><code>import UIKit
+class ViewControllerY: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var dataY : String!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outLabel.text = dataY
+  }
+  
+  @IBAction func actDismiss(_ sender: UIButton) {
+    dismiss(animated: true, completion: nil)
+  }
+}</code></pre>
+<ol type="1" start="11">
+<li>Modify <strong>ViewController</strong> to add the <code>prepare(for:sender:)</code> method</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let identifier = segue.identifier
+    if (identifier == &#34;segueToY&#34;) {
+      let vc = segue.destination as! ViewControllerY
+      vc.dataY = &#34;segue to Y&#34;
+    } else {
+      let vc = segue.destination as! ViewControllerX
+      if (identifier == &#34;segue1ToX&#34;) {
+        vc.dataX = &#34;segue1 to X&#34;
+      } else if (identifier == &#34;segue2ToX&#34;) {
+        vc.dataX = &#34;segue2 to X&#34;
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="12">
+<li>Try out the following actions and note the observations.</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong> Action</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Observation</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Run the project</p>
+</td><td colspan="1" rowspan="1"><p><strong>ViewController</strong> is shown</p>
+</td></tr>
+<tr><td colspan="2" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Segue 1 to X</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is presented modally, hides ViewController</p>
+<p>label shows <strong>segue 1 to X</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Dismiss</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is dismissed, ViewController is shown</p>
+</td></tr>
+<tr><td colspan="2" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Segue 2 to X</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is presented modally, hides ViewController</p>
+<p>label shows <strong>segue 2 to X</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Dismiss</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is dismissed, ViewController is shown</p>
+</td></tr>
+<tr><td colspan="2" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Segue to Y</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerY is presented modally, hides ViewController</p>
+<p>label shows <strong>segue to Y</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Dismiss</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerY is dismissed, ViewController is shown</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Performing a segue programmatically" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></p>
+<p>The <strong>starting point</strong> of a segue must be</p>
+<ul>
+<li>a view or object with a defined action, such as a control, bar button item, or gesture recognizer</li>
+<li>cell-based views such as tables and collection views</li>
+<li>a view controller</li>
+</ul>
+<p><strong>Creating a segue where the starting point is a view controller</strong></p>
+<p>To create a segue where the starting point is a view controller, right-click-drag from the source view controller icon to the destination view controller icon. This type of segue can only be performed programmatically.</p>
+<p><strong>Performing a segue programmatically</strong></p>
+<p>Use <code>performSegue(withIdentifier:sender:)</code> to perform a segue. Any segue can be performed programmatically as long as it has a unique identifier. For example, for a segue with identifier <strong>next</strong></p>
+<pre><code>performSegue(withIdentifier: &#34;next&#34;, sender: self)</code></pre>
+<p><code>prepare(for:sender:)</code> in the source view controller will be called before the segue is actually performed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Performing a segue programmatically" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject01</strong></li>
+<li>In <strong>Main.storyboard</strong>, create a modal (full screen) segue from <strong>ViewController</strong> to <strong>ViewControllerX</strong>; right-click-drag from the yellow <strong>ViewController</strong> icon to <strong>ViewControllerX</strong> and select <strong>Present Modally</strong> in the segue dialog</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/7c97e8939d3ae605.png"></p>
+<ol type="1" start="3">
+<li>Use the <strong>Attribute Inspector</strong> to set the <strong>identifier</strong> for the segue to <strong>segue3ToX</strong></li>
+<li>Add a button to <strong>ViewController</strong> (<code>title</code> <strong>Segue3 to X</strong>, <code>IBAction</code> <strong>actSegue3</strong>)</li>
+<li>Update <code>actSegue3</code> and <code>prepare(for:sender:)</code> in <strong>ViewController</strong></li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+ 
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+ 
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let identifier = segue.identifier
+    if (identifier == &#34;segueToY&#34;) {
+      let vc = segue.destination as! ViewControllerY
+      vc.dataY = &#34;segue to Y&#34;
+    } else {
+      let vc = segue.destination as! ViewControllerX
+      if (identifier == &#34;segue1ToX&#34;) {
+        vc.dataX = &#34;segue1 to X&#34;
+      } else if (identifier == &#34;segue2ToX&#34;) {
+        vc.dataX = &#34;segue2 to X&#34;
+      } else if (identifier == &#34;segue3ToX&#34;) {
+        vc.dataX = &#34;segue3 to X&#34;
+      }
+    }
+  }
+  
+  @IBAction func actSegue3(_ sender: UIButton) {
+    performSegue(withIdentifier: &#34;segue3ToX&#34;, sender: self)
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Try out the following actions and note the observations.</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong> Action</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Observation</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Run the project</p>
+</td><td colspan="1" rowspan="1"><p><strong>ViewController</strong> is shown</p>
+</td></tr>
+<tr><td colspan="2" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Segue 3 to X</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is presented modally, hides ViewController</p>
+<p>label shows <strong>segue 3 to X</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Dismiss</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is dismissed, ViewController is shown</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Performing an unwind segue programmatically" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></p>
+<p><strong>Creating an unwind segue where the starting point is a view controller</strong></p>
+<p>To create an unwind segue where the starting point is a view controller, right-click-drag from the view controller icon to the exit icon. This type of unwind segue can only be performed programmatically.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/a1f2ba3b67baef82.png"></p>
+<p><strong>Performing an unwind segue programmatically</strong></p>
+<p>Use <code>performSegue(withIdentifier:sender:)</code> to perform an unwind segue. Any unwind segue can be performed programmatically as long as it has a unique identifier. For example, for an unwind segue with identifier <strong>unwind</strong></p>
+<pre><code>performSegue(withIdentifier: &#34;unwind&#34;, sender: self)</code></pre>
+<p><code>prepare(for:sender:)</code> in the source view controller will be called before the segue is actually performed</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Performing an unwind segue programmatically" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject01</strong></li>
+<li>Modify <strong>ViewController</strong> to add an unwind segue method <code>unwindSegueMethod(_:)</code></li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+ 
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+ 
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let identifier = segue.identifier
+    if (identifier == &#34;segueToY&#34;) {
+      let vc = segue.destination as! ViewControllerY
+      vc.dataY = &#34;segue to Y&#34;
+    } else {
+      let vc = segue.destination as! ViewControllerX
+      if (identifier == &#34;segue1ToX&#34;) {
+        vc.dataX = &#34;segue1 to X&#34;
+      } else if (identifier == &#34;segue2ToX&#34;) {
+        vc.dataX = &#34;segue2 to X&#34;
+      } else if (identifier == &#34;segue3ToX&#34;) {
+        vc.dataX = &#34;segue3 to X&#34;
+      }
+    }
+  }
+  
+  @IBAction func actSegue3(_ sender: UIButton) {
+    performSegue(withIdentifier: &#34;segue3ToX&#34;, sender: self)
+  }
+  
+  @IBAction func unwindSegueMethod(_ sender: UIStoryboardSegue) {
+    print(&#34;unwind&#34;)
+  }
+}</code></pre>
+<p><strong>In Main.storyboard</strong></p>
+<ol type="1" start="3">
+<li>Create an unwind segue from <strong>ViewControllerX</strong> to <strong>ViewController</strong>; right-click-drag from the yellow <strong>ViewControllerX</strong> icon to the exit icon, select <code>unwindSegueMethod:</code> from the dialog</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a1f2ba3b67baef82.png"></p>
+<ol type="1" start="4">
+<li>From the <strong>Document Outline</strong>, select the <strong>unwind segue</strong> and use the <strong>Attribute Inspector</strong> to set the identifier for the unwind segue to <strong>exit</strong></li>
+</ol>
+<p class="image-container"><img style="width: 536.00px" src="img/a05d956123f67a14.png"></p>
+<p class="image-container"><img style="width: 516.00px" src="img/625ea0566843535b.png"></p>
+<ol type="1" start="5">
+<li>In <strong>ViewControllerX</strong>, modify <code>actDismiss</code> and add the <code>prepare(for:sender:)</code> method</li>
+</ol>
+<pre><code>import UIKit
+class ViewControllerX: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var dataX : String!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outLabel.text = dataX
+  }
+  
+  @IBAction func actDismiss(_ sender: UIButton) {
+    // comment out the call to dismiss(animated:completion:)
+    // dismiss(animated: true, completion: nil)
+    
+    // call performSegue(withIdentifier:sender:)
+    performSegue(withIdentifier: &#34;exit&#34;, sender: self)
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let identifier = segue.identifier
+    if (identifier == &#34;exit&#34;) {
+      print(&#34;about to perform exit segue&#34;)
+    }
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Try out the following actions and note the observations.</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong> Action</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Observation</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Run the project</p>
+</td><td colspan="1" rowspan="1"><p><strong>ViewController</strong> is shown</p>
+</td></tr>
+<tr><td colspan="2" rowspan="1"></td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Segue 1 to X</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is presented modally, hides ViewController</p>
+<p>label shows <strong>segue 1 to X</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Press <strong>Dismiss</strong></p>
+</td><td colspan="1" rowspan="1"><p>ViewControllerX is dismissed because the unwind segue was performed</p>
+<p>In the debug area, we should see </p>
+<p><strong>about to perform exit segue</strong></p>
+<p><strong>unwind</strong></p>
+<p>which shows that the following methods were called in this sequence:</p>
+<ul>
+<li><code>prepare(for:sender:)</code> method in <strong>ViewControllerX</strong></li>
+<li><code>unwindSegueMethod(_:)</code> method in <strong>ViewController</strong></li>
+</ul>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data controller" duration="15">
+        <p>To recap, the idea behind <strong>Model-View-Controller</strong> is to separate application code into 3 distinct areas: </p>
+<ol type="1" start="1">
+<li><strong>Model</strong> - Code in the model deals with data in the application.</li>
+<li><strong>View</strong> - Code in the view deals with the presentation of the application.</li>
+<li><strong>Controller</strong> - Code in the controller deals with the application logic.</li>
+</ol>
+<p>The purpose of separating the code into these 3 distinct areas is it makes the code easier to define and manage. This is a concept in programming called <strong>separation of concerns</strong>.</p>
+<p>We have seen views and controllers in our applications so far, but we have put all the code for management of data in the controller. We can define a <strong>DataController</strong> class which will be responsible for management of data instead. </p>
+<p>For example, here is a <strong>DataController</strong> class which uses an <strong>array</strong> to store data.</p>
+<pre><code>import Foundation
+class DataController {
+  private var items : [String] = []
+  
+  // Retrieve count
+  var count : Int {
+    return items.count
+  }
+  
+  // Search / retrieve index from value
+  func index(_ value : String) -&gt; Int? {
+    return items.firstIndex(of: value)
+  }
+  
+  // Retrieve value from index
+  func value(_ index : Int) -&gt; String {
+    return items[index]
+  }
+  
+  // Create
+  func add(_ value:String) {
+    items.append(value)
+  }
+  
+  // Update
+  func update(_ index:Int, value:String) {
+    items[index] = value
+  }
+  
+  // Delete
+  func remove(_ index : Int) {
+    items.remove(at: index)
+  }
+}</code></pre>
+<p>And here is a <strong>DataController</strong> class which uses a <strong>dictionary</strong> to store data.</p>
+<pre><code>import Foundation
+class DataController {
+  private var items : [String : String] = [:]
+  
+  // Retrieve count
+  var count : Int {
+    return items.count
+  }
+  
+  // Search / retrieve key index from key
+  func index(_ key : String) -&gt; Int? {
+    let keys = items.keys.sorted()
+    return keys.firstIndex(of: key)
+  }
+  
+  // Retrieve key from key index
+  func key(_ index : Int) -&gt; String {
+    let keys = items.keys.sorted()
+    return keys[index]
+  }
+  
+  // Retrieve value from key
+  func value(_ key : String) -&gt; String {
+    let value = items[key] ?? &#34;&#34;
+    return value
+  }
+  
+  // Create
+  // Update
+  func add(_ key:String, value:String) {
+    items[key] = value
+  }
+  
+  // Delete
+  func remove(_ key : String) {
+    items[key] = nil
+  }
+}</code></pre>
+<p>Using a <strong>DataController</strong> class allows us to add functionality at a later time with minimal impact on the rest of the application code, for example:</p>
+<ul>
+<li>adding persistence to a filesystem, database or web service</li>
+<li>validation checking</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Data controller" duration="15">
+        <ol type="1" start="1">
+<li>Create project <strong>SampleProject02</strong></li>
+<li>Create a class <strong>DataController</strong> with the following code:</li>
+</ol>
+<pre><code>import Foundation
+class DataController {
+  private var items : [String : String] = [&#34;17123456&#34;: &#34;John Lee&#34;, &#34;17987654&#34;: &#34;David Tan&#34;]
+  
+  // Retrieve count
+  var count : Int {
+    return items.count
+  }
+  
+  // Search / retrieve key index from key
+  func index(_ key : String) -&gt; Int? {
+    let keys = items.keys.sorted()
+    return keys.firstIndex(of: key)
+  }
+  
+  // Retrieve key from key index
+  func key(_ index : Int) -&gt; String {
+    let keys = items.keys.sorted()
+    return keys[index]
+  }
+  
+  // Retrieve value from key
+  func value(_ key : String) -&gt; String {
+    let value = items[key] ?? &#34;&#34;
+    return value
+  }
+  
+  // Create
+  // Update
+  func add(_ key:String, value:String) {
+    items[key] = value
+  }
+  
+  // Delete
+  func remove(_ key : String) {
+    items[key] = nil
+  }
+}</code></pre>
+<p><strong>In Main.storyboard</strong></p>
+<ol type="1" start="3">
+<li>Add a <strong>UIPickerView</strong> (<code>IBOutlet</code> <strong>outPickerView</strong>) to <strong>ViewController</strong></li>
+<li>Update <strong>ViewController</strong></li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+
+  let dc = DataController()
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -&gt; Int {
+    return dc.count
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
+    -&gt; String? {
+    let key = dc.key(row)
+    let item = dc.value(key)
+    return &#34;\(key) \(item)&#34;
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. You should see a picker view as shown below.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/880a2422b768c0b3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The application has two view controllers as shown below.</p>
+<ul>
+<li>Use two different approaches to segue from <strong>ViewControllerA</strong> to <strong>ViewControllerB</strong>. Use one approach for <strong>Button 1</strong> and another approach for <strong>Button 2</strong>. </li>
+<li>Write comments in your code to explain the steps to be done for the two different approaches.</li>
+<li>For each approach, write comments in your code to state where you could write code to be executed before the segue is performed.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/ac9c0ce61d0305c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>The application has two view controllers as shown below</li>
+<li>Create a segue from ViewControllerA to ViewControllerB</li>
+<li>Create an IBAction method for the segmented control</li>
+<li>Do not create an IBOutlet for the segmented control</li>
+<li>Add a <strong>Dismiss</strong> button in ViewControllerB to dismiss ViewControllerB</li>
+<li>Write the code for ViewControllerA and ViewControllerB such that the UILabel in ViewControllerB shows <strong>First</strong> when the First segment is selected, or <strong>Second</strong> when the Second segment is selected</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/9d5e73e99f9dc21b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>The application has two view controllers - <strong>ViewControllerA</strong> and <strong>ViewControllerB</strong></li>
+<li>When the <strong>To ViewControllerB</strong> button in <strong>ViewControllerA</strong> (Screenshot 1) is pressed, <strong>ViewControllerB</strong> (Screenshot 2) is presented via a modal (full screen) segue.</li>
+<li>When the <strong>Show Alert</strong> button in <strong>ViewControllerB</strong> (Screenshot 2) is pressed, an alert (Screenshot 3) is presented.</li>
+<li>The alert has two buttons titled <strong>Dismiss</strong> and <strong>Unwind</strong>. </li>
+<li>When <strong>Dismiss</strong> is pressed, ViewControllerB is dismissed by calling <code>dismiss(animated:completion:)</code></li>
+<li>When <strong>Unwind</strong> is pressed, an unwind segue to ViewControllerA is performed</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/f0d1df09f7531278.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/b03b46b19fd428c1.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/31b496c856be5001.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UITabBarController</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html</a></li>
+<li><a href="https://developer.apple.com/documentation/swift/dictionary" target="_blank">https://developer.apple.com/documentation/swift/dictionary</a></li>
+<li><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

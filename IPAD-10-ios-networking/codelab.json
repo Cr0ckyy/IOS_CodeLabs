@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-07-20T20:33:21Z",
+  "id": "10-ios-networking",
+  "duration": 140,
+  "title": "iOS Networking",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1SJqsJ1G7_VzfCQtS1q5cITjsmwlQT80jgPNJ1FRfcn4",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "10-ios-networking"
+}

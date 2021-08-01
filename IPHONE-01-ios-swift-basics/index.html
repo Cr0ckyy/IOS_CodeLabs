@@ -1,0 +1,644 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Swift - Basics</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="01-ios-swift-basics"
+                  title="Swift - Basics"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="1">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Write and execute basic Swift code in a playground, which includes using constants and variables, comments, data types (integers and floating point numbers, strings, booleans), operators and conditional statements</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Language comparison" duration="10">
+        <h3 is-upgraded>example.py (Python)</h3>
+<pre><code>def example1():
+  width = 0
+  width = 10
+  height = 5
+  area = height * width
+ 
+  statement1 = &#34;The height is &#34; + str(height) + &#34; and the width is &#34; + str(width)
+  print(statement1)
+  statement2 = &#34;The area is &#34; + str(area)
+  print(statement2)
+ 
+def example2():
+  today = &#34;Wednesday&#34;
+ 
+  if (today == &#34;Saturday&#34;) or (today == &#34;Sunday&#34;):
+        print(&#34;It&#39;s the weekend!&#34;)
+  elif (today == &#34;Wednesday&#34;):
+        print(&#34;It&#39;s Portfolio Day!&#34;)
+  else:
+        print(&#34;I have class today!&#34;)
+ 
+# call the function example1 and example2
+example1()
+example2()</code></pre>
+<h3 is-upgraded>example.php (PHP)</h3>
+<pre><code>&lt;html&gt;
+  &lt;head&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;pre&gt;
+      &lt;?php
+        function example1()
+        {
+          $width = 0;
+          $width = 10;
+          $height = 5;
+          $area = $height * $width;
+
+          print(&#34;\n&#34;);
+          $statement1 = &#34;The height is {$height} and the width is {$width}\n&#34;;
+          print($statement1);
+          $statement2 = &#34;The area is &#34; . $area . &#34;\n&#34;;
+          print($statement2);
+        }
+
+        function example2()
+        {
+          $today = &#34;Wednesday&#34;;
+          if (($today == &#34;Saturday&#34;) || ($today == &#34;Sunday&#34;)) {
+            print(&#34;It&#39;s the weekend!&#34;);
+          } else if ($today == &#34;Wednesday&#34;) {
+            print(&#34;It&#39;s Portfolio Day!&#34;);
+          } else {
+            print(&#34;I have class today!&#34;);
+          }
+        }
+        // call the function example1 and example2
+        example1();
+        example2();
+      ?&gt;
+    &lt;/pre&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 is-upgraded>MainApplication.java (Java)</h3>
+<pre><code>package example;
+public class MainApplication {
+  public static void main(String[] args) {
+    // call the function example1
+    MainApplication app = new MainApplication();
+    app.example1();
+    app.example2();
+  }
+ 
+  private void example1() {
+    Integer width = 0;
+    width = 10;
+    Integer height = 5;
+    Integer area = height * width;
+
+    String statement1 = String.format(&#34;The height is %d and the width is %d&#34;, height, width);
+    System.out.println(statement1);
+    String statement2 = &#34;The area is &#34; + area;
+    System.out.println(statement2);
+  }
+
+  private void example2() {
+    String today = &#34;Wednesday&#34;;
+
+    if ((today == &#34;Saturday&#34;) || (today == &#34;Sunday&#34;)) {
+      System.out.println(&#34;It&#39;s the weekend!&#34;);
+    } else if (today == &#34;Wednesday&#34;) {
+      System.out.println(&#34;It&#39;s Portfolio Day!&#34;);
+    } else {
+      System.out.println(&#34;I have class today!&#34;);
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Creating a playground" duration="3">
+        <ol type="1" start="1">
+<li>Launch Xcode. You will be presented with the Xcode welcome screen. Click the X in the top left corner.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f35de714a38c6623.png"></p>
+<ol type="1" start="2">
+<li>Go to the menu bar <strong>File</strong>, <strong>New</strong>, <strong>Playground</strong></li>
+<li>You will be presented with the playground options screen. Leave the Platform as iOS and playground type as Blank. Click Next, leave the name as MyPlayground and select a location to save the playground file.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/1ae21026b146b34d.png"></p>
+<ol type="1" start="4">
+<li>You will be presented with the playground screen. This is where we can write and execute our Swift code for development and testing purposes.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/d3c0064d6080e5d7.png"></p>
+<ol type="1" start="5">
+<li>To show the line numbers, go to the menu bar Xcode &gt; Preferences... &gt; Text Editing and check the box for Line numbers.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/742322aef58d0801.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Constants and variables" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></p>
+<aside class="special"><p>Constants and variables associate a name with a value of a particular type</p>
+</aside>
+<p><strong>Declaring Constants and Variables</strong></p>
+<ul>
+<li>Constants and variables must be declared before they&#39;re used</li>
+<li>Declare constants with the <code>let</code> keyword - the value of a constant can&#39;t be changed once it&#39;s set</li>
+<li>Declare variables with the <code>var</code> keyword - the value of a variable can be set to a different value in the future</li>
+</ul>
+<pre><code>let maximumNumberOfLoginAttempts = 10
+var welcomeMessage = &#34;welcome&#34;</code></pre>
+<p><strong>Type Annotations</strong></p>
+<ul>
+<li>You can provide a type annotation when you declare a constant or variable, to be clear about the kind of values the constant or variable can store. </li>
+<li>Write a type annotation by placing a colon after the constant or variable name, followed by a space, followed by the name of the type to use.</li>
+</ul>
+<pre><code>let maximumNumberOfLoginAttempts : Int
+var welcomeMessage : String</code></pre>
+<p><strong>Naming Constants and Variables</strong></p>
+<ul>
+<li>Constant and variable names can&#39;t contain whitespace characters, mathematical symbols, arrows, private-use Unicode scalar values, or line- and box-drawing characters. Nor can they begin with a number, although numbers may be included elsewhere within the name.</li>
+<li>Once you&#39;ve declared a constant or variable of a certain type, you can&#39;t declare it again with the same name, or change it to store values of a different type. Nor can you change a constant into a variable or a variable into a constant.</li>
+</ul>
+<p><strong>Printing Constants and Variables</strong></p>
+<ul>
+<li>You can print the current value of a constant or variable to Xcode&#39;s console pane with the <code>print()</code> function:</li>
+</ul>
+<pre><code>let maximumNumberOfLoginAttempts = 10
+var welcomeMessage = &#34;welcome&#34;
+print(maximumNumberOfLoginAttempts)
+print(welcomeMessage)
+print(maximumNumberOfLoginAttempts, welcomeMessage)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Comments" duration="3">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></p>
+<aside class="special"><p>Use comments to include non-executable text in your code, as a note or reminder to yourself.</p>
+<p>Comments are ignored by the Swift compiler when your code is compiled.</p>
+</aside>
+<ul>
+<li>Single-line comments begin with two forward-slashes <code>//</code></li>
+<li>Multiline comments start with a forward-slash followed by an asterisk <code>/*</code> and end with an asterisk followed by a forward-slash <code>*/</code></li>
+</ul>
+<pre><code>// This is a single line comment.
+
+/* This is a 
+multiline comment */</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Integers and Floating-Point Numbers" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></p>
+<aside class="special"><p><code>Int</code> Integers are whole numbers with no fractional component, such as 42 and -23.</p>
+<p><code>Double</code> Floating-point numbers are numbers with a fractional component, such as 3.14159, 0.1, and -273.15.</p>
+</aside>
+<p><strong>Integer and Floating-Point Conversion</strong></p>
+<pre><code>let intValue : Int = 10
+let doubleValue : Double = 10.2
+let intSum = intValue + Int(doubleValue)        
+let doubleSum = Double(intValue) + doubleValue  // value is 20.2
+
+print(intSum)
+print(doubleSum)</code></pre>
+<ul>
+<li>Conversions between integer and floating-point numeric types, and between floating-point and integer numeric types must be made explicit.</li>
+<li>Without the explicit conversion, the additions would not be allowed (i.e. you cannot add an Int and a Double).</li>
+<li>Floating-point values are always truncated when used to initialize a new integer value in this way. This means that 4.75 becomes 4, and -3.9 becomes -3.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Operators (Part 1)" duration="15">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html</a></p>
+<aside class="special"><p>Assignment Operator <code>=</code></p>
+<p>Arithmetic Operators <code>+</code> <code>-</code> <code>*</code> <code>/</code></p>
+<p>Remainder operator <code>%</code></p>
+<p>Compound assignment operators <code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code> <code>%=</code></p>
+</aside>
+<p><strong>Assignment Operator</strong></p>
+<p>The assignment operator (a = b) initializes or updates the value of a with the value of b:</p>
+<pre><code>let b = 10
+var a = 5
+a = b
+// a is now equal to 10</code></pre>
+<p><strong>Arithmetic Operators</strong></p>
+<p>Swift supports the four standard arithmetic operators for all number types:</p>
+<ul>
+<li>Addition (+)</li>
+<li>Subtraction (-)</li>
+<li>Multiplication (*)</li>
+<li>Division (/)</li>
+</ul>
+<pre><code>1 + 2       // equals 3
+5 - 3       // equals 2
+2 * 3       // equals 6
+10.0 / 2.5  // equals 4.0</code></pre>
+<p><strong>Remainder Operator</strong></p>
+<p>The remainder operator (a % b) works out how many multiples of b will fit inside a and returns the value that is left over (known as the remainder).</p>
+<pre><code>9 % 4    // equals 1</code></pre>
+<p><strong>Compound Assignment Operators</strong></p>
+<p>Swift provides compound assignment operators that combine assignment (=) with another operation. One example is the addition assignment operator (+=):</p>
+<pre><code>var a = 1
+a += 2
+// a is now equal to 3
+// The expression a += 2 is shorthand for a = a + 2.</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Converting numeric types" duration="10">
+        <ol type="1" start="1">
+<li>Add the following code to the playground</li>
+</ol>
+<pre><code>let intValue : Int = 10
+let doubleValue : Double = 10.2
+let intSum = intValue + doubleValue
+let doubleSum = intValue + doubleValue
+
+print(intSum)
+print(doubleSum)</code></pre>
+<ol type="1" start="2">
+<li>Observe the error messages</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/e5f6872b1119e02e.png"></p>
+<ol type="1" start="3">
+<li>Amend the code to explicitly convert the values</li>
+</ol>
+<pre><code>let intValue : Int = 10
+let doubleValue : Double = 10.2
+let intSum = intValue + Int(doubleValue)
+let doubleSum = Double(intValue) + doubleValue
+
+print(intSum)
+print(doubleSum)</code></pre>
+<ol type="1" start="4">
+<li>Run the code and observe the output</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c76cbe72adb0c077.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Strings" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/StringsAndCharacters.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/StringsAndCharacters.html</a></p>
+<p><strong>String Literals</strong></p>
+<p>String literals are surrounded by double quotation marks <code>&#34;&#34;</code></p>
+<pre><code>let someString = &#34;Some string literal value&#34;</code></pre>
+<p><strong>Initializing an Empty String</strong></p>
+<p>To create an empty String value either </p>
+<ul>
+<li>assign an empty string literal to a variable, or </li>
+<li>initialize a new String instance with initializer syntax</li>
+</ul>
+<pre><code>var emptyString = &#34;&#34;               // empty string literal
+var anotherEmptyString = String()  // initializer syntax</code></pre>
+<p>To find out whether a String value is empty, either</p>
+<ul>
+<li>check the Boolean <code>isEmpty</code> property, or</li>
+<li>Compare against an empty string literal</li>
+</ul>
+<pre><code>var emptyString = &#34;&#34;                // empty string literal
+let isEmpty1 = emptyString.isEmpty  // value is true
+let isEmpty2 = emptyString == &#34;&#34;    // value is true</code></pre>
+<p><strong>String Interpolation</strong></p>
+<ul>
+<li>String interpolation is a way to construct a new String value from a mix of constants, variables, literals, and expressions by including their values inside a string literal.</li>
+<li>Each item that you insert into the string literal is wrapped in a pair of parentheses, prefixed by a backslash <code>(\)</code></li>
+</ul>
+<pre><code>let multiplier = 3
+let message = &#34;\(multiplier) times 2.5 is \(Double(multiplier) * 2.5)&#34;
+// message is &#34;3 times 2.5 is 7.5&#34;</code></pre>
+<p><strong>Comparing Strings</strong></p>
+<p>String equality is checked with the &#34;equal to&#34; operator <code>==</code> and the &#34;not equal to&#34; operator <code>!=</code></p>
+<p>example.swift</p>
+<pre><code>let quotation = &#34;We&#39;re a lot alike, you and I.&#34;
+let sameQuotation = &#34;We&#39;re a lot alike, you and I.&#34;
+let isSame = quotation == sameQuotation  // value is true</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - A simple program" duration="10">
+        <ol type="1" start="1">
+<li>Add the following code to the playground to calculate and print the area of a square, and create a string using string interpolation.</li>
+</ol>
+<pre><code>// Task : Write code to calculate and print the area of a square
+
+// Subtask : Calculate the area of a square
+// declare and initialise a variable to hold the length of the side of the square
+let sideLength = 10
+// declare a variable to hold the calculated area of the square
+// assign the calculated value to the variable
+let area = sideLength * sideLength
+
+// Subtask : Print the area of the square
+// print the calculated value
+let message = &#34;The area of a square of side length \(sideLength) is \(area)&#34;
+print(message)</code></pre>
+<ol type="1" start="2">
+<li>Press the play button. The playground shows the results of each line of code in the sidebar. The print statement prints the message to the debug area.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f67324928cef313a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Bool" duration="3">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></p>
+<aside class="special"><p><code>Bool</code> The two valid Boolean values in Swift are <code>true</code> and <code>false</code>.</p>
+</aside>
+<pre><code>let orangesAreOrange : Bool = true
+let turnipsAreDelicious = false</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Operators (Part 2)" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html</a></p>
+<aside class="special"><p>Comparison Operators <code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></p>
+<p>Logical Operators <code>!</code> <code>&amp;&amp;</code> <code>||</code></p>
+</aside>
+<p><strong>Comparison Operators</strong></p>
+<ul>
+<li>Equal to <code>a == b</code></li>
+<li>Not equal to <code>a != b</code></li>
+<li>Greater than <code>a &gt; b</code></li>
+<li>Less than <code>a &lt; b</code></li>
+<li>Greater than or equal to <code>a &gt;= b</code></li>
+<li>Less than or equal to <code>a &lt;= b</code></li>
+</ul>
+<p>Each of the comparison operators returns a Bool value to indicate whether or not the statement is true</p>
+<pre><code>1 == 1   // true because 1 is equal to 1
+2 != 1   // true because 2 is not equal to 1
+2 &gt; 1    // true because 2 is greater than 1
+1 &lt; 2    // true because 1 is less than 2
+1 &gt;= 1   // true because 1 is greater than or equal to 1
+2 &lt;= 1   // false because 2 is not less than or equal to 1</code></pre>
+<p><strong>Logical Operators</strong></p>
+<ul>
+<li>The logical NOT operator <code>!a</code> inverts a Boolean value so that true becomes false, and false becomes true.</li>
+<li>The logical AND operator <code>a &amp;&amp; b</code> creates logical expressions where both values must be true for the overall expression to be true.</li>
+<li>The logical OR operator <code>a || b</code> creates logical expressions where either value must be true for the overall expression to be true.</li>
+</ul>
+<pre><code>// logical NOT
+let isWeekend = false       // value is false
+let isWeekday = !isWeekend  // value is true
+
+// logical AND
+let enteredDoorCode = true
+let passedRetinaScan = false
+let passedAllSecurityChecks = enteredDoorCode &amp;&amp; passedRetinaScan
+// value is false
+
+// logical OR
+let hasDoorKey = false
+let knowsOverridePassword = true
+let canEnter = hasDoorKey || knowsOverridePassword
+// value is true</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conditional statements - if" duration="20">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html</a></p>
+<aside class="special"><p><code>if</code></p>
+<p><code>if</code>-<code>else</code></p>
+<p><code>if</code>-<code>else if</code>-<code>else</code></p>
+</aside>
+<p>It is often useful to execute different pieces of code based on certain conditions. You might want to run an extra piece of code when an error occurs, or to display a message when a value becomes too high or too low. To do this, you make parts of your code conditional.</p>
+<p>In its simplest form, the if statement has a single if condition. It executes a set of statements only if that condition is true.</p>
+<pre><code>var temperatureInFahrenheit = 30
+if temperatureInFahrenheit &lt;= 32 {
+    print(&#34;It&#39;s very cold. Consider wearing a scarf.&#34;)
+}
+// Prints &#34;It&#39;s very cold. Consider wearing a scarf.&#34;</code></pre>
+<p>The example above checks whether the temperature is less than or equal to 32 degrees Fahrenheit (the freezing point of water). If it is, a message is printed. Otherwise, no message is printed, and code execution continues after the if statement&#39;s closing brace.</p>
+<p>The if statement can provide an alternative set of statements, known as an else clause, for situations when the if condition is false. These statements are indicated by the else keyword.</p>
+<pre><code>if temperatureInFahrenheit &lt;= 32 {
+    print(&#34;It&#39;s very cold. Consider wearing a scarf.&#34;)
+} else {
+    print(&#34;It&#39;s not that cold. Wear a t-shirt.&#34;)
+}
+// Prints &#34;It&#39;s not that cold. Wear a t-shirt.&#34;</code></pre>
+<p>One of these two branches is always executed. Because the temperature has increased to 40 degrees Fahrenheit, it is no longer cold enough to advise wearing a scarf and so the else branch is triggered instead.</p>
+<p>You can chain multiple if statements together to consider additional clauses.</p>
+<pre><code>var temperatureInFahrenheit = 90
+if temperatureInFahrenheit &lt;= 32 {
+    print(&#34;It&#39;s very cold. Consider wearing a scarf.&#34;)
+} else if temperatureInFahrenheit &gt;= 86 {
+    print(&#34;It&#39;s really warm. Don&#39;t forget to wear sunscreen.&#34;)
+} else {
+    print(&#34;It&#39;s not that cold. Wear a t-shirt.&#34;)
+}
+// Prints &#34;It&#39;s really warm. Don&#39;t forget to wear sunscreen.&#34;</code></pre>
+<p>Here, an additional if statement was added to respond to particularly warm temperatures. The final else clause remains, and it prints a response for any temperatures that are neither too warm nor too cold.</p>
+<p>The final else clause is optional, however, and can be excluded if the set of conditions does not need to be complete.</p>
+<pre><code>var temperatureInFahrenheit = 72
+if temperatureInFahrenheit &lt;= 32 {
+    print(&#34;It&#39;s very cold. Consider wearing a scarf.&#34;)
+} else if temperatureInFahrenheit &gt;= 86 {
+    print(&#34;It&#39;s really warm. Don&#39;t forget to wear sunscreen.&#34;)
+}</code></pre>
+<p>Because the temperature is neither too cold nor too warm to trigger the if or else if conditions, no message is printed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Conditional statements" duration="15">
+        <ol type="1" start="1">
+<li>Add the following code to the playground which uses conditional statements.</li>
+</ol>
+<pre><code>var temperatureInFahrenheit = 90
+if temperatureInFahrenheit &lt;= 32 {
+    print(&#34;It&#39;s very cold. Consider wearing a scarf.&#34;)
+} else if temperatureInFahrenheit &gt;= 86 {
+    print(&#34;It&#39;s really warm. Don&#39;t forget to wear sunscreen.&#34;)
+} else {
+    print(&#34;It&#39;s not that cold. Wear a t-shirt.&#34;)
+}
+// Prints &#34;It&#39;s really warm. Don&#39;t forget to wear sunscreen.&#34;</code></pre>
+<ol type="1" start="2">
+<li>Set <code>temperatureInFahrenheit</code> to different values and execute the code. Check if the printed statement is what you expected. Try the following values: 31, 32, 33, 85, 86, 87.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercises" duration="90">
+        <p><strong>Exercise</strong></p>
+<ul>
+<li>Write the code to convert kilograms (kg) to pounds (lbs)</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>70.0kg is 154.0lbs</pre>
+<pre>80.0kg is 176.0lbs</pre>
+<p><strong>Exercise</strong></p>
+<pre>The equation for a straight line is given by y = mx + c
+y represents a value on the y-axis
+x represents a value on the x-axis
+m represents the gradient of the line
+c represents the y-intercept of the line</pre>
+<ul>
+<li>Write a program to calculate and print the value of y, given a value for m, x and c.</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>The value of y given m(3.2) x(4.4) c(10.8) is 24.88</pre>
+<p><strong>Exercise</strong></p>
+<p><a href="http://intranet.rp.edu.sg/sites/StudentHandbook/SitePages/01.Academic_Information.aspx" target="_blank">http://intranet.rp.edu.sg/sites/StudentHandbook/SitePages/01.Academic_Information.aspx</a></p>
+<p>Each module grade is associated with a description and a Grade Point (GP):</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Grade</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Grade Point</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>DIST</p>
+</td><td colspan="1" rowspan="1"><p>Excellent</p>
+</td><td colspan="1" rowspan="1"><p>4.0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>A</p>
+</td><td colspan="1" rowspan="1"><p>Excellent</p>
+</td><td colspan="1" rowspan="1"><p>4.0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>B+</p>
+</td><td colspan="1" rowspan="1"><p>Very Good</p>
+</td><td colspan="1" rowspan="1"><p>3.5</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>B</p>
+</td><td colspan="1" rowspan="1"><p>Very Good</p>
+</td><td colspan="1" rowspan="1"><p>3.0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>C+</p>
+</td><td colspan="1" rowspan="1"><p>Good</p>
+</td><td colspan="1" rowspan="1"><p>2.5</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>C</p>
+</td><td colspan="1" rowspan="1"><p>Good</p>
+</td><td colspan="1" rowspan="1"><p>2.0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>D+</p>
+</td><td colspan="1" rowspan="1"><p>Pass</p>
+</td><td colspan="1" rowspan="1"><p>1.5</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>D</p>
+</td><td colspan="1" rowspan="1"><p>Pass</p>
+</td><td colspan="1" rowspan="1"><p>1.0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>F</p>
+</td><td colspan="1" rowspan="1"><p>Fail</p>
+</td><td colspan="1" rowspan="1"><p>0.0</p>
+</td></tr>
+</table>
+<ul>
+<li>Write the code to convert a grade to a grade point</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>Grade A is equal to a grade point of 4.0</pre>
+<pre>Grade C is equal to a grade point of 2.0</pre>
+<p><strong>Exercise</strong></p>
+<p><a href="https://en.wikipedia.org/wiki/Leap_year" target="_blank">https://en.wikipedia.org/wiki/Leap_year</a></p>
+<ul>
+<li>Write the code to determine if a year is a leap year</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>Year 1996 is a leap year</pre>
+<pre>Year 1997 is not a leap year</pre>
+<pre>Year 2000 is a leap year</pre>
+<pre>Year 2100 is not a leap year</pre>
+<p><strong>Exercise</strong></p>
+<p><a href="http://intranet.rp.edu.sg/sites/StudentHandbook/SitePages/01_Course_Fees.aspx" target="_blank">http://intranet.rp.edu.sg/sites/StudentHandbook/SitePages/01_Course_Fees.aspx</a></p>
+<p>The table below shows the amounts and details of the course fees payable.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Type of Fee</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Singapore Citizens</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Singapore Permanent Residents</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>International Students</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Subsidised Tuition Fee Payable</p>
+</td><td colspan="1" rowspan="1"><p>$2,900.00</p>
+</td><td colspan="1" rowspan="1"><p>$5,800.00</p>
+</td><td colspan="1" rowspan="1"><p>$10,400.00</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Supplementary Fee (inclusive of GST)</p>
+</td><td colspan="1" rowspan="1"><p>$86.50</p>
+</td><td colspan="1" rowspan="1"><p>$116.50</p>
+</td><td colspan="1" rowspan="1"><p>$159.50</p>
+</td></tr>
+</table>
+<ul>
+<li>Write the code to print course fees payable depending on the value of a variable called <code>feeType</code> which can assume one of  the following values: <code>SC</code>, <code>SPR</code>, <code>IS</code>. The code should include the variables <code>tuitionFee</code> and <code>supplementaryFee</code>. The code should have only one print statement.</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>Singapore Citizens pay $2986.5 (Tuition Fee: $2900.0, Supplementary Fee: $86.5)</pre>
+<pre>Singapore Permanent Residents pay $5916.5 (Tuition Fee: $5800.0, Supplementary Fee: $116.5)</pre>
+<pre>International Students pay $10559.5 (Tuition Fee: $10400.0, Supplementary Fee: $159.5)</pre>
+<p><strong>Exercise</strong></p>
+<p><a href="https://www.iras.gov.sg/irashome/Individuals/Locals/Working-Out-Your-Taxes/Income-Tax-Rates/" target="_blank">https://www.iras.gov.sg/irashome/Individuals/Locals/Working-Out-Your-Taxes/Income-Tax-Rates/</a></p>
+<ul>
+<li>Write the code to calculate income tax payable in Singapore. The code should have only one print statement.</li>
+<li>Sample output is shown below:</li>
+</ul>
+<pre>For a salary of $36000.0, the income tax is $410.0
+The effective income tax rate is 1.1388888888888888%</pre>
+<pre>For a salary of $150000.0, the income tax is $12450.0
+The effective income tax rate is 8.3%</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Swift - Classes</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift53.epub" target="_blank">https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift53.epub</a></li>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></li>
+<li><a href="https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html" target="_blank">https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

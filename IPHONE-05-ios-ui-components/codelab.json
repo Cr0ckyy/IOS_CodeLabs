@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-13T14:51:18Z",
+  "id": "05-ios-ui-components",
+  "duration": 145,
+  "title": "UI Components",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to use other basic UI components, arrays and loops",
+  "source": "1nB7pV9S1rSN3daWrR9SVG5vaS0pPSAIx5upZjwmnxs0",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "05-ios-ui-components"
+}

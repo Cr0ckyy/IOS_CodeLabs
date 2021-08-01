@@ -1,0 +1,864 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UIImagePicker</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="07-ios-uiimagepicker"
+                  title="UIImagePicker"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p><strong>At the conclusion of this lesson, participants will be able to:</strong></p>
+<ol type="1" start="1">
+<li>Use a UIToolbar and UIBarButtonItem objects to present users with options to perform actions within an iOS application</li>
+<li>Use a pop over to present users with view controllers as a smaller pop over window anchored to controls within the current view</li>
+<li>Use the UIImagePickerController and UIImagePickerControllerDelegate to allow users to select pictures from the photo library</li>
+<li>Use the built-in editing features for a table view to provide users with functionality for deletion and reordering</li>
+<li>Use Swift extensions to write cleaner and maintainable code</li>
+<li>Use guard statements to perform argument validation in functions</li>
+</ol>
+<p><strong>What you&#39;ll need</strong></p>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIToolbar" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/reference/uikit/uitoolbar" target="_blank">https://developer.apple.com/reference/uikit/uitoolbar</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UIToolbar</li>
+</ul>
+<p>A toolbar is a UI control that displays one or more toolbar items. A toolbar is implemented using the <code>UIToolbar</code> class. The toolbar items are instances of the <code>UIBarButtonItem</code> class. <code>UIBarButtonItem</code> objects can be customized with a title or image icon, or it can be a predefined System Item as shown in the screenshot below.</p>
+<p class="image-container"><img style="width: 322.00px" src="img/c2ce777f22068042.png"></p>
+<aside class="warning"><p>A toolbar usually appears at the bottom of the screen; in Interface Builder, select the UIToolbar object and use the Add New Constraints tool to create Bottom (0), Left (0) and Right (0) constraints.</p>
+</aside>
+<p><strong>UIBarButtonItem.SystemItem.fixedSpace</strong></p>
+<p>Blank space to add between other items. Only the width property is used when this value is set.</p>
+<p><strong>UIBarButtonItem.SystemItem.flexibleSpace</strong></p>
+<p>Blank space to add between other items. The space is distributed equally between the other items. Other item properties are ignored when this value is set.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity01 UIToolbar" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject01</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="2">
+<li>Drag a UIToolbar object from the object library to the bottom of the view</li>
+<li>Select the UIToolbar object, use the Add New Constraints tool to create Bottom (0), Left (0) and Right (0) constraints.</li>
+<li>Add 4 more UIBarButtonItem objects from the object library to the toolbar.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/58c2b90a2adad817.png"></p>
+<ol type="1" start="5">
+<li>Between the third and fourth UIBarButtonItem, add a Flexible Space Bar Button Item.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/e4d9255a1aa7621f.png"></p>
+<ol type="1" start="6">
+<li>Use the Attributes Inspector to set the properties for the UIBarButtonItem objects:</li>
+</ol>
+<ul>
+<li>1st UIBarButtonItem - Title <strong>Inbox</strong></li>
+<li>2nd UIBarButtonItem - Title <strong>&lt;</strong></li>
+<li>3rd UIBarButtonItem - Title <strong>&gt;</strong></li>
+<li>4th UIBarButtonItem - System Item <strong>Trash</strong></li>
+<li>5th UIBarButtonItem - System Item <strong>Camera</strong></li>
+</ul>
+<p class="image-container"><img style="width: 734.00px" src="img/a3955fb1d897ca2d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIPopoverPresentationController" duration="15">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uipopoverpresentationcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uipopoverpresentationcontroller</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UIPopoverPresentationController</li>
+</ul>
+<p>The figure below shows a view controller presented as a popover. Instead of occupying the full screen, the popover appears as a smaller view anchored to a user interface object. On an iPad device, the popover is layered on top of the existing content, while the background is dimmed. </p>
+<aside class="warning"><p>The popover remains visible until the user taps outside of the popover. The popover can be dismissed by calling <code>dismiss(animated: true, completion: nil)</code>in the view controller that is presented as a popover.</p>
+</aside>
+<p class="image-container"><img style="width: 746.00px" src="img/f66351d8f261111d.png"></p>
+<p><strong>Present As Popover segue</strong></p>
+<p>To present a view controller as a popover, create a Present As Popover segue from a user interface object (e.g. UIButton or UIBarButtonItem) to the view controller to be presented.</p>
+<p class="image-container"><img style="width: 338.00px" src="img/bf039f467863114d.png"></p>
+<p><strong>iPhone devices</strong></p>
+<p>iPhone devices present a popover as a modal segue by default. To present as a popover on an iPhone device, in the presenting view controller:</p>
+<ul>
+<li>declare conformance to UIPopoverPresentationControllerDelegate protocol</li>
+<li>implement the adaptivePresentationStyle(for:traitCollection:) method to return UIModalPresentationStyle.none</li>
+</ul>
+<p>in the prepare(for:sender:) method in the presenting view controller:</p>
+<ul>
+<li>get the destination view controller</li>
+<li>get the UIPopoverPresentationController object from the popoverPresentationController property of the destination view controller</li>
+<li>set the presenting view controller as the delegate of the UIPopoverPresentationController</li>
+</ul>
+<pre><code>import UIKit
+// declare conformance to UIPopoverPresentationControllerDelegate protocol
+class ViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // implement the adaptivePresentationStyle(for:traitCollection:) method to return UIModalPresentationStyle.none
+  func adaptivePresentationStyle(for controller: UIPresentationController,
+                                 traitCollection: UITraitCollection)
+    -&gt; UIModalPresentationStyle {
+      return .none
+  }
+  
+  // in the prepare(for:sender:) method in the presenting view controller
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the destination view controller
+    let vc = segue.destination
+    // get the UIPopoverPresentationController object from the popoverPresentationController property of the destination view controller
+    if let popoverPresentationController = vc.popoverPresentationController {
+      // set the presenting view controller as the delegate of the UIPopoverPresentationController
+      popoverPresentationController.delegate = self
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity02 Popover" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject01</strong></li>
+<li>Create <code>NextViewController</code> : <code>UIViewController</code></li>
+</ol>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="3">
+<li>Add a View Controller; set the class as <code>NextViewController</code></li>
+<li>Create a <code>Present As Popover</code> segue from the <strong>Camera</strong> button to NextViewController</li>
+</ol>
+<ol type="1" start="5">
+<li>Run the project on an <strong>iPad Pro (9.7-inch)</strong> simulator. Click on the <strong>Camera</strong> button, NextViewController should appear in a popover.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/19b63e4917e1dea8.png"></p>
+<ol type="1" start="6">
+<li>Run the project on an <strong>iPhone 8</strong>. Click on the Reply button, NextViewController should not appear in a popover.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/133720ad3de8a424.png"></p>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="7">
+<li>Update <code>ViewController</code> with the code shown below:</li>
+</ol>
+<pre><code>import UIKit
+// declare conformance to UIPopoverPresentationControllerDelegate protocol
+class ViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // implement the adaptivePresentationStyle(for:traitCollection:) method to return UIModalPresentationStyle.none
+  func adaptivePresentationStyle(for controller: UIPresentationController,
+                                 traitCollection: UITraitCollection)
+    -&gt; UIModalPresentationStyle {
+      return .none
+  }
+  
+  // in the prepare(for:sender:) method in the presenting view controller
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the destination view controller
+    let vc = segue.destination
+    // get the UIPopoverPresentationController object from the popoverPresentationController property of the destination view controller
+    if let popoverPresentationController = vc.popoverPresentationController {
+      // set the presenting view controller as the delegate of the UIPopoverPresentationController
+      popoverPresentationController.delegate = self
+    }
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project on an <strong>iPhone 8</strong>. Click on the Reply button, NextViewController should appear in a popover.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/c8d3e5752b0f79fd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Extensions" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/Extensions.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Extensions.html</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>swift extensions</li>
+</ul>
+<p>Extensions add new functionality to an existing class, structure, enumeration, or protocol type. This includes the ability to extend types for which you do not have access to the original source code (known as retroactive modeling).</p>
+<p>Extensions in Swift can:</p>
+<ul>
+<li>Add computed instance properties and computed type properties</li>
+<li>Define instance methods and type methods</li>
+<li>Provide new initializers</li>
+<li>Define subscripts</li>
+<li>Define and use new nested types</li>
+<li>Make an existing type conform to a protocol</li>
+</ul>
+<p><strong>Example1:</strong></p>
+<p>This adds a method called second() to the String class, even though we do not have access to the original source code for the String class.</p>
+<pre><code>extension String {
+  // a special method to get the second character from the String
+  func second() -&gt; String? {
+    // String must have 2 or more characters
+    if (self.count &gt;= 2) {
+      // get index of second character
+      let i = self.index(self.startIndex, offsetBy: 1)
+      // get second character
+      let c = self[i]
+      // return second character as a String
+      return String(c)
+    }
+    // no valid character to return
+    return nil
+  }
+}</code></pre>
+<p><strong>Example2:</strong></p>
+<p>This makes an existing type conform to a protocol</p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}
+
+// declare conformance to UIPopoverPresentationControllerDelegate protocol
+extension ViewController: UIPopoverPresentationControllerDelegate {
+  
+  // implement the adaptivePresentationStyle(for:traitCollection:) method to return UIModalPresentationStyle.none
+  func adaptivePresentationStyle(for controller: UIPresentationController,
+                                 traitCollection: UITraitCollection)
+    -&gt; UIModalPresentationStyle {
+      return .none
+  }
+  
+  // in the prepare(for:sender:) method in the presenting view controller
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the destination view controller
+    let vc = segue.destination
+    // get the UIPopoverPresentationController object from the popoverPresentationController property of the destination view controller
+    if let popoverPresentationController = vc.popoverPresentationController {
+      // set the presenting view controller as the delegate of the UIPopoverPresentationController
+      popoverPresentationController.delegate = self
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity03 Extensions" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject01</strong>.</li>
+<li>Update <code>ViewController</code> with the code shown below:</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}
+
+// declare conformance to UIPopoverPresentationControllerDelegate protocol
+extension ViewController: UIPopoverPresentationControllerDelegate {
+  
+  // implement the adaptivePresentationStyle(for:traitCollection:) method to return UIModalPresentationStyle.none
+  func adaptivePresentationStyle(for controller: UIPresentationController,
+                                 traitCollection: UITraitCollection)
+    -&gt; UIModalPresentationStyle {
+      return .none
+  }
+  
+  // in the prepare(for:sender:) method in the presenting view controller
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the destination view controller
+    let vc = segue.destination
+    // get the UIPopoverPresentationController object from the popoverPresentationController property of the destination view controller
+    if let popoverPresentationController = vc.popoverPresentationController {
+      // set the presenting view controller as the delegate of the UIPopoverPresentationController
+      popoverPresentationController.delegate = self
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project on an <strong>iPhone 8</strong>. Verify the code can compile and the behaviour remains unchanged.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="guard" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/ReferenceManual/Statements.html" target="_blank">https://docs.swift.org/swift-book/ReferenceManual/Statements.html</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>swift guard</li>
+</ul>
+<p>A guard statement is often used in a function to check for</p>
+<ul>
+<li>valid parameter values</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>func add(x:Int?, y:Int?) -&gt; Int? {
+  // optional binding using guard let instead of if let
+  guard let x = x, let y = y, y % 2 == 0 else {
+    // guard checks for the conditions that you want
+    // in this case, we want
+    // - optional binding for x to convert successfully
+    // - optional binding for y to convert successfully
+    // - y to be divisible by 2
+    return nil
+  }
+  // Any constants or variables assigned a value from an optional binding declaration
+  // in a guard statement condition can be used for the rest of the guard statement&#39;s
+  // enclosing scope, which is the add(x:y:) function in this example
+  return x + y
+}</code></pre>
+<p>The value of any condition in a guard statement must be of type Bool or a type bridged to Bool. The condition can also be an optional binding declaration.</p>
+<p>Any constants or variables assigned a value from an optional binding declaration in a guard statement condition can be used for the rest of the guard statement&#39;s enclosing scope.</p>
+<p>The else clause of a guard statement is required, and must either call a function with the Never return type or transfer program control outside the guard statement&#39;s enclosing scope using one of the following statements:</p>
+<ul>
+<li>return</li>
+<li>break</li>
+<li>continue</li>
+<li>throw</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity04 guard" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject02</strong> using the Single View Application template.</li>
+<li>Update <code>ViewController</code> with the code shown below:</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(add(x: nil, y: 3))
+    print(add(x: 1, y: nil))
+    print(add(x: 1, y: 3))
+    print(add(x: 1, y: 2))
+  }
+  
+  
+  func add(x:Int?, y:Int?) -&gt; Int? {
+    // optional binding using guard let instead of if let
+    guard let x = x, let y = y, y % 2 == 0 else {
+      // guard checks for the conditions that you want
+      // in this case, we want
+      // - x to be not nil
+      // - y to be not nil
+      // - y to be divisible by 2
+      return nil
+    }
+    // Any constants or variables assigned a value from an optional binding declaration
+    // in a guard statement condition can be used for the rest of the guard statement&#39;s
+    // enclosing scope, which is the add(x:y:) function in this example
+    return x + y
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. Verify <code>add(x:y:)</code> returns a non-nil value only if x is not nil, y is not nil and y is an even number.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIImagePickerController" duration="15">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uiimagepickercontroller" target="_blank">https://developer.apple.com/documentation/uikit/uiimagepickercontroller</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uiimagepickercontroller/infokey" target="_blank">https://developer.apple.com/documentation/uikit/uiimagepickercontroller/infokey</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UIImagePickerController</li>
+</ul>
+<p>The UIImagePickerController class allows you to present an interface in your application for your user to take a new picture or movie. The UIImagePickerController can also be configured to provide a user interface for choosing among saved pictures and movies.</p>
+<p>The role and appearance of an image picker controller depends on the source type you assign to it before you present it:</p>
+<ul>
+<li>A sourceType of camera provides a user interface for taking a new picture or movie (on devices that support media capture).</li>
+<li>A sourceType of photoLibrary or savedPhotosAlbum provides a user interface for choosing among saved pictures and movies.</li>
+</ul>
+<p><strong>Steps to display and use an UIImagePickerController</strong></p>
+<p>The steps to display and use an UIImagePickerController are as follows:</p>
+<ol type="1" start="1">
+<li>Create an extension to the view controller to conform to UIImagePickerControllerDelegate and implement the protocol methods to handle events (e.g. image selection)</li>
+<li>Create a UIImagePickerController object</li>
+<li>Configure the UIImagePickerController object; at a minimum, set the source type.</li>
+<li>Set the delegate for the UIImagePickerController object</li>
+<li>Present the UIImagePickerController</li>
+</ol>
+<p>If the user selects an image, the delegate method <code>imagePickerController(_:didFinishPickingMediaWithInfo:)</code> is called. Note that the info parameter of the delegate method is a <code>[UIImagePickerController.InfoKey : Any]</code> dictionary containing information about the selected image. </p>
+<p><strong>Example:</strong></p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outImageView: UIImageView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+  }
+  
+  @IBAction func actCamera(_ sender: UIBarButtonItem) {
+    // 2. Create a UIImagePickerController object
+    let imagePicker = UIImagePickerController()
+    // 3. Configure the UIImagePickerController object; at a minimum, set the source type.
+    imagePicker.sourceType = .photoLibrary
+    imagePicker.modalPresentationStyle = .currentContext
+    // 4. Set the delegate for the UIImagePickerController object
+    imagePicker.delegate = self
+    // 5. Present the UIImagePickerController
+    present(imagePicker, animated: true, completion: nil)
+  }
+}
+
+// 1. Create an extension to the view controller to conform to UIImagePickerControllerDelegate and implement the protocol methods to handle events (e.g. image selection)
+extension ViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerController(_ picker: UIImagePickerController,
+                             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    // info dictionary may contain multiple representations of the image
+    // use the original image representation
+    guard let selectedImage = info[.originalImage] as? UIImage else {
+      fatalError(&#34;original image not found, dumping: \(info)&#34;)
+    }
+    outImageView.image = selectedImage
+    // Dismiss the picker.
+    dismiss(animated: true, completion: nil)
+  }
+}</code></pre>
+<aside class="special"><p><strong>To add images to your simulator</strong></p>
+<p>Drag and drop the images from the Finder to your simulator</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity05 UIImagePickerController" duration="15">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject03</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="2">
+<li>Drag a UIToolbar object from the object library to the bottom of the view</li>
+<li>Select the UIToolbar object, use the Add New Constraints tool to create Bottom (0), Left (0) and Right (0) constraints.</li>
+<li>Use the Attributes Inspector to set the System Item for the UIBarButtonItem object to <strong>Camera</strong></li>
+<li>Place a Flexible Space Bar Button Item before and after the Camera UIBarButtonItem</li>
+<li>Add a UIImageView (IBOutlet <code>outImageView</code>) above the tool bar; resize it to occupy the space within the top, left and right layout guides and top of the tool bar; add constraints Top (0), Bottom (0), Left (20) and Right (20)</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/8645f3ff5b391b81.png"></p>
+<ol type="1" start="7">
+<li>Create an IBAction method <code>actCamera</code> for the Camera UIBarButtonItem</li>
+<li>Update <code>ViewController</code> with the code shown below:</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outImageView: UIImageView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+  }
+  
+  @IBAction func actCamera(_ sender: UIBarButtonItem) {
+    // 2. Create a UIImagePickerController object
+    let imagePicker = UIImagePickerController()
+    // 3. Configure the UIImagePickerController object; at a minimum, set the source type.
+    imagePicker.sourceType = .photoLibrary
+    imagePicker.modalPresentationStyle = .currentContext
+    // 4. Set the delegate for the UIImagePickerController object
+    imagePicker.delegate = self
+    // 5. Present the UIImagePickerController
+    present(imagePicker, animated: true, completion: nil)
+  }
+}
+
+// 1. Create an extension to the view controller to conform to UIImagePickerControllerDelegate and implement the protocol methods to handle events (e.g. image selection)
+extension ViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerController(_ picker: UIImagePickerController,
+                             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    // info dictionary may contain multiple representations of the image
+    // use the original image representation
+    guard let selectedImage = info[.originalImage] as? UIImage else {
+      fatalError(&#34;original image not found, dumping: \(info)&#34;)
+    }
+    outImageView.image = selectedImage
+    // Dismiss the picker.
+    dismiss(animated: true, completion: nil)
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project on an iPhone 8 simulator. Click the Camera button and select an image. The image should be displayed in the image view.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/96f110ff32537afb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableView editing" duration="15">
+        <p><strong>Complete code</strong></p>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  
+  var items : [String] = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;, &#34;d&#34;, &#34;e&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // The Edit button is shown by adding the code
+    // navigationItem.leftBarButtonItem = editButtonItem
+    // to viewDidLoad()
+    self.navigationItem.rightBarButtonItem = self.editButtonItem
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return items.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    if let label = cell.textLabel {
+      label.text = items[indexPath.row]
+    }
+    return cell
+  }
+  
+  // Override to support conditional editing of the table view.
+  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -&gt; Bool {
+    return true
+  }
+  
+  // Override to support editing the table view.
+  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      // Remove the item from the data source first
+      items.remove(at: indexPath.row)
+      // Delete the specific row from the table view
+      tableView.deleteRows(at: [indexPath], with: .fade)
+    }
+  }
+  
+  // Override to support conditional rearranging of the table view.
+  override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -&gt; Bool {
+    // Return false if you do not want the item to be re-orderable.
+    return true
+  }
+ 
+  // Override to support rearranging the table view.
+  override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+    // keep a reference to the item to be moved
+    var item = items[fromIndexPath.row]
+    // remove the item from the data source at the row indicated by fromIndexPath
+    items.remove(at: fromIndexPath.row)
+    // insert the item to the array at the row indicated by to
+    items.insert(item, at: to.row)
+  }
+}</code></pre>
+<p><strong>Display of content in table view (relevant code shown only)</strong></p>
+<ul>
+<li>Standard code for displaying content in a table view</li>
+</ul>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  
+  var items : [String] = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;, &#34;d&#34;, &#34;e&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return items.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    if let label = cell.textLabel {
+      label.text = items[indexPath.row]
+    }
+    return cell
+  }
+}</code></pre>
+<p><strong>Display of Edit button (relevant code shown only)</strong></p>
+<ul>
+<li>The UITableViewDataSource protocol has methods which support deletion and reordering of items in the table view. To implement both features, the Edit button must first be shown in the UINavigationItem.</li>
+<li>The table view controller must be embedded in a UINavigationController for this feature to work</li>
+</ul>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // The Edit button is shown by adding the code
+    // navigationItem.leftBarButtonItem = editButtonItem
+    // to viewDidLoad()
+    self.navigationItem.rightBarButtonItem = self.editButtonItem
+  }
+}</code></pre>
+<p>When the user presses the Edit button, the delete and reorder icons (where applicable) will be shown.</p>
+<p class="image-container"><img style="width: 746.00px" src="img/a6bfd5ddbed50b7d.png"></p>
+<p><strong>Delete functionality (relevant code shown only)</strong></p>
+<ul>
+<li><code>tableView(_:canEditRowAt:)</code> reports whether a particular row can be edited; this includes being able to be deleted and being able to be rearranged</li>
+<li>The delete functionality is implemented in <code>tableView(_:commit:forRowAt:)</code> by removing the item from the data source first, then deleting the specific row from the table view.</li>
+</ul>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  var items : [String] = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;, &#34;d&#34;, &#34;e&#34;]
+
+  // Override to support conditional editing of the table view.
+  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -&gt; Bool {
+    return true
+  }
+  
+  // Override to support editing the table view.
+  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      // Remove the item from the data source first
+      items.remove(at: indexPath.row)
+      // Delete the specific row from the table view
+      tableView.deleteRows(at: [indexPath], with: .fade)
+    } 
+  }
+}</code></pre>
+<ul>
+<li>The user interface consists of a delete control on the left, and when that is pressed, a Delete confirmation button on the right</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/ef31cc507b70169c.png"></p>
+<p><strong>Rearranging functionality (relevant code shown only)</strong></p>
+<ul>
+<li><code>tableView(_:canMoveRowAt:)</code> reports whether a particular row can be moved</li>
+<li>The rearrange functionality is implemented in <code>tableView(_:commit:moveRowAt:to:)</code> by removing the item from the data source at the row indicated by <code>fromIndexPath</code> and inserting to the array at the row indicated by <code>to</code></li>
+</ul>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  var items : [String] = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;, &#34;d&#34;, &#34;e&#34;]
+  
+  // Override to support conditional rearranging of the table view.
+  override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -&gt; Bool {
+    // Return false if you do not want the item to be re-orderable.
+    return true
+  }
+ 
+  // Override to support rearranging the table view.
+  override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+    // keep a reference to the item to be moved
+    var item = items[fromIndexPath.row]
+    // remove the item from the data source at the row indicated by fromIndexPath
+    items.remove(at: fromIndexPath.row)
+    // insert the item to the array at the row indicated by to
+    items.insert(item, at: to.row)
+  }
+}</code></pre>
+<ul>
+<li>The user interface consists of a reorder control on the right, which can be dragged to indicate where the row should be moved to</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/c579c440a70a7bf4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity06 UITableView editing" duration="15">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject04</strong> using the Single View Application template.</li>
+<li>Create <code>TableViewController</code> : <code>UITableViewController</code></li>
+</ol>
+<p>In Main.storyboard:</p>
+<ol type="1" start="3">
+<li>Delete the view controller.</li>
+<li>Add a Table View Controller object and set the class as <code>TableViewController</code>.</li>
+<li>Embed the Table View Controller in a <code>UINavigationController</code>.</li>
+<li>Select the UINavigationController and use the Attributes Inspector to set the UINavigationController as the initial view controller.</li>
+<li>Set the <code>identifier</code> of the table view cell to <code>cell</code>.</li>
+</ol>
+<p>In TableViewController:</p>
+<ol type="1" start="8">
+<li>Update <code>TableViewController</code> with the code shown below:</li>
+</ol>
+<pre><code>import UIKit
+class TableViewController: UITableViewController {
+  
+  var items : [String] = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;, &#34;d&#34;, &#34;e&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // The Edit button is shown by adding the code
+    // navigationItem.leftBarButtonItem = editButtonItem
+    // to viewDidLoad()
+    self.navigationItem.rightBarButtonItem = self.editButtonItem
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return items.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    if let label = cell.textLabel {
+      label.text = items[indexPath.row]
+    }
+    return cell
+  }
+  
+  // Override to support conditional editing of the table view.
+  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -&gt; Bool {
+    return true
+  }
+  
+  // Override to support editing the table view.
+  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      // Remove the item from the data source first
+      items.remove(at: indexPath.row)
+      // Delete the specific row from the table view
+      tableView.deleteRows(at: [indexPath], with: .fade)
+    }
+  }
+  
+  // Override to support conditional rearranging of the table view.
+  override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -&gt; Bool {
+    // Return false if you do not want the item to be re-orderable.
+    return true
+  }
+ 
+  // Override to support rearranging the table view.
+  override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+    // keep a reference to the item to be moved
+    var item = items[fromIndexPath.row]
+    // remove the item from the data source at the row indicated by fromIndexPath
+    items.remove(at: fromIndexPath.row)
+    // insert the item to the array at the row indicated by to
+    items.insert(item, at: to.row)
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project on an iPhone simulator. When the Edit button is pressed, delete and ordering controls appear.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/787395c60ee00e81.png"></p>
+<ol type="1" start="10">
+<li>When the delete control is pressed, a confirmation delete button appears; when the delete button is pressed, the row is deleted.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/ef31cc507b70169c.png"></p>
+<ol type="1" start="11">
+<li>When the ordering control is pressed and dragged the row can be rearranged within the table view section.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/c579c440a70a7bf4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 01" duration="10">
+        <p>Rewrite the following function using the guard statement. Save your answer in Exercise01.playground.</p>
+<pre><code>func printRepeat(text: String?, times: Int) {
+  if (times == 0) {
+    print(&#34;unable to proceed, times is 0&#34;)
+  } else if (text == nil) {
+    print(&#34;unable to proceed, text is nil&#34;)
+  } else {
+    if let text = text {
+      for index in 1...times {
+        print(&#34;\(text)&#34;)
+      }
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 02" duration="20">
+        <p>Create project Exercise02 based on the screenshot below. ViewController should use extensions.</p>
+<p class="image-container"><img style="width: 746.00px" src="img/cec54f45cd80c979.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 03" duration="60">
+        <aside class="warning"><p><strong>Students who have not submitted a video demo for P06 must do a 15 to 25 minute screen recording of your solution for Exercise 03 and submit that as your DEMO requirement for your CAG03. </strong></p>
+<ul>
+<li>Based on the timing requirement, it is suggested that you do the recording only when you know your solution inside out. </li>
+<li>This demonstration should show <strong>how you develop the app from start to finish</strong> (with typing, no copy-paste allowed, except for the portion for UIImagePickerController). <strong>Do not just show your finished project</strong>, show the view controllers, Main.storyboard, simulator, and say ta-dah, my project - that will not be accepted.</li>
+<li>It is suggested that you develop your app starting with the requirements for Level 1, then Level 2, then Level 3. Try your best to demo as many levels as you can within the time limit, but do not despair if you are not able to demo all 3 levels.</li>
+<li>Use of extensions, guard statements and property observers will be taken into account.</li>
+<li>The submitted screen recording <strong>MUST</strong> have your face and <strong>MUST</strong> have your commentary as you do the demonstration. Samples may be found in<a href="https://myrp-my.sharepoint.com/:f:/g/personal/rahim_low_myrp_edu_sg/EtQb0YJSKv5BsUDo0R-Etb0B7cYSGq-oTeHQ7N50KLhhPw" target="_blank">https://myrp-my.sharepoint.com/:f:/g/personal/rahim_low_myrp_edu_sg/EtQb0YJSKv5BsUDo0R-Etb0B7cYSGq-oTeHQ7N50KLhhPw</a> in the StudentWork folder.</li>
+</ul>
+</aside>
+<p>Create project Exercise03 based on the screenshot below.</p>
+<ul>
+<li>Level 1 - the project consists of a UIViewController which has a UICollectionView. The default number of items in the collection view is 25. The cell consists of a UIImageView. The image view displays a hard-coded image in all cells. The toolbar has a UIBarButtonItem on the left with a title <strong>Set Number</strong> and a UIBarButtonItem on the right with a title <strong>Choose Image</strong>. Nothing happens when those buttons are pressed.</li>
+<li>Level 2 - when the <strong>Choose Image</strong> button is pressed, the UIImagePickerController is presented allowing the user to select an image from the photo library. The image that is selected will be displayed in the collection view cells.</li>
+<li>Level 3 - when the <strong>Set Number</strong> button is pressed, <strong>NumberViewController</strong> is presented as a <strong>pop over</strong>. NumberViewController consists of a text field and a <strong>Submit</strong> button. When the <strong>Submit</strong> button is pressed, the collection view is updated to show the number of cells entered in the text field (e.g. if the user enters 5 and presses <strong>Submit</strong>, the collection view shows 5 cells). Hint : you will need to pass data from NumberViewController back to ViewController by using the protocol-delegate pattern.</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/60667503d08e43f3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UserDefaults and Settings Bundle</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

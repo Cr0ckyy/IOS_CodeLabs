@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-16T20:34:12Z",
+  "id": "00-ios-macos",
+  "duration": 23,
+  "title": "macOS",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn macOS basics",
+  "source": "1sIz3K8BhwhPU-tuJvDr61E-UsPep5CcJOow7ok7Ld7E",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "00-ios-macos"
+}

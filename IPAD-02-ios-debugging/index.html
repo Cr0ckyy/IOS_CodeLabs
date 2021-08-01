@@ -1,0 +1,965 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Debugging</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="02-ios-debugging"
+                  title="Debugging"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>explain the terminology used in debugging, such as debugging, logging, breakpoints, stepping, syntax errors / compile-time errors and logical errors / run-time errors</li>
+<li>utilise the debugging process to reproduce errors, write code to fix the errors and verify resolution through testing</li>
+<li>gain insight into errors in the code through</li>
+</ol>
+<ul>
+<li>using logging as indicators in code execution and to print out variable values</li>
+<li>interpreting error messages found in Xcode</li>
+<li>using the debugging tools provided by the IDE (e.g. breakpoints, stepping and variable inspection)</li>
+</ul>
+<ol type="1" start="4">
+<li>identify, explain and solve common errors in iOS development</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+<h2 is-upgraded><strong>Videos for the activities can be obtained from:</strong></h2>
+<ul>
+<li>LEO2</li>
+<li>Dropbox (<a href="https://www.dropbox.com/sh/o8ppmp1b3o6tcgt/AABZatYRwWRIS3y6g7C7HCPwa" target="_blank">https://www.dropbox.com/sh/o8ppmp1b3o6tcgt/AABZatYRwWRIS3y6g7C7HCPwa</a>)</li>
+<li>Google Drive (<a href="https://drive.google.com/open?id=1vAV3urwfrk3OlrepKQ7IfzMC5BL25Bh3" target="_blank">https://drive.google.com/open?id=1vAV3urwfrk3OlrepKQ7IfzMC5BL25Bh3</a>)</li>
+<li>YouTube</li>
+</ul>
+<p>C349 Lesson 02 Activity 01 - Introduction to debugging (<a href="https://youtu.be/XrmvepZ55h8" target="_blank">https://youtu.be/XrmvepZ55h8</a>)</p>
+<p>C349 Lesson 02 Activity 02 - Logging as an indicator (<a href="https://youtu.be/vwULuni8M_I" target="_blank">https://youtu.be/vwULuni8M_I</a>)</p>
+<p>C349 Lesson 02 Activity 03 - Logging as an indicator (<a href="https://youtu.be/v0OKOfvIonI" target="_blank">https://youtu.be/v0OKOfvIonI</a>)</p>
+<p>C349 Lesson 02 Activity 04 - Logging to print out values of variables (<a href="https://youtu.be/PFt2r5Ek_Ww" target="_blank">https://youtu.be/PFt2r5Ek_Ww</a>)</p>
+<p>C349 Lesson 02 Activity 05 - Finding and fixing errors (<a href="https://youtu.be/_pX4sYFXgbc" target="_blank">https://youtu.be/_pX4sYFXgbc</a>)</p>
+<p>C349 Lesson 02 Activity 06 - Breakpoints and stepping (<a href="https://youtu.be/Gw_N-t4JCtk" target="_blank">https://youtu.be/Gw_N-t4JCtk</a>)</p>
+<p>C349 Lesson 02 Activity 07 - Step over, step into and step out (<a href="https://youtu.be/N68KL3KjH1E" target="_blank">https://youtu.be/N68KL3KjH1E</a>)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging terminology" duration="10">
+        <p><strong>Computer program </strong><a href="http://en.wikipedia.org/wiki/Computer_program" target="_blank">http://en.wikipedia.org/wiki/Computer_program</a></p>
+<p>A computer program is a sequence of instructions written to perform a specified task. The program has an executable form that the computer can use directly to execute the instructions. The same program in its human-readable source code form, from which executable programs are derived, enables a programmer to study and develop its algorithms.</p>
+<p><strong>Debugging </strong><a href="http://en.wikipedia.org/wiki/Debugging" target="_blank">http://en.wikipedia.org/wiki/Debugging</a></p>
+<p>Debugging is a methodical process of finding and reducing the number of bugs, or defects, in a computer program, thus making it behave as <strong>expected</strong>.</p>
+<p><strong>Logging </strong><a href="http://en.wikipedia.org/wiki/Logfile" target="_blank">http://en.wikipedia.org/wiki/Logfile</a></p>
+<p>Logging is the act of recording events that occur when a piece of software executes. This can be used as signposts for program execution or to produce a snapshot of variable values.</p>
+<p><strong>Breakpoints </strong><a href="http://en.wikipedia.org/wiki/Breakpoint" target="_blank">http://en.wikipedia.org/wiki/Breakpoint</a></p>
+<p>A breakpoint is an <strong>intentional</strong> stopping or pausing place in a program, put in place for debugging purposes.</p>
+<p><strong>Stepping </strong><a href="http://en.wikipedia.org/wiki/Program_animation" target="_blank">http://en.wikipedia.org/wiki/Program_animation</a></p>
+<p>Stepping refers to the process of executing code one &#34;line&#34; at a time. The programmer may examine the state of the program, machine, and related data before and after execution of a particular line of code. This allows evaluation of the effects of that statement or instruction in isolation and thereby gain insight into the behavior (or misbehavior) of the executing program.</p>
+<p><strong>Syntax error / compile-time error </strong><a href="http://en.wikipedia.org/wiki/Syntax_error" target="_blank">http://en.wikipedia.org/wiki/Syntax_error</a></p>
+<p>In computer science, a syntax error is a mistake in the use of the syntax of a particular programming language. Syntax errors are typically caught by the compiler, and prevents the creation of the executable program.</p>
+<p><strong>Logical error / run-time error </strong><a href="http://en.wikipedia.org/wiki/Logic_error" target="_blank">http://en.wikipedia.org/wiki/Logic_error</a></p>
+<p>In computer programming, a logic error is a bug in a program that causes it to operate incorrectly. A logic error produces unintended or undesired output or other behaviour. Logical errors cannot be caught by the compiler, and are usually only discovered when the program is executed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Introduction to debugging" duration="20">
+        <ol type="1" start="1">
+<li>Create SampleProject using the <code>Single View App</code> template.</li>
+<li>Change the simulator to <code>iPhone 8</code>. </li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>Change the <code>View as:</code> to <code>iPhone 8</code> or <code>iPhone SE (2nd generation)</code></li>
+<li>In ViewController, add a <code>UITextField</code> (IBOutlet <code>outTextField</code>), a <code>UIlabel</code> (IBOutlet <code>outLabel</code>) and a <code>UIButton</code> (IBAction <code>actButton</code>, title <code>Press Me!</code>)</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="5">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    outLabel.text = outTextField.text
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. Verify the label shows the contents of the text field when the button is pressed.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="7">
+<li>Use the Connections Inspector to break the IBOutlet connection for the text field.</li>
+</ol>
+<ol type="1" start="8">
+<li>Run the project. Verify the application crashes when the button is pressed. From the right panel in the debug area, read the error message. From the left panel in the debug area, expand <code>self</code> and note that <code>outTextField</code> has a value of nil.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="9">
+<li>Use the Assistant Editor and Connections Inspector to connect the IBOutlet <code>outTextField</code> to the text field.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging Technique - Logging" duration="15">
+        <p>In iOS development, print statements are used for logging to the debug area. Note that print statements should only be used when debugging.</p>
+<p><strong>Logging as an indicator</strong></p>
+<p>Use print statements as an indicator that a particular method has been called, or that one or more statements have been executed. The following print statement prints out the file name, method name and source code line number to the debug area when it is called.</p>
+<pre><code>print(#file, #function, #line)</code></pre>
+<p>For example, given the following piece of code:</p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+  }
+}</code></pre>
+<p>If we see the following in the debug area:</p>
+<pre>/Users/solar/Desktop/SampleProject/SampleProject/ViewController.swift viewDidLoad() 5</pre>
+<p>We can say that the following is true:</p>
+<ul>
+<li>the viewDidLoad method in the ViewController class was called</li>
+<li>statements belonging to the viewDidLoad method before and including line 5 were executed (i.e. lines 4 and 5 were executed)</li>
+</ul>
+<p><strong>Logging to print out values of variables</strong></p>
+<p>Use print statements to print out the value of one or more variables.</p>
+<p>For example, given the following piece of code:</p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(&#34;The text in the text field is \(outTextField.text!)&#34;)
+  }
+}</code></pre>
+<p>If we see the following in the debug area after we press the button:</p>
+<pre>The text in the text field is john</pre>
+<p>We can say that the following is true:</p>
+<ul>
+<li>the actButton IBAction method is called when the button is pressed, i.e. the button is connected to the actButton IBAction method</li>
+<li>the text in the text field is john</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Logging as an indicator" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Use the Connections Inspector to break the IBAction connection for the button.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="3">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;inside viewDidLoad&#34;)
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(&#34;inside actButton&#34;)
+    outLabel.text = outTextField.text
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. Verify nothing happens when the button is pressed. Verify in the debug area, the <code>inside viewDidLoad</code> statement appears, but the <code>inside actButton</code> statement does not appear, as shown below.</li>
+</ol>
+<pre>inside viewDidLoad</pre>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="5">
+<li>Use the Assistant Editor and Connections Inspector to connect the IBAction <code>actButton</code> to the button.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="6">
+<li>Change <code>actButton(_:)</code> to <code>actButton2(_:)</code>.</li>
+</ol>
+<ol type="1" start="7">
+<li>Run the project. Verify the application crashes when the button is pressed. Note the source file and line number where Xcode indicates the crash happened. From the right panel in the debug area, read the error message and note the explanation after <code>reason:</code></li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="8">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. Verify in the debug area the following output after the button is pressed. The line numbers may be different from what is shown, but should tally with your own code.</li>
+</ol>
+<pre>/Users/solaradmin/Desktop/SampleProject/SampleProject/ViewController.swift viewDidLoad() 8
+/Users/solaradmin/Desktop/SampleProject/SampleProject/ViewController.swift actButton(_:) 12</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Logging as an indicator" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Add a <code>UIPickerView</code> (IBOutlet <code>outPickerView</code>). </li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="3">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return 1
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return &#34;hello&#34;
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. Verify that nothing shows up in the picker view.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="5">
+<li>Update the code with the code shown below. Add the code in <code>viewDidLoad</code> to set the <code>delegate</code> and <code>dataSource</code> for <code>outPickerView</code>.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return 1
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return &#34;hello&#34;
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. Verify that one item shows up in the picker view.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="7">
+<li>Update the code with the code shown below. Add print statements in the protocol methods and change <code>pickerView(_:titleForRow:forComponent:)</code> to <code>pickerView(_:atitleForRow:forComponent:)</code></li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    print(#file, #function, #line)
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    print(#file, #function, #line)
+    return 1
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  atitleForRow row: Int, forComponent component: Int) -&gt; String? {
+    print(#file, #function, #line)
+    return &#34;hello&#34;
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project. Verify that a question mark shows up in the picker view.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="9">
+<li>Click on the yellow warning icon at <code>pickerView(_:atitleForRow:forComponent:)</code> and click on the <code>Fix</code> button next to <code>Rename to ‘pickerView(_:titleForRow:forComponent:)&#39; to satisfy this requirement</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c844becdac62c91c.png"></p>
+<p><strong>In the Project Navigator:</strong></p>
+<ol type="1" start="10">
+<li>Create <code>ViewControllerA</code> : <code>UIViewController</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="11">
+<li>Add a view controller to the right of ViewController. Do not set the class as ViewControllerA.</li>
+<li>In ViewController, add a UIButton (title <code>Segue to ViewControllerA</code>) and create a modal segue (presentation <code>Full Screen</code>) from that button to the new view controller.</li>
+</ol>
+<p><strong>In ViewControllerA:</strong></p>
+<ol type="1" start="13">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewControllerA: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+  }
+}</code></pre>
+<ol type="1" start="14">
+<li>Run the project. Verify the print statement in ViewControllerA is not shown in the debug area after <code>Segue to ViewControllerA</code> is pressed.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="15">
+<li>Set the class for the last added view controller as <code>ViewControllerA</code>.</li>
+</ol>
+<ol type="1" start="16">
+<li>Run the project. Verify the print statement in ViewControllerA is shown in the debug area after <code>Segue to ViewControllerA</code> is pressed.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Logging to print out values of variables" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the code with the code shown below. The expected behaviour for the updated code is that when the <code>Press Me!</code> button is pressed, the text from the text field will be appended to the array and displayed in the picker view.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = []
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+    if let text = outTextField.text {
+      items.append(text)
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    print(#file, #function, #line)
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    print(#file, #function, #line)
+    return items.count
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    print(#file, #function, #line)
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. Type <code>apple</code> into the text field and press the <code>Press Me!</code> button. Verify that the picker does not show <code>apple</code>.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="4">
+<li>Update the code with the code shown below. Add a print statement after the append statement to print out the contents of the <code>items</code> variable.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = []
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+    if let text = outTextField.text {
+      items.append(text)
+      print(items)
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    print(#file, #function, #line)
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    print(#file, #function, #line)
+    return items.count
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    print(#file, #function, #line)
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. Type <code>apple</code> into the text field and press the <code>Press Me!</code> button. Type <code>orange</code> into the text field and press the <code>Press Me!</code> button. Verify that the debug area shows that values are being appended into the <code>items</code> array each time.</li>
+</ol>
+<pre>[&#34;apple&#34;]
+[&#34;apple&#34;, &#34;orange&#34;]</pre>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="6">
+<li>Update the code with the code shown below. Add the code to reload the picker view after the recently added print statement.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = []
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(#file, #function, #line)
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    outLabel.text = outTextField.text
+    if let text = outTextField.text {
+      items.append(text)
+      print(items)
+      outPickerView.reloadAllComponents()
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    print(#file, #function, #line)
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    print(#file, #function, #line)
+    return items.count
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    print(#file, #function, #line)
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="7">
+<li>Run the project. Type <code>apple</code> into the text field and press the <code>Press Me!</code> button. Verify the picker shows <code>apple</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging Process" duration="15">
+        <p>The debugging process can be broken down into 5 parts:</p>
+<ol type="1" start="1">
+<li>Identify the steps to reproduce the error</li>
+<li>Reproduce the error</li>
+<li>Find / identify the code involved</li>
+<li>Fix the code</li>
+<li>Test that the error no longer exists</li>
+</ol>
+<p>Before a bug can be fixed, the developer must first be able to reproduce the bug. Otherwise,</p>
+<ul>
+<li>It may be difficult for the developer to find / identify the code involved</li>
+<li>After fixing the code, it may be difficult to test that the error no longer exists</li>
+</ul>
+<p>Hence, the first thing to do in the debugging process is to identify the steps to reproduce the bug. It is important to reproduce the bug using the least possible number of steps because that will help to zero in on where the error is.</p>
+<p>Once the developer knows the steps to reproduce the bug, the next thing to do is to reproduce the bug, and find the code which is causing the error. One of the techniques to find the faulty code is to read the error messages in the IDE. Other techniques include logging, and breakpoints and stepping.</p>
+<p>After understanding the cause of the error, the code needs to be fixed to address the error. When that is done, the code needs to be tested again to ensure that the bug no longer exists.</p>
+<p><strong>Reading error messages</strong></p>
+<p>Error messages in the IDE or the debug area may offer a hint about which line of code was being executed when the error occurred. Some error messages are easy to understand while some are not. The more errors you encounter and learn from, the easier it becomes to understand and fix the errors. At its best, understanding all the possible errors will help you avoid writing code which causes those errors in the first place.</p>
+<p>When it comes to reading error messages in Xcode, you need to look at the error messages in the editor window and also in the debug area. </p>
+<p><strong>Example 1</strong>: examine the following scenario where an application crashes:</p>
+<p class="image-container"><img style="width: 624.00px" src="img/ea0ec0c11ff2065c.png"></p>
+<p>The error indication on line 7 of the editor window says <code>Fatal error: Index out of range</code> but the information in the debug area seems to be referring to some Swift library files. In this case, the error indication on line 7 is much more helpful than the information in the debug area.</p>
+<p><strong>Example 2</strong>: In Activity 02 where we changed the name of the IBAction method from actButton to actButton2, the application appeared to have crashed in the AppDelegate class. It is unlikely that we introduced any errors to that class since we did not modify any code in the AppDelegate. The error indication in the editor window tallies with the information in the debug area though. They both identified there was an unrecognized selector called actButton being referenced in ViewController.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/1fdc753b09fa64ae.png"></p>
+<p>The point is that you cannot simply look at where the application crashes. You have to exercise some judgement in how you interpret the various error messages. The first few times you encounter an error message, it may not appear to make sense. You may have to Google for answers, or try to deduce the meaning of the error. Once you have the solution for a particular error, you can apply the same or similar solution the next time you see that same error.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Finding and fixing errors" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the code with the code shown below. Initialise the array with some values. Change the code in actButton(_:) to convert the text from the text field to a number, use that number as an index to get an item from the array, and display that item in the label.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = [&#34;apple&#34;, &#34;banana&#34;, &#34;orange&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    if let text = outTextField.text {
+      let num = Int(text)!
+      let item = items[num]
+      outLabel.text = item
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. Type <code>100</code> into the text field and press the <code>Press Me!</code> button. Verify the application crashes at the line after the String to Int conversion.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="4">
+<li>Update the code with the code shown below. Modify the code to conditionally execute the item retrieval and label update only if num is less than the array count.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = [&#34;apple&#34;, &#34;banana&#34;, &#34;orange&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    if let text = outTextField.text {
+      let num = Int(text)!
+      // ensures the number is within the range of valid values for the array index
+      if (num &lt; items.count) {
+        let item = items[num]
+        outLabel.text = item
+      }
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. Type <code>100</code> into the text field and press the <code>Press Me!</code> button. Verify the application does not crash.</li>
+<li>Type <code>one</code> into the text field and press the <code>Press Me!</code> button. Verify the application crashes at the line of code that does the String to Int conversion.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="7">
+<li>Update the code with the code shown below. Modify the code to conditionally execute the num check, item retrieval and label update only if the String to Int conversion was successful.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = [&#34;apple&#34;, &#34;banana&#34;, &#34;orange&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    print(#file, #function, #line)
+    if let text = outTextField.text {
+      // ensures the text in the text field can be converted to a number
+      if let num = Int(text) {
+        // ensures the number is within the range of valid values for the array index
+        if (num &lt; items.count) {
+          let item = items[num]
+          outLabel.text = item
+        }
+      }
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project. Type <code>one</code> into the text field and press the <code>Press Me!</code> button. Verify the application does not crash.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging Techniques - Using the IDE debugging tools" duration="15">
+        <p><a href="https://help.apple.com/xcode/mac/current/#/devda5478599" target="_blank">https://help.apple.com/xcode/mac/current/#/devda5478599</a></p>
+<p class="image-container"><img style="width: 624.00px" src="img/1832cb60a73926d1.png"></p>
+<p><strong>Breakpoints</strong></p>
+<p><a href="https://help.apple.com/xcode/mac/current/#/dev9a374afc9" target="_blank">https://help.apple.com/xcode/mac/current/#/dev9a374afc9</a></p>
+<p>A breakpoint allows you to pause the execution of the computer program so that you can examine the state of the program, machine, and related data up to that point of execution. You can then proceed to step through the code to evaluate the effects of subsequent code execution.</p>
+<p>You can set a breakpoint by clicking in the margin next to the line of code that you want to set a breakpoint. The breakpoint is indicated at the line number by a dark blue marker. Clicking on the breakpoint again disables the breakpoint, and the marker changes to a light blue color.</p>
+<p>You can use the <a href="https://help.apple.com/xcode/mac/current/#/dev1cf0a324f" target="_blank">Breakpoint navigator</a> to view, navigate, and manage all of the breakpoints in your project.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/a893df6d539e7fe0.png"></p>
+<p>When you run an application, the application will halt at the location of the breakpoint that you set. The next line of code to be executed will be highlighted in green.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/72e1e76aaf1d7d55.png"></p>
+<p><strong>Stepping through code</strong></p>
+<p>Computer programs execute exceedingly fast, and that often makes it hard to catch an error. By stepping through the program line by line, the programmer is able to analyse the consequences of executing each line of code, which makes it easier to uncover the bug.</p>
+<p>The debug bar in the debug area lets you <a href="https://help.apple.com/xcode/mac/current/#/dev2f7e98457" target="_blank">control the execution of your running app</a>. The debug area automatically opens when you build and run your app.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/c3d5caa6163e0a4a.png"></p>
+<p>There are 4 buttons that control program execution. From the left, the buttons are:</p>
+<ul>
+<li>Pause / continue execution - When the program is paused, pressing this button resumes execution of the program until the next breakpoint is reached. If there are no other breakpoints, the program runs as normal.</li>
+<li>Step over - Execute the next statement, and pause. If the next statement calls a function, run the whole function and pause after returning from it. Will not step into the function the way step into does.</li>
+<li>Step into - Execute the next statement, and pause. If the next statement calls a function, go into the function and pause before executing the first statement in the function.</li>
+<li>Step out - Execute the rest of the current function and pause in the function that called this one.</li>
+</ul>
+<p><strong>Inspecting variable values</strong></p>
+<p>Variables are used extensively in any computer program, and for many bugs, the error comes as a result of an uninitialised variable, a variable holding an incorrect value, a variable being used incorrectly, using an incorrect variable, etc. Inspecting the value of a variable can help uncover a bug when you have a good idea what the value of the variable should be, as opposed to what the value of the variable is.</p>
+<p>You can <a href="https://help.apple.com/xcode/mac/current/#/dev9de24d52b" target="_blank">inspect a variable value</a> in the variables view (the left panel) of the debug area of Xcode.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/72e1e76aaf1d7d55.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - Breakpoints and stepping" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the code with the code shown below. We are reverting the code back to the code used at the start of Activity 5 before we fixed the bugs.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = [&#34;apple&#34;, &#34;banana&#34;, &#34;orange&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    if let text = outTextField.text {
+      let num = Int(text)!
+      let item = items[num]
+      outLabel.text = item
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. Type <code>100</code> into the text field and press the <code>Press Me!</code> button. Verify the application crashes at the line after the String to Int conversion.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="4">
+<li>Put a breakpoint at the first line of code in the actButton(_:) method.</li>
+</ol>
+<ol type="1" start="5">
+<li>Run the project. Type <code>0</code> into the text field and press the <code>Press Me!</code> button. Verify the application pauses execution at the breakpoint. </li>
+<li>Press the continue execution button. Verify the application continues execution.</li>
+<li>Press the <code>Press Me!</code> button. Verify the application pauses execution at the breakpoint. </li>
+<li>Press the step over button. Verify the application continues to the next line of code.</li>
+<li>Inspect the values of <code>text</code>, <code>num</code> and <code>item</code> as you step through the code until the nearest closing bracket.</li>
+<li>Type <code>100</code> into the text field and press the <code>Press Me!</code> button. Verify the application pauses execution at the breakpoint. </li>
+<li>Press the step over button until the application crashes. Verify that the application crashes at the line where the item is being retrieved from the array.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 7 - Step over, step into and step out" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject</code>.</li>
+</ol>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the code with the code shown below. Add the testFunction() method, and the calls to testFunction() in viewDidLoad. We will use this code to illustrate the behaviour of step over, step into and step out.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  var items : [String] = [&#34;apple&#34;, &#34;banana&#34;, &#34;orange&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outPickerView.delegate = self
+    outPickerView.dataSource = self
+    testFunction()
+    testFunction()
+  }
+
+  func testFunction() {
+    print(&#34;this is a test function&#34;)
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    if let text = outTextField.text {
+      let num = Int(text)!
+      let item = items[num]
+      outLabel.text = item
+    }
+  }
+  
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>In viewDidLoad(), put a breakpoint at the first call to testFunction().</li>
+<li>Run the project. Press the step over button. Verify the application continues to the next line of code within viewDidLoad(). Press the step over button again. Verify the application continues to the next line of code within viewDidLoad().</li>
+<li>Run the project. Press the step into button. Verify the application continues to the first line of code in testFunction(). Press the step over button twice. Verify the application continues to the second call to testFunction() in viewDidLoad().</li>
+<li>Run the project. Press the step into button. Verify the application continues to the first line of code in testFunction(). Press the step out button. Verify the application continues to the second call to testFunction() in viewDidLoad().</li>
+<li>Press the step out button. Verify the application steps out to machine language code in the iOS library. Press the continue execution button. Verify the application continues execution.</li>
+<li>Put some additional breakpoints in ViewController and view all the breakpoints via the Breakpoint Navigator.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Common Xcode error messages" duration="15">
+        <pre>Terminating app due to uncaught exception &#39;NSInvalidArgumentException&#39;,
+reason: &#39;-[SampleProject302.ViewController actButton:]: unrecognized
+selector sent to instance 0x7f93b8fa94a0&#39;</pre>
+<p>A selector is approximately equivalent to a method. An unrecognized selector error message means that a method was called on an object, but that object did not have that method. For the example above, it means that the actButton(_:) method was called on the ViewController object, but the ViewController object did not have a actButton(_:) method.</p>
+<pre>Terminating app due to uncaught exception &#39;NSUnknownKeyException&#39;, 
+reason: &#39;[&lt;SampleProject302.ViewController 0x7f9f00d1ebd0&gt; 
+setValue:forUndefinedKey:]: this class is not key value coding-compliant 
+for the key outLabel.&#39;</pre>
+<p>This error message happens when a user interface object has a reference to an IBOutlet property that does not exist. For the example above, there was a UILabel with a referencing outlet to an IBOutlet property called outLabel. However, in the corresponding view controller class, the IBOutlet property did not exist.</p>
+<pre>2016-04-24 23:15:21.918 SampleProject302[5085:415959] Failed to instantiate 
+the default view controller for UIMainStoryboardFile &#39;Main&#39; - perhaps the 
+designated entry point is not set?</pre>
+<p>This error message happens when there is no view controller in Main.storyboard set as the initial view controller.</p>
+<pre>Terminating app due to uncaught exception &#39;NSInternalInconsistencyException&#39;, 
+reason: &#39;unable to dequeue a cell with identifier reuseIdentifier - must 
+register a nib or a class for the identifier or connect a prototype cell in 
+a storyboard&#39;</pre>
+<p>This error message happens when you try to dequeue a UITableViewCell object with a particular identifier but that identifier has not been correspondingly set in Interface Builder. Ensure that the identifier set in Interface Builder is a case-sensitive match for the identifier used in the code.</p>
+<pre>Terminating app due to uncaught exception &#39;NSInvalidArgumentException&#39;, 
+reason: &#39;Receiver (&lt;SampleProject302.TableViewController: 0x7fad53e1b580&gt;) 
+has no segue with identifier &#39;next&#39;&#39;</pre>
+<p>This error message happens when you try to perform a segue with a particular identifier but that identifier has not been correspondingly set in Interface Builder. Ensure that the identifier set in Interface Builder is a case-sensitive match for the identifier used in the code.</p>
+<pre>fatal error: Index out of range</pre>
+<p>This error message happens when you try to access an element in an array with an index which is outside the acceptable index values for the array.</p>
+<pre>fatal error: unexpectedly found nil while unwrapping an Optional value</pre>
+<p>This error message happens when you try to unwrap an optional which has a nil value. Always remember to check for nil before unwrapping an Optional, or to perform optional binding.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Common iOS programming errors" duration="10">
+        <p>Check that the view controller object in interface builder has been tied to the correct class via the identity inspector.</p>
+<p>Check that the user interface objects have referencing outlets to IBOutlet properties that exist, and that the sent events are tied to IBAction methods that exist. Be especially careful to ensure that the case-sensitive spelling is exactly correct.</p>
+<p>Similarly, check that the connection between the user interface objects and the IBOutlet properties and IBAction methods really exist as you expected. Check the connections inspector for the user interface object and / or for the view controller object. Another way to do this is to look at the properties and method definitions in the code. If the property or action has been connected to a user interface element in Main.storyboard, there should be a dark grey circle next to the property declaration or method definition. Clicking on that dark grey circle shows the corresponding user interface object. If the circle is not filled, it means there is no existing connection.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UISplitViewController and template code</li>
+</ul>
+<p><strong>Reference docs</strong></p>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Computer_program" target="_blank">http://en.wikipedia.org/wiki/Computer_program</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Debugging" target="_blank">http://en.wikipedia.org/wiki/Debugging</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Logfile" target="_blank">http://en.wikipedia.org/wiki/Logfile</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Breakpoint" target="_blank">http://en.wikipedia.org/wiki/Breakpoint</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Program_animation" target="_blank">http://en.wikipedia.org/wiki/Program_animation</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Syntax_error" target="_blank">http://en.wikipedia.org/wiki/Syntax_error</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Logic_error" target="_blank">http://en.wikipedia.org/wiki/Logic_error</a></li>
+<li><a href="https://help.apple.com/xcode/mac/current/#/devda5478599" target="_blank">https://help.apple.com/xcode/mac/current/#/devda5478599</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

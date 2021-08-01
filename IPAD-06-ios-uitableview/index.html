@@ -1,0 +1,181 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UITableView</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="06-ios-uitableview"
+                  title="UITableView"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>Summary for UITableView, UITableViewDataSource, UITableViewDelegate and UITableViewController</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableView" duration="0">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitableview" target="_blank">https://developer.apple.com/documentation/uikit/uitableview</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UITableView</li>
+</ul>
+<p><strong>UITableView</strong></p>
+<ul>
+<li>Display a single column of vertically scrolling content divided into rows. </li>
+<li>Each row contains one piece of your app&#39;s content. </li>
+<li>Table displays a single long list of rows, or related rows can be grouped into sections.</li>
+</ul>
+<p><strong>Properties</strong></p>
+<p><code>var dataSource: UITableViewDataSource?</code></p>
+<p>The object that acts as the data source of the table view.</p>
+<p><code>var delegate: UITableViewDelegate?</code></p>
+<p>The object that acts as the delegate of the table view.</p>
+<p><strong>Methods</strong></p>
+<p><code>func dequeueReusableCell(withIdentifier: String, for: IndexPath) -&gt; UITableViewCell</code></p>
+<p>Returns a reusable table-view cell object for the specified reuse identifier and adds it to the table.</p>
+<p><code>func dequeueReusableCell(withIdentifier: String) -&gt; UITableViewCell?</code></p>
+<p>Returns a reusable table-view cell object located by its identifier.</p>
+<p><code>func cellForRow(at: IndexPath) -&gt; UITableViewCell?</code></p>
+<p>Returns the table cell at the specified index path.</p>
+<p><code>var indexPathForSelectedRow: IndexPath?</code></p>
+<p>An index path identifying the row and section of the selected row.</p>
+<p><code>var indexPathsForSelectedRows: [IndexPath]?</code></p>
+<p>The index paths representing the selected rows.</p>
+<p><code>func selectRow(at: IndexPath?, animated: Bool, scrollPosition: UITableView.ScrollPosition)</code></p>
+<p>Selects a row in the table view identified by index path, optionally scrolling the row to a location in the table view.</p>
+<p><code>func deselectRow(at: IndexPath, animated: Bool)</code></p>
+<p>Deselects a given row identified by index path, with an option to animate the deselection.</p>
+<p><code>func insertRows(at: [IndexPath], with: UITableView.RowAnimation)</code></p>
+<p>Inserts rows in the table view at the locations identified by an array of index paths, with an option to animate the insertion.</p>
+<p><code>func deleteRows(at: [IndexPath], with: UITableView.RowAnimation)</code></p>
+<p>Deletes the rows specified by an array of index paths, with an option to animate the deletion.</p>
+<p><code>func reloadData()</code></p>
+<p>Reloads the rows and sections of the table view.</p>
+<p><code>func reloadRows(at: [IndexPath], with: UITableView.RowAnimation)</code></p>
+<p>Reloads the specified rows using a given animation effect.</p>
+<p><code>func scrollToRow(at: IndexPath, at: UITableView.ScrollPosition, animated: Bool)</code></p>
+<p>Scrolls through the table view until a row identified by index path is at a particular location on the screen.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableViewDataSource" duration="0">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitableviewdatasource" target="_blank">https://developer.apple.com/documentation/uikit/uitableviewdatasource</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UITableViewDataSource</li>
+</ul>
+<p><strong>UITableViewDataSource</strong></p>
+<ul>
+<li>Methods for managing data for the table view and provides cells for the table view.</li>
+</ul>
+<p><strong>Methods</strong></p>
+<p><code>func tableView(UITableView, numberOfRowsInSection: Int) -&gt; Int</code></p>
+<p>Tells the data source to return the number of rows in a given section of a table view.</p>
+<p><code>func numberOfSections(in: UITableView) -&gt; Int</code></p>
+<p>Asks the data source to return the number of sections in the table view.</p>
+<p><code>func tableView(UITableView, cellForRowAt: IndexPath) -&gt; UITableViewCell</code></p>
+<p>Asks the data source for a cell to insert in a particular location of the table view.</p>
+<p><code>func tableView(UITableView, titleForHeaderInSection: Int) -&gt; String?</code></p>
+<p>Asks the data source for the title of the header of the specified section of the table view.</p>
+<p><code>func tableView(UITableView, titleForFooterInSection: Int) -&gt; String?</code></p>
+<p>Asks the data source for the title of the footer of the specified section of the table view.</p>
+<p><code>func tableView(UITableView, commit: UITableViewCell.EditingStyle, forRowAt: IndexPath)</code></p>
+<p>Asks the data source to commit the insertion or deletion of a specified row in the receiver.</p>
+<p><code>func tableView(UITableView, canEditRowAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the data source to verify that the given row is editable.</p>
+<p><code>func tableView(UITableView, canMoveRowAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the data source whether a given row can be moved to another location in the table view.</p>
+<p><code>func tableView(UITableView, moveRowAt: IndexPath, to: IndexPath)</code></p>
+<p>Tells the data source to move a row at a specific location in the table view to another location.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableViewDelegate" duration="0">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitableviewdelegate" target="_blank">https://developer.apple.com/documentation/uikit/uitableviewdelegate</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UITableViewDelegate</li>
+</ul>
+<p><strong>UITableViewDelegate</strong></p>
+<ul>
+<li>Methods for managing selection and highlighting.</li>
+</ul>
+<p><strong>Methods</strong></p>
+<p><code>func tableView(UITableView, willSelectRowAt: IndexPath) -&gt; IndexPath?</code></p>
+<p>Tells the delegate a row is about to be selected.</p>
+<p><code>func tableView(UITableView, didSelectRowAt: IndexPath)</code></p>
+<p>Tells the delegate a row is selected.</p>
+<p><code>func tableView(UITableView, willDeselectRowAt: IndexPath) -&gt; IndexPath?</code></p>
+<p>Tells the delegate that a specified row is about to be deselected.</p>
+<p><code>func tableView(UITableView, didDeselectRowAt: IndexPath)</code></p>
+<p>Tells the delegate that the specified row is now deselected.</p>
+<p><code>func tableView(UITableView, shouldHighlightRowAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the delegate if the specified row should be highlighted.</p>
+<p><code>func tableView(UITableView, didHighlightRowAt: IndexPath)</code></p>
+<p>Tells the delegate that the specified row was highlighted.</p>
+<p><code>func tableView(UITableView, didUnhighlightRowAt: IndexPath)</code></p>
+<p>Tells the delegate that the highlight was removed from the row at the specified index path.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableViewController" duration="0">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitableviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uitableviewcontroller</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UITableViewController</li>
+</ul>
+<p><strong>UITableViewController</strong></p>
+<ul>
+<li>A view controller that specializes in managing a table view.</li>
+</ul>
+<p><strong>Properties</strong></p>
+<p><code>var tableView: UITableView!</code></p>
+<p>Returns the table view managed by the controller object.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

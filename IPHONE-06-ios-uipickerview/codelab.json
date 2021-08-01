@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-24T16:52:28Z",
+  "id": "06-ios-uipickerview",
+  "duration": 205,
+  "title": "UIDatePicker and UIPickerView",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to use UIDatePicker and UIPickerView",
+  "source": "16rgzGobCmbhSxyfrbROBF-Hw56iC6dSmmbn1RUb10Sk",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "06-ios-uipickerview"
+}

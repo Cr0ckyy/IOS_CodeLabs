@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-01-15T18:03:59Z",
+  "id": "10-ios-uitabbarcontroller-singleton",
+  "duration": 130,
+  "title": "UITabBarController and singleton pattern",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn about UITabBarController and the singleton pattern",
+  "source": "12e0qjc3U9wYvtwJrywBQrDKWaBJmCylpq3p-uHoekhc",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "10-ios-uitabbarcontroller-singleton"
+}

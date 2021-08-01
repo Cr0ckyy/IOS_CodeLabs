@@ -1,0 +1,895 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>iOS Notifications</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="12-ios-notifications"
+                  title="iOS Notifications"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Explain how user notifications are used to communicate important information to users regardless of whether the app is running</li>
+<li>Use the User Notifications framework to configure, schedule, respond and cancel local notifications</li>
+<li>Create and respond to actionable notifications which are presented to the user</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UserNotifications" duration="5">
+        <p><a href="https://developer.apple.com/documentation/usernotifications" target="_blank">https://developer.apple.com/documentation/usernotifications</a></p>
+<p>User-facing notifications communicate important information to users of your app, regardless of whether your app is running on the user&#39;s device. For example, a sports app can let the user know when their favorite team scores. Notifications can also tell your app to download information and update its interface.</p>
+<p>Notifications can</p>
+<ul>
+<li>display an alert</li>
+<li>play a sound</li>
+<li>badge the app&#39;s icon</li>
+</ul>
+<p>The notification interface is displayed</p>
+<ul>
+<li>on the lock screen, and</li>
+<li>on the Home screen of an iOS device</li>
+</ul>
+<p>You can generate notifications locally from your app or remotely from a server that you manage:</p>
+<ul>
+<li>for local notifications, the app creates the notification content and specifies a condition, like a time or location, that triggers the delivery of the notification.</li>
+<li>for remote notifications (also known as push notifications), you use one of your company&#39;s servers to generate notifications, and Apple Push Notification service (APNs) handles the delivery of those notifications to the user&#39;s devices.</li>
+</ul>
+<p>Use this framework to:</p>
+<ul>
+<li>define the types of notifications that your app supports</li>
+<li>define any custom actions associated with your notification types</li>
+<li>schedule local notifications for delivery</li>
+<li>process already delivered notifications</li>
+<li>respond to user-selected actions</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Asking Permission to Use Notifications" duration="10">
+        <p><a href="https://developer.apple.com/documentation/usernotifications/asking_permission_to_use_notifications" target="_blank">https://developer.apple.com/documentation/usernotifications/asking_permission_to_use_notifications</a></p>
+<p>Local and remote notifications get the user&#39;s attention by displaying an alert, playing sounds, or badging your app&#39;s icon. These interactions occur when your app isn&#39;t running or is in the background. They let users know that your app has relevant information for them to view. Because the user might consider notification-based interactions disruptive, you must obtain permission to use them.</p>
+<p><strong>Request permission to display alerts, play sounds, or badge the app&#39;s icon in response to a notification.</strong></p>
+<p>Request the user to authorise notifications in the <code>application(_:didFinishLaunchingWithOptions:)</code> method in the <code>AppDelegate</code>. Get the shared <code>UNUserNotificationCenter</code> instance and call its <code>requestAuthorization(options:completionHandler:)</code> method. Specify all of the interaction types that your app employs. For example, you can request authorization to display alerts, add a badge to the app icon, or play sounds:</p>
+<pre><code>import UIKit
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+      if let error = error {
+        // Handle the error here.
+      }
+      // Enable or disable features based on the authorization.
+    }
+    
+    return true
+  }
+}</code></pre>
+<p>The first time your app makes this authorization request, the system prompts the user to grant or deny the request and records the user&#39;s response. Subsequent authorization requests don&#39;t prompt the user.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 01 - Asking Permission to Use Notifications" duration="5">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>AppDelegate.swift</strong></p>
+<ol type="1" start="2">
+<li>Request the user to authorise notifications for the app by updating the <code>application(_:didFinishLaunchingWithOptions:)</code> method.</li>
+</ol>
+<pre><code>import UIKit
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+      if let error = error {
+        // Handle the error here.
+      }
+      // Enable or disable features based on the authorization.
+    }
+    
+    return true
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application on an iPhone simulator; the authorisation dialog appears. Press <strong>Allow</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/233892657e1c6cd1.png"></p>
+<ol type="1" start="4">
+<li>Re-run the application from Xcode; the authorisation dialog no longer appears.        </li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Scheduling a Notification Locally from Your App" duration="10">
+        <p><a href="https://developer.apple.com/documentation/usernotifications/scheduling_a_notification_locally_from_your_app" target="_blank">https://developer.apple.com/documentation/usernotifications/scheduling_a_notification_locally_from_your_app</a></p>
+<p><strong>Local Notifications</strong></p>
+<p>Use local notifications to get the user&#39;s attention. You can display an alert, play a sound, or badge your app&#39;s icon. For example, a background app could ask the system to display an alert when a particular task is finished. Always use local notifications to convey important information that the user wants.</p>
+<p>The delivery of notifications is handled by the system, based on a time or location that you specify. If the delivery of the notification occurs when your app is not running or in the background, the system interacts with the user for you. If your app is in the foreground, the system delivers the notification to your app for handling.</p>
+<p><strong>Check authorization status</strong></p>
+<p>Always check your app&#39;s authorization status before scheduling local notifications. Users can change your app&#39;s authorization settings at any time. They can also change the type of interactions allowed by your app—which may cause you to alter the number or type of notifications your app sends.</p>
+<p>Call the notification center&#39;s <code>getNotificationSettings(completionHandler:)</code> method to get the current notification settings and schedule notifications only if the app is authorized.</p>
+<pre><code>// get the UNUserNotificationCenter object
+let center = UNUserNotificationCenter.current()
+center.getNotificationSettings { settings in
+  guard (settings.authorizationStatus == .authorized) else {
+    return
+  }
+  // schedule a notification
+}</code></pre>
+<p><strong>Scheduling a Notification Locally from Your App</strong></p>
+<ol type="1" start="1">
+<li>Create the notification&#39;s content by creating and configuring a <code>UNMutableNotificationContent</code> object.</li>
+<li>Specify the conditions for delivery by creating a <code>UNCalendarNotificationTrigger</code>, <code>UNTimeIntervalNotificationTrigger</code>, or <code>UNLocationNotificationTrigger</code> object.</li>
+<li>Create and register a notification request by creating a <code>UNNotificationRequest</code> object that includes your content and trigger conditions, and call the <code>add(_:withCompletionHandler:)</code> method to schedule your request with the system.</li>
+</ol>
+<p><strong>UNMutableNotificationContent</strong></p>
+<p><a href="https://developer.apple.com/documentation/usernotifications/unmutablenotificationcontent" target="_blank">https://developer.apple.com/documentation/usernotifications/unmutablenotificationcontent</a></p>
+<p><code>UNMutableNotificationContent</code> properties:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>var title: String</code></p>
+</td><td colspan="1" rowspan="1"><p>The localized title, containing the reason for the alert.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var subtitle: String</code></p>
+</td><td colspan="1" rowspan="1"><p>The localized subtitle, containing a secondary description of the reason for the alert.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var body: String</code></p>
+</td><td colspan="1" rowspan="1"><p>The localized message to display in the notification alert.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var badge: NSNumber?</code></p>
+</td><td colspan="1" rowspan="1"><p>The number to apply to the app&#39;s icon.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var sound: UNNotificationSound?</code></p>
+</td><td colspan="1" rowspan="1"><p>The sound to play when the notification is delivered.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var launchImageName: String</code></p>
+</td><td colspan="1" rowspan="1"><p>The name of the custom launch image to display when your app is launched in response to the notification.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var userInfo: [AnyHashable : Any]</code></p>
+</td><td colspan="1" rowspan="1"><p>A dictionary of custom information associated with the notification.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>var attachments: [UNNotificationAttachment]</code></p>
+</td><td colspan="1" rowspan="1"><p>An array of attachments to display in an alert-based notification.</p>
+</td></tr>
+</table>
+<p><strong>UNNotificationRequest</strong></p>
+<p><a href="https://developer.apple.com/documentation/usernotifications/unnotificationrequest" target="_blank">https://developer.apple.com/documentation/usernotifications/unnotificationrequest</a></p>
+<p>Providing an identifier for the <code>UNNotificationRequest</code> object gives you a way to identify local notifications after they have been scheduled. You can use identifiers to look up pending requests later and to cancel them before they are delivered.</p>
+<p><strong>Example</strong></p>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // get the UNUserNotificationCenter object
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { settings in
+      guard (settings.authorizationStatus == .authorized) else {
+        return
+      }
+      
+      // schedule a notification
+      
+      // Create the notification&#39;s content by creating and configuring a
+      // UNMutableNotificationContent object.
+      let meetingID = &#34;WSM_TUE_2PM&#34;
+      let userID = &#34;david_tan&#34;
+      
+      let content = UNMutableNotificationContent()
+      content.title = &#34;Weekly Staff Meeting&#34;
+      content.body = &#34;Every Tuesday at 2pm&#34;
+      content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                          &#34;USER_ID&#34; : userID ]
+      content.sound = UNNotificationSound.default
+      content.badge = 1
+      
+      // Specify the conditions for delivery by creating a
+      // UNCalendarNotificationTrigger, UNTimeIntervalNotificationTrigger, or
+      // UNLocationNotificationTrigger object.
+      
+      // create a trigger to fire once in 10 seconds
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10,
+                                                      repeats:false)
+      
+      // Create and register a notification request by creating a
+      // UNNotificationRequest object that includes your content and trigger
+      // conditions, and call the add(_:withCompletionHandler:) method to
+      // schedule your request with the system.
+      let uuidString = UUID().uuidString
+      let request = UNNotificationRequest(identifier: uuidString,
+                                          content: content, trigger: trigger)
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.add(request) { (error) in
+        if error != nil {
+          // Handle any errors.
+        }
+      }
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 02 - Scheduling a Notification Locally from Your App" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject</strong>.</li>
+</ol>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // get the UNUserNotificationCenter object
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { settings in
+      guard (settings.authorizationStatus == .authorized) else {
+        return
+      }
+      
+      // schedule a notification
+      
+      // Create the notification&#39;s content by creating and configuring a
+      // UNMutableNotificationContent object.
+      let meetingID = &#34;WSM_TUE_2PM&#34;
+      let userID = &#34;david_tan&#34;
+      
+      let content = UNMutableNotificationContent()
+      content.title = &#34;Weekly Staff Meeting&#34;
+      content.body = &#34;Every Tuesday at 2pm&#34;
+      content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                          &#34;USER_ID&#34; : userID ]
+      content.sound = UNNotificationSound.default
+      content.badge = 1
+      
+      // Specify the conditions for delivery by creating a
+      // UNCalendarNotificationTrigger, UNTimeIntervalNotificationTrigger, or
+      // UNLocationNotificationTrigger object.
+      
+      // create a trigger to fire once in 10 seconds
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10,
+                                                      repeats:false)
+      
+      // Create and register a notification request by creating a
+      // UNNotificationRequest object that includes your content and trigger
+      // conditions, and call the add(_:withCompletionHandler:) method to
+      // schedule your request with the system.
+      let uuidString = UUID().uuidString
+      let request = UNNotificationRequest(identifier: uuidString,
+                                          content: content, trigger: trigger)
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.add(request) { (error) in
+        if error != nil {
+          // Handle any errors.
+        }
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application on an iPhone simulator</li>
+<li>Press <strong>Cmd-Shift-H</strong> to go to the Home Screen</li>
+<li>A notification banner should eventually appear</li>
+<li>A notification sound should be played</li>
+<li>The App icon should be badged with the number 1</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a4a9ae3ac1f6d274.png"></p>
+<ol type="1" start="8">
+<li> To achieve the same result using <code>UNCalendarNotificationTrigger</code>:</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // get the UNUserNotificationCenter object
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { settings in
+      guard (settings.authorizationStatus == .authorized) else {
+        return
+      }
+      
+      // schedule a notification
+      
+      // Create the notification&#39;s content by creating and configuring a
+      // UNMutableNotificationContent object.
+      let meetingID = &#34;WSM_TUE_2PM&#34;
+      let userID = &#34;david_tan&#34;
+      
+      let content = UNMutableNotificationContent()
+      content.title = &#34;Weekly Staff Meeting&#34;
+      content.body = &#34;Every Tuesday at 2pm&#34;
+      content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                          &#34;USER_ID&#34; : userID ]
+      content.sound = UNNotificationSound.default
+      content.badge = 1
+      
+      // Specify the conditions for delivery by creating a
+      // UNCalendarNotificationTrigger, UNTimeIntervalNotificationTrigger, or
+      // UNLocationNotificationTrigger object.
+      
+      // create a trigger to fire once in 10 seconds
+      // current date and time plus 10 seconds
+      let date = Date().addingTimeInterval(TimeInterval(10))
+      // break the date and time into date components
+      let calendar = Calendar.current
+      let dateComponents = calendar.dateComponents(
+        [.year, .month, .day,
+         .hour, .minute, .second],
+        from: date)
+      // create a calendar notification trigger
+      let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents,
+                                                  repeats: false)
+
+      // Create and register a notification request by creating a
+      // UNNotificationRequest object that includes your content and trigger
+      // conditions, and call the add(_:withCompletionHandler:) method to
+      // schedule your request with the system.
+      let uuidString = UUID().uuidString
+      let request = UNNotificationRequest(identifier: uuidString,
+                                          content: content, trigger: trigger)
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.add(request) { (error) in
+        if error != nil {
+          // Handle any errors.
+        }
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the application on an iPhone simulator and verify that the behaviour is the same</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Actionable Notifications" duration="10">
+        <p><a href="https://developer.apple.com/documentation/usernotifications/declaring_your_actionable_notification_types" target="_blank">https://developer.apple.com/documentation/usernotifications/declaring_your_actionable_notification_types</a></p>
+<p>Actionable notifications let the user respond to a delivered notification without launching the corresponding app. For an actionable notification, the system displays one or more buttons in addition to the notification interface. Tapping a button sends the selected action to the app, which then processes the action in the background.</p>
+<p>To support actionable notifications, you must:</p>
+<ul>
+<li>Declare your custom actions and notification categories in the <code>application(_:didFinishLaunchingWithOptions:)</code> method in the <code>AppDelegate</code></li>
+<li>Handle all actions that have been registered (see the section after Activity 03)</li>
+<li>Assign a registered notification category identifier to the <code>UNMutableNotificationContent</code> object</li>
+</ul>
+<p><strong>Declare Your Custom Actions and Notification Categories</strong></p>
+<ol type="1" start="1">
+<li>Define the custom actions, which are <code>UNNotificationAction</code> objects</li>
+<li>Define the notification categories, which are <code>UNNotificationCategory</code> objects; each object specifies the array of <code>UNNotificationAction</code> objects associated with it</li>
+<li>Register the notification categories</li>
+</ol>
+<p>The example below shows the registration of one notification category which has two custom actions.</p>
+<pre><code>// Define the custom actions
+let acceptAction = UNNotificationAction(identifier: &#34;ACCEPT_ACTION&#34;,
+                                        title: &#34;Accept&#34;,
+                                        options: UNNotificationActionOptions(rawValue: 0))
+let declineAction = UNNotificationAction(identifier: &#34;DECLINE_ACTION&#34;,
+                                         title: &#34;Decline&#34;,
+                                         options: UNNotificationActionOptions(rawValue: 0))
+// Define the notification category
+let meetingInviteCategory =
+  UNNotificationCategory(identifier: &#34;MEETING_INVITATION&#34;,
+                         actions: [acceptAction, declineAction],
+                         intentIdentifiers: [],
+                         hiddenPreviewsBodyPlaceholder: &#34;&#34;,
+                         options: .customDismissAction)
+// Register the notification categories
+let notificationCenter = UNUserNotificationCenter.current()
+notificationCenter.setNotificationCategories([meetingInviteCategory])</code></pre>
+<aside class="warning"><p><strong>Warning</strong></p>
+<p>All of your action objects must have unique identifiers. When handling actions, the identifier is the only way to distinguish one action from another, even when those actions belong to different categories.</p>
+</aside>
+<p><strong>Assign a registered notification category identifier to the UNMutableNotificationContent object</strong></p>
+<p>The system displays actions only for notifications whose <code>categoryIdentifier</code> property contains a valid category identifier string. The system uses the <code>categoryIdentifier</code> to look up your app&#39;s registered categories and their associated actions. It then uses that information to add the action buttons to the notification interface.</p>
+<p>To assign a category to a local notification, assign the appropriate string to the <code>categoryIdentifier</code> property of your <code>UNMutableNotificationContent</code> object. </p>
+<pre><code>let meetingID = &#34;WSM_TUE_2PM&#34;
+let userID = &#34;david_tan&#34;
+
+let content = UNMutableNotificationContent()
+content.title = &#34;Weekly Staff Meeting&#34;
+content.body = &#34;Every Tuesday at 2pm&#34;
+content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                    &#34;USER_ID&#34; : userID ]
+content.categoryIdentifier = &#34;MEETING_INVITATION&#34;
+content.sound = UNNotificationSound.default
+content.badge = 1</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 03 - Actionable Notifications" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject</strong>.</li>
+</ol>
+<p><strong>AppDelegate.swift</strong></p>
+<ol type="1" start="2">
+<li>Modify <code>application(_:didFinishLaunchingWithOptions:)</code> to create two notification actions and one notification category, and register the notification category with the <code>UNUserNotificationCenter</code>.</li>
+</ol>
+<pre><code>import UIKit
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+      if let error = error {
+        // Handle the error here.
+      }
+      // Enable or disable features based on the authorization.
+      
+      // Define the custom actions
+      let acceptAction = UNNotificationAction(identifier: &#34;ACCEPT_ACTION&#34;,
+                                              title: &#34;Accept&#34;,
+                                              options: UNNotificationActionOptions(rawValue: 0))
+      let declineAction = UNNotificationAction(identifier: &#34;DECLINE_ACTION&#34;,
+                                               title: &#34;Decline&#34;,
+                                               options: UNNotificationActionOptions(rawValue: 0))
+      // Define the notification category
+      let meetingInviteCategory =
+        UNNotificationCategory(identifier: &#34;MEETING_INVITATION&#34;,
+                               actions: [acceptAction, declineAction],
+                               intentIdentifiers: [],
+                               hiddenPreviewsBodyPlaceholder: &#34;&#34;,
+                               options: .customDismissAction)
+      // Register the notification categories
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.setNotificationCategories([meetingInviteCategory])
+    }
+    
+    return true
+  }
+}</code></pre>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="3">
+<li>Modify <code>viewDidLoad()</code> to set the categoryIdentifier property for the <code>UNMutableNotificationContent</code> object. Revert back to the <code>UNTimeIntervalNotificationTrigger</code> code which is shorter.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // get the UNUserNotificationCenter object
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { settings in
+      guard (settings.authorizationStatus == .authorized) else {
+        return
+      }
+      
+      // schedule a notification
+      
+      // Create the notification&#39;s content by creating and configuring a
+      // UNMutableNotificationContent object.
+      let meetingID = &#34;WSM_TUE_2PM&#34;
+      let userID = &#34;david_tan&#34;
+       
+      let content = UNMutableNotificationContent()
+      content.title = &#34;Weekly Staff Meeting&#34;
+      content.body = &#34;Every Tuesday at 2pm&#34;
+      content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                          &#34;USER_ID&#34; : userID ]
+      content.categoryIdentifier = &#34;MEETING_INVITATION&#34;
+      content.sound = UNNotificationSound.default
+      content.badge = 1
+      
+      // Specify the conditions for delivery by creating a
+      // UNCalendarNotificationTrigger, UNTimeIntervalNotificationTrigger, or
+      // UNLocationNotificationTrigger object.
+      
+      // create a trigger to fire once in 10 seconds
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10,
+                                                      repeats:false)
+      
+      // Create and register a notification request by creating a
+      // UNNotificationRequest object that includes your content and trigger
+      // conditions, and call the add(_:withCompletionHandler:) method to
+      // schedule your request with the system.
+      let uuidString = UUID().uuidString
+      let request = UNNotificationRequest(identifier: uuidString,
+                                          content: content, trigger: trigger)
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.add(request) { (error) in
+        if error != nil {
+          // Handle any errors.
+        }
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the application on an iPhone simulator</li>
+<li>Press <strong>Cmd-Shift-H</strong> to go to the Home Screen</li>
+<li>A notification banner should eventually appear</li>
+<li>Drag down on the notification. The actionable notification buttons appear.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9d5c401d20bab329.png"></p>
+<ol type="1" start="8">
+<li>Run the application on an iPhone simulator</li>
+<li>Press <strong>Cmd-Shift-H</strong> to go to the Home Screen</li>
+<li>Press <strong>Cmd-L</strong> to lock the screen</li>
+<li>A notification alert should eventually appear        </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f1298cd89b5a4cc5.png"></p>
+<ol type="1" start="12">
+<li>Slide left on the notification alert, click on View</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/255e9eb208830628.png"></p>
+<ol type="1" start="13">
+<li>The actionable notification buttons appear.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/79fa234bb969fe72.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Handling Actionable Notifications" duration="10">
+        <p><a href="https://developer.apple.com/documentation/usernotifications/declaring_your_actionable_notification_types" target="_blank">https://developer.apple.com/documentation/usernotifications/declaring_your_actionable_notification_types</a></p>
+<p>Your app must handle all of the actions that it defines. When the user selects an action, the system launches your app in the background and notifies the shared <code>UNUserNotificationCenter</code> object, which notifies its delegate. Use your delegate object&#39;s <code>userNotificationCenter(_:didReceive:withCompletionHandler:)</code> method to identify the selected action and provide an appropriate response.</p>
+<p>You can create an extension to implement the <code>UNUserNotificationCenterDelegate</code> protocol methods. Remember to set the <code>delegate</code> property for the <code>UNUserNotificationCenter</code> object.</p>
+<pre><code>// Create an extension to implement the UNUserNotificationCenterDelegate methods
+extension AppDelegate : UNUserNotificationCenterDelegate {
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              didReceive response: UNNotificationResponse,
+                              withCompletionHandler completionHandler:
+    @escaping () -&gt; Void) {
+    
+    // Get the meeting ID from the original notification.
+    let userInfo = response.notification.request.content.userInfo
+    let meetingID = userInfo[&#34;MEETING_ID&#34;] as! String
+    let userID = userInfo[&#34;USER_ID&#34;] as! String
+    
+    if (response.actionIdentifier == &#34;ACCEPT_ACTION&#34;) {
+      print(&#34;\(userID) accepted \(meetingID)&#34;)
+    } else if (response.actionIdentifier == &#34;DECLINE_ACTION&#34;) {
+      print(&#34;\(userID) declined \(meetingID)&#34;)
+    } else {
+      print(&#34;neither button was selected&#34;)
+    }
+
+    // Always call the completion handler when done.
+    completionHandler()
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 04 - Handling Actionable Notifications" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject</strong>.</li>
+</ol>
+<p><strong>AppDelegate.swift</strong></p>
+<ol type="1" start="2">
+<li>Set the <code>delegate</code> property for the <code>UNUserNotificationCenter</code> object</li>
+<li>Create an extension to implement the <code>UNUserNotificationCenterDelegate</code> methods</li>
+</ol>
+<pre><code>import UIKit
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    // Set the delegate property for the UNUserNotificationCenter object
+    center.delegate = self
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+      if let error = error {
+        // Handle the error here.
+      }
+      // Enable or disable features based on the authorization.
+      
+      // Define the custom actions
+      let acceptAction = UNNotificationAction(identifier: &#34;ACCEPT_ACTION&#34;,
+                                              title: &#34;Accept&#34;,
+                                              options: UNNotificationActionOptions(rawValue: 0))
+      let declineAction = UNNotificationAction(identifier: &#34;DECLINE_ACTION&#34;,
+                                               title: &#34;Decline&#34;,
+                                               options: UNNotificationActionOptions(rawValue: 0))
+      // Define the notification category
+      let meetingInviteCategory =
+        UNNotificationCategory(identifier: &#34;MEETING_INVITATION&#34;,
+                               actions: [acceptAction, declineAction],
+                               intentIdentifiers: [],
+                               hiddenPreviewsBodyPlaceholder: &#34;&#34;,
+                               options: .customDismissAction)
+      // Register the notification categories
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.setNotificationCategories([meetingInviteCategory])
+    }
+    
+    return true
+  }
+}
+
+// Create an extension to implement the UNUserNotificationCenterDelegate methods
+extension AppDelegate : UNUserNotificationCenterDelegate {
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              didReceive response: UNNotificationResponse,
+                              withCompletionHandler completionHandler:
+    @escaping () -&gt; Void) {
+    
+    // Get the meeting ID from the original notification.
+    let userInfo = response.notification.request.content.userInfo
+    let meetingID = userInfo[&#34;MEETING_ID&#34;] as! String
+    let userID = userInfo[&#34;USER_ID&#34;] as! String
+    
+    if (response.actionIdentifier == &#34;ACCEPT_ACTION&#34;) {
+      print(&#34;\(userID) accepted \(meetingID)&#34;)
+    } else if (response.actionIdentifier == &#34;DECLINE_ACTION&#34;) {
+      print(&#34;\(userID) declined \(meetingID)&#34;)
+    } else {
+      print(&#34;neither button was selected&#34;)
+    }
+
+    // Always call the completion handler when done.
+    completionHandler()
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the application on an iPhone simulator</li>
+<li>A notification banner should eventually appear</li>
+<li>Drag down on the notification. The actionable notification buttons appear.</li>
+<li>Based on whether the notification, or the <strong>Accept</strong> button or the <strong>Decline</strong> button was pressed, we will see the corresponding messages in the debug area.</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Clicked on</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Corresponding debug message</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>notification</p>
+</td><td colspan="1" rowspan="1"><p><strong><code>neither button was selected</code></strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Accept</p>
+</td><td colspan="1" rowspan="1"><p><strong><code>david_tan accepted WSM_TUE_2PM</code></strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Decline</p>
+</td><td colspan="1" rowspan="1"><p><strong><code>david_tan declined WSM_TUE_2PM</code></strong></p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notifications when app is in the Foreground" duration="5">
+        <p>The UNUserNotificationCenterDelegate protocol method userNotificationCenter(_:willPresent:withCompletionHandler:) is called if a notification arrives while the app is running in the foreground. You can write code in this method to update the user interface directly when the notification arrives, or tell the system to continue to display the notification interface.</p>
+<pre><code>func userNotificationCenter(_ center: UNUserNotificationCenter,
+                            willPresent notification: UNNotification,
+                            withCompletionHandler completionHandler:
+  @escaping (UNNotificationPresentationOptions) -&gt; Void) {
+  // write code to update the user interface directly, or
+  
+  // tell the system to continue to display the notification interface
+  completionHandler([.alert,.badge,.sound])
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 05 - Notifications when app is in the Foreground" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject</strong>.</li>
+</ol>
+<p><strong>AppDelegate.swift</strong></p>
+<ol type="1" start="2">
+<li>Implement the <code>userNotificationCenter(_:willPresent:withCompletionHandler:)</code> method in the <code>UNUserNotificationCenterDelegate</code> extension.</li>
+</ol>
+<pre><code>import UIKit
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    // Set the delegate property for the UNUserNotificationCenter object
+    center.delegate = self
+    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+      if let error = error {
+        // Handle the error here.
+      }
+      // Enable or disable features based on the authorization.
+      
+      // Define the custom actions
+      let acceptAction = UNNotificationAction(identifier: &#34;ACCEPT_ACTION&#34;,
+                                              title: &#34;Accept&#34;,
+                                              options: UNNotificationActionOptions(rawValue: 0))
+      let declineAction = UNNotificationAction(identifier: &#34;DECLINE_ACTION&#34;,
+                                               title: &#34;Decline&#34;,
+                                               options: UNNotificationActionOptions(rawValue: 0))
+      // Define the notification category
+      let meetingInviteCategory =
+        UNNotificationCategory(identifier: &#34;MEETING_INVITATION&#34;,
+                               actions: [acceptAction, declineAction],
+                               intentIdentifiers: [],
+                               hiddenPreviewsBodyPlaceholder: &#34;&#34;,
+                               options: .customDismissAction)
+      // Register the notification categories
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.setNotificationCategories([meetingInviteCategory])
+    }
+    
+    return true
+  }
+}
+
+// Create an extension to implement the UNUserNotificationCenterDelegate methods
+extension AppDelegate : UNUserNotificationCenterDelegate {
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              didReceive response: UNNotificationResponse,
+                              withCompletionHandler completionHandler:
+    @escaping () -&gt; Void) {
+    
+    // Get the meeting ID from the original notification.
+    let userInfo = response.notification.request.content.userInfo
+    let meetingID = userInfo[&#34;MEETING_ID&#34;] as! String
+    let userID = userInfo[&#34;USER_ID&#34;] as! String
+    
+    if (response.actionIdentifier == &#34;ACCEPT_ACTION&#34;) {
+      print(&#34;\(userID) accepted \(meetingID)&#34;)
+    } else if (response.actionIdentifier == &#34;DECLINE_ACTION&#34;) {
+      print(&#34;\(userID) declined \(meetingID)&#34;)
+    } else {
+      print(&#34;neither button was selected&#34;)
+    }
+    
+    // Always call the completion handler when done.
+    completionHandler()
+  }
+  
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              willPresent notification: UNNotification,
+                              withCompletionHandler completionHandler:
+    @escaping (UNNotificationPresentationOptions) -&gt; Void) {
+    // write code to update the user interface directly, or
+    
+    // tell the system to continue to display the notification interface
+    completionHandler([.alert,.badge,.sound])
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application on an iPhone simulator. We do not have to go to the home screen. Leave the app running in the foreground.</li>
+<li>A notification banner should eventually appear.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cancelling Local Notifications" duration="5">
+        <p>Scheduled local notifications remain active until they are unscheduled by the system or until you cancel them explicitly. The system unschedules notifications automatically after they are delivered, unless the notification&#39;s trigger is configured to repeat. To cancel an individual notification before it is delivered, or to cancel a repeating notification, call the <code>removePendingNotificationRequests(withIdentifiers:)</code> method of <code>UNUserNotificationCenter</code>. The notification being cancelled must have an identifier assigned to its <code>UNNotificationRequest</code> object. To cancel all pending local notifications, regardless of whether they have a request identifier, call the <code>removeAllPendingNotificationRequests()</code> method instead.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Modifying the badge number" duration="5">
+        <p>The badge number on the app icon can be set using the code shown below:</p>
+<pre><code>// set the badge number directly
+UIApplication.shared.applicationIconBadgeNumber = 99</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 06 - Cancelling Local Notifications and Modifying the badge number" duration="5">
+        <ol type="1" start="1">
+<li>Continue with <strong>SampleProject</strong>.</li>
+</ol>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Set the badge number</li>
+<li>Remove the notification request</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // set the badge number
+    UIApplication.shared.applicationIconBadgeNumber = 99
+    
+    // get the UNUserNotificationCenter object
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { settings in
+      guard (settings.authorizationStatus == .authorized) else {
+        return
+      }
+      
+      // schedule a notification
+      
+      // Create the notification&#39;s content by creating and configuring a
+      // UNMutableNotificationContent object.
+      let meetingID = &#34;WSM_TUE_2PM&#34;
+      let userID = &#34;david_tan&#34;
+       
+      let content = UNMutableNotificationContent()
+      content.title = &#34;Weekly Staff Meeting&#34;
+      content.body = &#34;Every Tuesday at 2pm&#34;
+      content.userInfo = [&#34;MEETING_ID&#34; : meetingID,
+                          &#34;USER_ID&#34; : userID ]
+      content.categoryIdentifier = &#34;MEETING_INVITATION&#34;
+      content.sound = UNNotificationSound.default
+      content.badge = 1
+      
+      // Specify the conditions for delivery by creating a
+      // UNCalendarNotificationTrigger, UNTimeIntervalNotificationTrigger, or
+      // UNLocationNotificationTrigger object.
+      
+      // create a trigger to fire once in 10 seconds
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval:10,
+                                                      repeats:false)
+      
+      // Create and register a notification request by creating a
+      // UNNotificationRequest object that includes your content and trigger
+      // conditions, and call the add(_:withCompletionHandler:) method to
+      // schedule your request with the system.
+      let uuidString = UUID().uuidString
+      let request = UNNotificationRequest(identifier: uuidString,
+                                          content: content, trigger: trigger)
+      let notificationCenter = UNUserNotificationCenter.current()
+      notificationCenter.add(request) { (error) in
+        if error != nil {
+          // Handle any errors.
+        }
+      }
+      
+      // remove the notification request
+      center.removePendingNotificationRequests(withIdentifiers: [uuidString])
+    }
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the application on an iPhone simulator</li>
+<li>Press <strong>Cmd-Shift-H</strong> to go to the Home Screen</li>
+<li>The App icon should be badged with the number <strong>99</strong></li>
+<li>There should not be any notification after 10 seconds</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,936 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UISplitViewController</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="03-uisplitviewcontroller"
+                  title="UISplitViewController"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>configure the behaviour and appearance of the UISplitViewController</li>
+<li>use a UISplitViewController and show detail segue such that changes in the master view controller drives changes in the detail view controller</li>
+<li>use the protocol delegate pattern for communication between the detail view controller and the master view controller</li>
+<li>obtain and use references to the master view controller and detail view controller via the UISplitViewController</li>
+<li>add property observers to execute code when properties are set</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISplitViewController (Part 1)" duration="20">
+        <p><a href="https://developer.apple.com/documentation/uikit/uisplitviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uisplitviewcontroller</a></p>
+<p><strong>Description</strong></p>
+<p>A split view controller is a container view controller that manages two child view controllers in a master-detail interface. In this type of interface, changes in the primary view controller (the master) drive changes in a secondary view controller (the detail). </p>
+<p class="image-container"><img style="width: 624.00px" src="img/ee025be07e40c12a.png"></p>
+<p><strong>Example</strong></p>
+<p>The Settings App on the iPad uses a split view controller. </p>
+<p class="image-container"><img style="width: 624.00px" src="img/ead948ec15dea540.png"></p>
+<p><strong>Availability</strong></p>
+<p>In iOS 8 and later, you can use the UISplitViewController class on all iOS devices; in previous versions of iOS, the class is available only on iPad.</p>
+<p><strong>Set the UISplitViewController as the root view controller / intial view controller</strong></p>
+<p>When building your app&#39;s user interface, the split view controller is typically the root view controller of your app&#39;s window. </p>
+<p><strong>Getting a reference to the UISplitViewController object in code</strong></p>
+<p>All UIViewController objects have a property <code>splitViewController : UISplitViewController?</code> which is set if the UIViewController object is being managed directly or indirectly by a UISplitViewController object; <code>splitViewController</code> is <code>nil</code> otherwise. The following code can be used in the view controller to get a reference to the UISplitViewController object.</p>
+<pre><code>// svc is a reference to the UISplitViewController object
+if let svc = splitViewController {
+}</code></pre>
+<p><strong>preferredDisplayMode property</strong></p>
+<p>The UISplitViewController object has a property <code>preferredDisplayMode : UISplitViewControllerDisplayMode</code> which determines:</p>
+<ul>
+<li>on launch - either both visible or only the detail is visible</li>
+<li>appearance - either master and detail appear side-by-side or master overlaps the detail</li>
+<li>can the master be hidden - either yes or no</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>preferredDisplayMode</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>orientation</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>on launch</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>appearance</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>can hide master</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>.allVisible</code></p>
+</td><td colspan="1" rowspan="1"><p>don&#39;t care</p>
+</td><td colspan="1" rowspan="1"><p>both visible</p>
+</td><td colspan="1" rowspan="1"><p>side-by-side</p>
+</td><td colspan="1" rowspan="1"><p>no</p>
+</td></tr>
+<tr><td colspan="1" rowspan="2"><p><code>.automatic</code></p>
+</td><td colspan="1" rowspan="1"><p>portrait</p>
+</td><td colspan="1" rowspan="1"><p>detail only</p>
+</td><td colspan="1" rowspan="1"><p>overlaps </p>
+</td><td colspan="1" rowspan="1"><p>yes </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>landscape</p>
+</td><td colspan="1" rowspan="1"><p>both visible</p>
+</td><td colspan="1" rowspan="1"><p>side-by-side</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>.primaryHidden</code></p>
+</td><td colspan="1" rowspan="1"><p>don&#39;t care</p>
+</td><td colspan="1" rowspan="1"><p>detail only</p>
+</td><td colspan="1" rowspan="1"><p>overlaps</p>
+</td><td colspan="1" rowspan="1"><p>yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>.primaryOverlay</code></p>
+</td><td colspan="1" rowspan="1"><p>don&#39;t care</p>
+</td><td colspan="1" rowspan="1"><p>both visible</p>
+</td><td colspan="1" rowspan="1"><p>overlaps</p>
+</td><td colspan="1" rowspan="1"><p>yes</p>
+</td></tr>
+</table>
+<p>The default value of this property is <code>.automatic</code></p>
+<p>If the master can be hidden:</p>
+<ul>
+<li>to show the master - swipe from the left edge of the screen towards the right edge</li>
+<li>to hide the master -  click on the detail</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - UISplitViewController" duration="20">
+        <ol type="1" start="1">
+<li>Create <code>SampleProject01</code> using the <code>Single View App</code> template.</li>
+<li>Change the simulator to <code>iPad Pro (9.7-inch)</code>. </li>
+<li>Delete <code>ViewController.swift</code> (select <code>Move To Trash</code>)</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/3c56cac78d65af9c.png"></p>
+<ol type="1" start="4">
+<li>Create <code>MasterViewController</code> : <code>UITableViewController</code></li>
+<li>Create <code>DetailViewController</code> : <code>UIViewController</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="6">
+<li>Change the <code>View as:</code> to <code>iPhone 8</code> or <code>iPhone SE (2nd generation)</code></li>
+<li>Delete the <code>View Controller Scene</code></li>
+<li>Add a Split View Controller from the object library</li>
+<li>Set the Split View Controller as the Initial View Controller</li>
+<li>Set the class of the table view controller as MasterViewController</li>
+<li>Set the cell identifier for the cell in the table view in MasterViewController as <code>cell</code></li>
+<li>Set the class of the view controller as DetailViewController</li>
+<li>Embed DetailViewController in a UINavigationController</li>
+<li>Add a UITextView (IBOutlet <code>outTextView</code>) to DetailViewController and adjust the width so that it fits within the guides</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/b95bc5936d9d17b.png"></p>
+<p><strong>In MasterViewController:</strong></p>
+<ol type="1" start="15">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class MasterViewController : UITableViewController {
+  var titles = [&#34;Military Defence&#34;, &#34;Civil Defence&#34;, &#34;Economic Defence&#34;,
+                &#34;Social Defence&#34;, &#34;Psychological Defence&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return titles.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+    -&gt; UITableViewCell {
+      let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+      let row = indexPath.row
+      let title = titles[row]
+      
+      if let label = cell.textLabel {
+        label.text = title
+      }
+      
+      return cell
+  }
+}</code></pre>
+<p><strong>In DetailViewController:</strong></p>
+<ol type="1" start="16">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class DetailViewController : UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+  }
+}</code></pre>
+<ol type="1" start="17">
+<li>Run the project. Verify DetailViewController is shown in the iPad and the following debug message is seen in the debug area.</li>
+</ol>
+<pre>/Users/solaradmin/Desktop/SampleProject01/SampleProject01/DetailViewController.swift viewDidLoad() 7</pre>
+<p class="image-container"><img style="width: 624.00px" src="img/92e6a472dce84cc8.png"></p>
+<ol type="1" start="18">
+<li>Swipe from the left edge of the iPad towards the right edge. Verify MasterViewController partially covers DetailViewController and the following debug messages are seen in the debug area.</li>
+</ol>
+<pre>/Users/solaradmin/Desktop/SampleProject01/SampleProject01/DetailViewController.swift viewDidLoad() 7
+/Users/solaradmin/Desktop/SampleProject01/SampleProject01/MasterViewController.swift viewDidLoad() 8</pre>
+<p class="image-container"><img style="width: 624.00px" src="img/7601d3c3dd2b8d63.png"></p>
+<ol type="1" start="19">
+<li>Click on DetailViewController to hide MasterViewController.</li>
+<li>Rotate Left the iPad (from the menu bar, select Device, Rotate Left, or use the keyboard shortcut Command-LeftArrow). Verify MasterViewController appears side-by-side with DetailViewController and MasterViewController cannot be hidden by clicking on DetailViewController.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/784d3f8db7361119.png"></p>
+<p><strong>In DetailViewController:</strong></p>
+<ol type="1" start="21">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class DetailViewController : UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+    
+    // get a reference to the UISplitViewController object
+    if let svc = self.splitViewController {
+      // set the preferredDisplayMode property
+      svc.preferredDisplayMode = .allVisible
+    }
+  }
+}</code></pre>
+<ol type="1" start="22">
+<li>Run the project. Observe the behaviour of MasterViewController and DetailViewController in portrait and landscape mode.</li>
+<li>Try the different values for preferredDisplayMode (<code>.allVisible</code>, <code>.automatic,</code> <code>.primaryHidden</code>, <code>.primaryOverlay</code>) and observe the behaviour of MasterViewController and DetailViewController in portrait and landscape mode.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISplitViewController (Part 2)" duration="5">
+        <p><strong>Show detail segue</strong></p>
+<p><a href="https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></p>
+<p>The show detail segue </p>
+<ul>
+<li>can only be used with view controllers embedded in a UISplitViewController object</li>
+<li>causes the detail view controller to be replaced with new content</li>
+</ul>
+<p>Difference in using a show and show detail segue <strong>from the master</strong>:</p>
+<ul>
+<li>show segue - new view controller is pushed to the navigation controller in the master</li>
+<li>show detail segue - new view controller replaces the detail view controller</li>
+</ul>
+<aside class="warning"><p><strong>In the </strong><strong><code>prepare(for:sender:)</code></strong><strong> method</strong></p>
+<p>If the destination view controller is a view controller (e.g. ViewController X), cast the view controller to that type immediately:</p>
+<p><code>let vc = segue.destination as! ViewControllerX</code></p>
+<p>If the destination view controller is a UINavigationController which holds the view controller (e.g. ViewController X), get the UINavigationController first, then get the view controller from the UINavigationController and cast it to that type:</p>
+<p><code>let nc = segue.destination as! UINavigationController</code></p>
+<p><code>let vc = nc.topViewController as! ViewControllerX</code></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - show detail segue" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject01</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Create a <code>Show Detail</code> segue from the cell in MasterViewController to the UINavigationController for DetailViewController</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/5b53af491c1e7b4a.png"></p>
+<p><strong>In DetailViewController:</strong></p>
+<ol type="1" start="3">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class DetailViewController : UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+  var stringData : String!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+    
+    // get a reference to the UISplitViewController object
+    if let svc = self.splitViewController {
+      // set the preferredDisplayMode to .allVisible
+      svc.preferredDisplayMode = .allVisible
+    }
+    
+    if let text = stringData {
+      outTextView.text = text
+    }
+  }
+}</code></pre>
+<p><strong>In MasterViewController:</strong></p>
+<ol type="1" start="4">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class MasterViewController : UITableViewController {
+  var titles = [&#34;Military Defence&#34;, &#34;Civil Defence&#34;, &#34;Economic Defence&#34;,
+                &#34;Social Defence&#34;, &#34;Psychological Defence&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return titles.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+    -&gt; UITableViewCell {
+      let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+      let row = indexPath.row
+      let title = titles[row]
+      
+      if let label = cell.textLabel {
+        label.text = title
+      }
+      
+      return cell
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the index path of the selected row
+    if let indexPath = tableView.indexPathForSelectedRow {
+      // get the row number
+      let row = indexPath.row
+      // get the selected title
+      let title = titles[row]
+      
+      // get destination view controller which is a UINavigationController in this example
+      let nc = segue.destination as! UINavigationController
+      // get the DetailViewController from the UINavigationController
+      let vc = nc.topViewController as! DetailViewController
+      // pass the title over
+      vc.stringData = title
+    }
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. Observe that every time a cell is clicked, the viewDidLoad() method in DetailViewController is called, and the UITextView is updated with the text from the selected cell.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISplitViewController (Part 3)" duration="5">
+        <p><strong>Using the protocol-delegate pattern for communicating from detail view controller to master view controller</strong></p>
+<p>The protocol delegate pattern can be used for the detail view controller to communicate with the master view controller. To recap, the 5 steps to be done are:</p>
+<ol type="1" start="1">
+<li>Create a protocol for the detail view controller to communicate with the master view controller</li>
+<li>In the detail view controller, create a delegate property; the data type of this property is the protocol</li>
+<li>In the detail view controller, call the protocol methods on the delegate object </li>
+<li>In the master view controller, declare conformance to the protocol and implement the protocol methods</li>
+<li>In the master view controller, set the delegate property in the detail view controller with the delegate object, which is the master view controller</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Protocol delegate pattern" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject01</code></li>
+<li>Declare a protocol MyProtocol</li>
+</ol>
+<pre><code>import Foundation
+protocol MyProtocol {
+  func shuffle()
+}</code></pre>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>Set the identifier for the show detail segue as <code>next</code>.</li>
+<li>Add UIButton (IBAction actButton) to DetailViewController.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/2f1352eaafc0de1b.png"></p>
+<p><strong>In DetailViewController:</strong></p>
+<ol type="1" start="5">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class DetailViewController : UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+  
+  var stringData : String!
+  var delegate : MyProtocol!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+    
+    // get a reference to the UISplitViewController object
+    if let svc = self.splitViewController {
+      // set the preferredDisplayMode property
+      svc.preferredDisplayMode = .allVisible
+    }
+    
+    if let text = stringData {
+      outTextView.text = text
+    }
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    if let delegate = delegate {
+      delegate.shuffle()
+    }
+  }
+}</code></pre>
+<p><strong>In MasterViewController:</strong></p>
+<ol type="1" start="6">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class MasterViewController : UITableViewController, MyProtocol {
+  var titles = [&#34;Military Defence&#34;, &#34;Civil Defence&#34;, &#34;Economic Defence&#34;,
+                &#34;Social Defence&#34;, &#34;Psychological Defence&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    print(&#34;\(#file) \(#function) \(#line)&#34;)
+    
+    // force a cell selection and segue on load
+    let indexPath = IndexPath(row: 0, section: 0)
+    tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+    performSegue(withIdentifier: &#34;next&#34;, sender: self)
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return titles.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+    -&gt; UITableViewCell {
+      let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+      let row = indexPath.row
+      let title = titles[row]
+      
+      if let label = cell.textLabel {
+        label.text = title
+      }
+      
+      return cell
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the index path of the selected row
+    if let indexPath = tableView.indexPathForSelectedRow {
+      // get the row numbers
+      let row = indexPath.row
+      // get the selected title
+      let title = titles[row]
+      
+      // get destination view controller which is a UINavigationController in this example
+      let nc = segue.destination as! UINavigationController
+      // get the DetailViewController from the UINavigationController
+      let vc = nc.topViewController as! DetailViewController
+      // pass the title over
+      vc.stringData = title
+      // set the delegate property to this object
+      vc.delegate = self
+    }
+  }
+  
+  func shuffle() {
+    titles.shuffle()
+    tableView.reloadData()
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. Observe that when the button in DetailViewController is clicked, the contents of the table view are shuffled.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISplitViewController (Part 4)" duration="10">
+        <p><strong>Directly access the view controller objects via the UISplitViewController object</strong></p>
+<p>The UISplitViewController object has a property <code>viewControllers : [UIViewController]</code> which holds the reference to the master view controller and the detail view controller. The master view controller is the first item in the array and the detail view controller is the second item in the array.</p>
+<p>The following code can be used in any view controller (master view controller or detail view controller) to get a reference to the master view controller and the detail view controller.</p>
+<pre><code>// svc is a reference to the UISplitViewController object
+if let svc = splitViewController {
+  // the master view controller is the first item in the array
+  let mvc = svc.viewControllers[0]
+  // the detail view controller is the second item in the array
+  let dvc = svc.viewControllers[1]
+}</code></pre>
+<aside class="warning"><p>If the view controller in the array is a view controller (e.g. ViewController X), cast the view controller to that type immediately:</p>
+<p><code>let vc = svc.viewControllers[0] as! ViewControllerX</code></p>
+<p>If the view controller in the array is a UINavigationController which holds the view controller (e.g. ViewController X), get the UINavigationController first, then get the view controller from the UINavigationController and cast it to that type:</p>
+<p><code>let nc = svc.viewControllers[0] as! UINavigationController</code></p>
+<p><code>let vc = nc.topViewController as! ViewControllerX</code></p>
+<p>The sample code above is for the master view controller; for the detail view controller, replace the index 0 with the index 1.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Direct access via UISplitViewController" duration="20">
+        <ol type="1" start="1">
+<li>Create <code>SampleProject02</code> using the <code>Single View App</code> template.</li>
+<li>Change the simulator to <code>iPad Pro (9.7-inch)</code>. </li>
+<li>Create <code>AnotherViewController</code> : <code>UIViewController</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>Change the <code>View as:</code> to <code>iPhone 8</code> or <code>iPhone SE (2nd generation)</code></li>
+<li>Add a View Controller from the object library and set the class as AnotherViewController</li>
+<li>Add a Split View Controller from the object library</li>
+<li>Delete the UINavigationController, master view controller and detail view controller</li>
+<li>Set the Split View Controller as the Initial View Controller</li>
+<li>Right-click drag from the split view controller to ViewController and select master view controller</li>
+</ol>
+<p class="image-container"><img style="width: 348.00px" src="img/e8ffa85bfc89afe8.png"></p>
+<ol type="1" start="10">
+<li>Right-click drag from the split view controller to AnotherViewController and select detail view controller</li>
+</ol>
+<p class="image-container"><img style="width: 348.00px" src="img/9c50259a329fbb40.png"></p>
+<ol type="1" start="11">
+<li>Add a UISlider (IBAction actSlider) and a UILabel (IBOutlet outLabel) to ViewController</li>
+<li>Add a UISlider (IBAction actSliderA) and a UILabel (IBOutlet outLabelA) to AnotherViewController</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a02fdbd6407a23f1.png"></p>
+<p><strong>In ViewController:</strong></p>
+<ol type="1" start="13">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actSlider(_ sender: UISlider) {
+    if let svc = self.splitViewController {
+      let dvc = svc.viewControllers[1] as! AnotherViewController
+      dvc.updateLabelA(text: &#34;\(sender.value)&#34;)
+    }
+  }
+  
+  func updateLabel(text : String) {
+    outLabel.text = text
+  }
+}</code></pre>
+<p><strong>In AnotherViewController:</strong></p>
+<ol type="1" start="14">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class AnotherViewController: UIViewController {
+  @IBOutlet weak var outLabelA: UILabel!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actSliderA(_ sender: UISlider) {
+    if let svc = self.splitViewController {
+      let dvc = svc.viewControllers[0] as! ViewController
+      dvc.updateLabel(text: &#34;\(sender.value)&#34;)
+    }
+  }
+  
+  func updateLabelA(text : String) {
+    outLabelA.text = text
+  }
+}</code></pre>
+<ol type="1" start="15">
+<li>Run the project. Observe that changes to the slider value in the master view controller are shown in the label in the detail view controller and changes to the slider value in the detail view controller are shown in the label in the master view controller.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Master-Detail App Template" duration="15">
+        <ol type="1" start="1">
+<li>Create <code>SampleProject03</code> using the <code>Master-Detail App</code> template.</li>
+<li>Change the simulator to <code>iPad Pro (9.7-inch)</code>. </li>
+<li>Run the project. </li>
+</ol>
+<ul>
+<li>When the + button is pressed, a new NSDate object is created and added to the objects array; a row is inserted into the top of the table.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/135fa23c627ee4aa.png"></p>
+<ul>
+<li>When a cell is selected, the detail view controller shows the information from the selected cell.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/bc63befa65741c7a.png"></p>
+<ul>
+<li>When the Edit button is pressed, the Edit button changes to a Done button. A delete indicator appears on the left side of each cell. When the delete indicator is pressed, a Delete button appears on the right side of that cell. Pressing the Delete button deletes the selected item from the array and the table.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/9f6e9f680157a37c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/97109b17b5e83652.png"></p>
+<p><strong>Main.storyboard:</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/259e71b2ed517d03.png"></p>
+<p><strong>MasterViewController.swift:</strong></p>
+<pre><code>import UIKit
+class MasterViewController: UITableViewController {
+  var detailViewController: DetailViewController? = nil
+  var objects = [Any]()
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    navigationItem.leftBarButtonItem = editButtonItem
+    
+    let addButton = UIBarButtonItem(barButtonSystemItem: .add,
+                                    target: self,
+                                    action: #selector(insertNewObject(_:)))
+    navigationItem.rightBarButtonItem = addButton
+    if let split = splitViewController {
+      let controllers = split.viewControllers
+      let nc = controllers[controllers.count-1] as! UINavigationController
+      detailViewController = nc.topViewController as? DetailViewController
+    }
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
+    super.viewWillAppear(animated)
+  }
+  
+  @objc
+  func insertNewObject(_ sender: Any) {
+    objects.insert(NSDate(), at: 0)
+    let indexPath = IndexPath(row: 0, section: 0)
+    tableView.insertRows(at: [indexPath], with: .automatic)
+  }
+  
+  // MARK: - Segues
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == &#34;showDetail&#34; {
+      if let indexPath = tableView.indexPathForSelectedRow {
+        let object = objects[indexPath.row] as! NSDate
+        let nc = segue.destination as! UINavigationController
+        let controller = nc.topViewController as! DetailViewController
+        controller.detailItem = object
+        controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+        controller.navigationItem.leftItemsSupplementBackButton = true
+        detailViewController = controller
+      }
+    }
+  }
+  
+  // MARK: - Table View
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          numberOfRowsInSection section: Int) -&gt; Int {
+    return objects.count
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;Cell&#34;, for: indexPath)
+    let object = objects[indexPath.row] as! NSDate
+    cell.textLabel!.text = object.description
+    return cell
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          canEditRowAt indexPath: IndexPath) -&gt; Bool {
+    // Return false if you do not want the specified item to be editable.
+    return true
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          commit editingStyle: UITableViewCell.EditingStyle,
+                          forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      objects.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .fade)
+    } else if editingStyle == .insert {
+      // Create a new instance of the appropriate class,
+      // insert it into the array, and add a new row to the table view.
+    }
+  }
+}</code></pre>
+<p><strong>DetailViewController.swift:</strong></p>
+<pre><code>import UIKit
+class DetailViewController: UIViewController {
+  @IBOutlet weak var detailDescriptionLabel: UILabel!
+
+  func configureView() {
+    // Update the user interface for the detail item.
+    if let detail = detailItem {
+      if let label = detailDescriptionLabel {
+        label.text = detail.description
+      }
+    }
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    configureView()
+  }
+  
+  var detailItem: NSDate? {
+    didSet {
+      // Update the view.
+      configureView()
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explanation of Master-Detail App template code" duration="15">
+        <p><strong>MasterViewController.swift:</strong></p>
+<ol type="1" start="1">
+<li><code>MasterViewController</code> : <code>UITableViewController</code> displays the contents of the <code>objects</code> array, which stores <code>NSDate</code> objects. The relevant code is shown below.</li>
+</ol>
+<pre><code>import UIKit
+class MasterViewController: UITableViewController {
+  var objects = [Any]()
+
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          numberOfRowsInSection section: Int) -&gt; Int {
+    return objects.count
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;Cell&#34;, for: indexPath)
+    let object = objects[indexPath.row] as! NSDate
+    cell.textLabel!.text = object.description
+    return cell
+  }
+}</code></pre>
+<ol type="1" start="2">
+<li>The passing of data to DetailViewController is done in the <code>prepare(for:sender:)</code> method. The relevant code is shown below.</li>
+</ol>
+<pre><code>import UIKit
+class MasterViewController: UITableViewController {
+  var detailViewController: DetailViewController? = nil
+  var objects = [Any]()
+  
+  // MARK: - Segues
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == &#34;showDetail&#34; {
+      if let indexPath = tableView.indexPathForSelectedRow {
+        let object = objects[indexPath.row] as! NSDate
+        let nc = segue.destination as! UINavigationController
+        let controller = nc.topViewController as! DetailViewController
+        controller.detailItem = object
+        controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+        controller.navigationItem.leftItemsSupplementBackButton = true
+        detailViewController = controller
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>The add (+) button is programatically created and added to the UINavigationItem in viewDidLoad(). The relevant code is shown below.</li>
+</ol>
+<ul>
+<li>The function to be executed when the button is pressed is declared in <code>insertNewObject(_:)</code> and the link between the button and the function is made when creating the UIBarButtonItem object.</li>
+</ul>
+<pre><code>import UIKit
+class MasterViewController: UITableViewController {
+  var objects = [Any]()
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let addButton = UIBarButtonItem(barButtonSystemItem: .add,
+                                    target: self,
+                                    action: #selector(insertNewObject(_:)))
+    navigationItem.rightBarButtonItem = addButton
+  }
+  
+  @objc
+  func insertNewObject(_ sender: Any) {
+    objects.insert(NSDate(), at: 0)
+    let indexPath = IndexPath(row: 0, section: 0)
+    tableView.insertRows(at: [indexPath], with: .automatic)
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>The Edit / Delete feature is automagically supported by the UITableViewController class and the UITableViewDataSource protocol. The relevant code is shown below.</li>
+</ol>
+<ul>
+<li>The Edit button is shown by the single line of code in viewDidLoad()</li>
+<li>The delete functionality is implemented in <code>tableView(_:commit:forRowAt:)</code> by removing the item from the array and deleting the specific row from the table; <code>tableView(_:canEditRowAt:)</code> reports that all rows can be edited</li>
+</ul>
+<pre><code>import UIKit
+class MasterViewController: UITableViewController {
+  var objects = [Any]()
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationItem.leftBarButtonItem = editButtonItem
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          canEditRowAt indexPath: IndexPath) -&gt; Bool {
+    // Return false if you do not want the specified item to be editable.
+    return true
+  }
+  
+  override func tableView(_ tableView: UITableView,
+                          commit editingStyle: UITableViewCell.EditingStyle,
+                          forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      objects.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .fade)
+    } else if editingStyle == .insert {
+      // Create a new instance of the appropriate class,
+      // insert it into the array, and add a new row to the table view.
+    }
+  }
+}</code></pre>
+<p><strong>DetailViewController.swift:</strong></p>
+<ol type="1" start="5">
+<li><code>DetailViewController</code> : <code>UIViewController</code> has a <code>detailItem</code> property which holds the NSDate object to display. The relevant code is shown below.</li>
+</ol>
+<ul>
+<li>The <code>configureView()</code> method is a helper method to update the label. It has a series of optional binding statements to ensure that <code>detailItem</code> and <code>detailDescriptionLabel</code> have been set before attempting to display the <code>NSDate</code> object in the label</li>
+<li>The syntax for the <code>detailItem</code> property is called a <strong>property observer</strong>, which will be explained in the next section </li>
+</ul>
+<pre><code>import UIKit
+class DetailViewController: UIViewController {
+  @IBOutlet weak var detailDescriptionLabel: UILabel!
+
+  func configureView() {
+    // Update the user interface for the detail item.
+    if let detail = detailItem {
+      if let label = detailDescriptionLabel {
+        label.text = detail.description
+      }
+    }
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    configureView()
+  }
+  
+  var detailItem: NSDate? {
+    didSet {
+      // Update the view.
+      configureView()
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Property observers" duration="5">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Properties.html</a></p>
+<p><strong>Description</strong></p>
+<p>Property observers observe and respond to changes in a property&#39;s value. Property observers are called every time a property&#39;s value is set, even if the new value is the same as the property&#39;s current value.</p>
+<p>Add a set of curly brackets immediately after the property declaration, and add a didSet block inside. The code to be executed when the property&#39;s value is set is placed inside the didSet block.</p>
+<pre><code>class MyClass {
+  var myValue : Int = 0 {
+    didSet {
+      // code to be executed goes here
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="10">
+        <p>For SampleProject01 from Activity 3, when the button is pressed, the contents of the table view are shuffled; the cell selection in master view controller disappears, and the label in the detail view controller remains showing the previously selected value.</p>
+<p>Enhance <code>SampleProject01</code> based on the following:</p>
+<ul>
+<li>The previously selected cell should remain selected</li>
+<li>The value in the detail view controller should show the new value from that selected cell</li>
+</ul>
+<p>Example desired behaviour:</p>
+<ul>
+<li>Initially, the third cell (Economic Defence) is selected, so the detail view controller shows the value Economic Defence</li>
+<li>After pressing the button, the contents of the table view are shuffled; the third cell now shows Military Defence (for example) and the third cell remains selected; the detail view controller shows Military Defence as well</li>
+</ul>
+<p>Zip this project up and label it as Exercise01.zip. Submit this project.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/e8d699279dfa3103.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2" duration="10">
+        <p>For SampleProject02 from Activity 4, modify ViewController and AnotherViewController to use property observers instead.</p>
+<p>Zip this project up and label it as Exercise02.zip. Submit this project.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="15">
+        <p>Create an application which shows the values <code>apple</code>, <code>banana</code> and <code>carrot</code>. The application should allow deletion of items, and should consist only of a UINavigationController and UITableViewController.</p>
+<p>Zip this project up and label it as Exercise03.zip. Submit this project.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Autolayout</li>
+</ul>
+<p><strong>Reference docs</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uisplitviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uisplitviewcontroller</a></li>
+<li><a href="https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html" target="_blank">https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></li>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Properties.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

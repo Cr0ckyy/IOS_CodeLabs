@@ -1,0 +1,739 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UserDefaults and Settings Bundle</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="08-ios-user_defaults-settings_bundle"
+                  title="UserDefaults and Settings Bundle"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Use the UserDefaults class to store and retrieve application preferences to the user defaults system</li>
+<li>Implement the code to register default values for preference values</li>
+<li>Describe the use of the settings bundle to create an entry in the Settings app</li>
+<li>Modify the settings bundle to create a customised entry in the Settings app</li>
+<li>Describe the relationship between application preferences and the settings bundle</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Persistence" duration="5">
+        <p>Data persistence means that data is saved to non-volatile storage and can be retrieved even after an app is restarted or the device running the app is rebooted.</p>
+<p>There are different ways that data can be persisted such as:</p>
+<ul>
+<li>UserDefaults - simple key-value storage, used for user settings or app states (covered in P08)</li>
+<li>Codable and FileManager - Codable enables an object to be encoded and decoded for archiving and unarchiving, while FileManager does the archiving and unarchiving (covered in P09)</li>
+<li>SQLite - a relational database management system (not covered in this module)</li>
+<li>CoreData - an object graph and persistence framework (not covered in this module)</li>
+</ul>
+<p>Before we learn about user defaults, we will learn about the nil-coalescing operator which will be useful later on.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Nil-Coalescing Operator" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html</a></p>
+<p>The nil-coalescing operator (??) has two operands and returns a value. A sample statement is shown below (assuming a and b have been previously declared).</p>
+<pre><code>var result = a ?? b</code></pre>
+<p>The nil-coalescing operator is shorthand for the code below (assuming a, b and result have been previously declared):</p>
+<pre><code>if a != nil { // if a is not nil
+  result = a! // unwrap a and assign it to result
+} else {      // else if a is nil
+  result = b  // assign the value of b to result
+}</code></pre>
+<aside class="warning"><p>Note</p>
+<ul>
+<li>The data type for result and b is the same data type (e.g. String)</li>
+<li>The data type for a is the same data type as result and b, but the optional type (e.g. String?)</li>
+</ul>
+</aside>
+<p>Example:</p>
+<pre><code>var a : String? = &#34;a&#34;
+var b : String = &#34;b&#34;
+var result : String = a ?? b
+print(result)
+// result has the value &#34;a&#34;
+
+a = nil
+result = a ?? b
+print(result)
+// result has the value &#34;b&#34;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Nil-Coalescing Operator" duration="5">
+        <ol type="1" start="1">
+<li>Create a new playground called Activity01</li>
+<li>Add the code shown below, then run the code. Note that when a is not nil, result has the unwrapped value of a. When a is nil, result has the value of b. Also, note that the data type of result and b is String, while the data type of a is String?</li>
+</ol>
+<pre><code>var a : String? = &#34;a&#34;
+var b : String = &#34;b&#34;
+var result : String = a ?? b
+print(result)
+// result has the value &#34;a&#34;
+
+a = nil
+result = a ?? b
+print(result)
+// result has the value &#34;b&#34;</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1 - Nil-Coalescing Operator" duration="10">
+        <ol type="1" start="1">
+<li>Create a new playground called Exercise01 with the code shown below:</li>
+</ol>
+<pre><code>var a : String? = &#34;a&#34;
+var b : String = &#34;b&#34;
+var result : String = a ?? b
+
+// a = &#34;hello&#34;, b = &#34;goodbye&#34;, the value of result is _BLANK_
+// a = nil, b = &#34;goodbye&#34;, the value of result is _BLANK_
+
+var userDefinedColor : String? = nil
+var defaultColor = &#34;red&#34;
+var color = userDefinedColor ?? defaultColor
+
+// userDefinedColor = &#34;blue&#34;, b = &#34;red&#34;, the value of color is _BLANK_
+// userDefinedColor = nil, b = &#34;red&#34;, the value of color is _BLANK_
+
+var height : Int? = 175
+var defaultHeight = 170
+var myHeight = height ?? defaultHeight
+
+// height = nil, defaultHeight = 170, the value of myHeight is _BLANK_
+// height = 175, defaultHeight = 170, the value of myHeight is _BLANK_</code></pre>
+<ol type="1" start="2">
+<li>At the end of each comment, put in the correct answer for _BLANK_</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UserDefaults" duration="15">
+        <p><a href="https://developer.apple.com/reference/foundation/userdefaults" target="_blank">https://developer.apple.com/reference/foundation/userdefaults</a></p>
+<p>An interface to the user&#39;s defaults database, where you store key-value pairs persistently across launches of your app. Primarily used for storing and retrieving user settings or application states.</p>
+<p>To store a key-value pair, use the <code>set(_:forKey:)</code> method on the UserDefaults object.</p>
+<p>To retrieve a value associated with a key, use the appropriate UserDefaults method based on the data type of the value (see table below for some of the commonly used value data types). Where the return type is Any, the value needs to be cast to the correct type before it is used by using the <code>as!</code> operator.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Data type of value</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Method to retrieve value</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Value if key does not exist</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>Bool</code></p>
+</td><td colspan="1" rowspan="1"><p><code>bool(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>false</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>Integer</code></p>
+</td><td colspan="1" rowspan="1"><p><code>integer(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>0</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>Double</code></p>
+</td><td colspan="1" rowspan="1"><p><code>double(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>0.0</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>String?</code></p>
+</td><td colspan="1" rowspan="1"><p><code>string(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>nil</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>[String]?</code></p>
+</td><td colspan="1" rowspan="1"><p><code>stringArray(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>nil</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>[Any]?</code></p>
+</td><td colspan="1" rowspan="1"><p><code>array(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>nil</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>[String:Any]?</code></p>
+</td><td colspan="1" rowspan="1"><p><code>dictionary(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>nil</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>Any?</code></p>
+</td><td colspan="1" rowspan="1"><p><code>object(forKey:)</code></p>
+</td><td colspan="1" rowspan="1"><p><code>nil</code></p>
+</td></tr>
+</table>
+<p><strong>Storing to UserDefaults</strong></p>
+<p>The code to store to the UserDefaults object is given below:</p>
+<pre><code>// Step 1 - get the UserDefaults object
+let defaults = UserDefaults.standard
+// Step 2 - set the value for the desired key
+defaults.set(&#34;John Tan&#34;, forKey:&#34;name&#34;)</code></pre>
+<p>The typical workflow for setting user defaults:</p>
+<ol type="1" start="1">
+<li>Get the UserDefaults object</li>
+<li>Set the value for the desired key</li>
+</ol>
+<p><strong>Retrieving from UserDefaults</strong></p>
+<p>The code to retrieve values from the UserDefaults object is given below:</p>
+<pre><code>// Step 1 - get the UserDefaults object
+let defaults = UserDefaults.standard
+// Step 2 - get the value for the desired key
+let name = defaults.string(forKey:&#34;name&#34;)</code></pre>
+<p>The typical workflow for getting user defaults:</p>
+<ol type="1" start="1">
+<li>Get the UserDefaults object</li>
+<li>Get the value for the desired key</li>
+</ol>
+<p><strong>Removing from UserDefaults</strong></p>
+<p>The code to remove from the UserDefaults object is given below:</p>
+<pre><code>// Step 1 - get the UserDefaults object
+let defaults = UserDefaults.standard
+// Step 2 - remove the value for the desired key
+defaults.removeObject(forKey:&#34;name&#34;)</code></pre>
+<p>The typical workflow for removing from user defaults:</p>
+<ol type="1" start="1">
+<li>Get the UserDefaults object</li>
+<li>Remove the value for the desired key</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - UserDefaults" duration="20">
+        <ol type="1" start="1">
+<li>Create a new project <strong>SampleProject02</strong> using the Single View Application template.</li>
+<li>Run the application. From the Simulator menu bar, select <code>Device</code>, <code>Erase All Content and Settings...</code></li>
+</ol>
+<aside class="warning"><p>Note</p>
+<ul>
+<li>Performing an Erase All Content and Settings... on the simulator is similar to doing a factory reset on a device</li>
+<li>In this case, it will erase all the iOS applications loaded on the simulator, along with any data associated with those applications, such as the user&#39;s defaults database</li>
+</ul>
+</aside>
+<p><strong>In Main.Storyboard</strong></p>
+<ol type="1" start="3">
+<li>Add 2 buttons titled <strong>Load</strong> (IBAction <code>actLoad</code>) and <strong>Save</strong> (IBAction <code>actSave</code>)</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/cbe37567d52ff9e5.png"></p>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="4">
+<li>Update the <code>actLoad(_:)</code> method.</li>
+</ol>
+<pre><code>@IBAction func actLoad(_ sender: UIButton) {
+  // Step 1 - get the UserDefaults object
+  let defaults = UserDefaults.standard
+  
+  // Step 2 - get the value for the desired key
+  let booleanValue = defaults.bool(forKey: &#34;booleanValue&#34;)
+  let integerValue = defaults.integer(forKey: &#34;integerValue&#34;)
+  let doubleValue = defaults.double(forKey: &#34;doubleValue&#34;)
+  let stringValue = defaults.string(forKey: &#34;stringValue&#34;)
+  
+  // print out the values for debugging purposes
+  print(&#34;booleanValue is \(booleanValue)&#34;)
+  print(&#34;integerValue is \(integerValue)&#34;)
+  print(&#34;doubleValue is \(doubleValue)&#34;)
+  print(&#34;stringValue is \(stringValue)&#34;)
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the application and press the <strong>Load</strong> button. At this point, these keys do not exist in the user&#39;s defaults database, hence we get the output shown below.</li>
+</ol>
+<pre><code>booleanValue is false
+integerValue is 0
+doubleValue is 0.0
+stringValue is nil</code></pre>
+<ol type="1" start="6">
+<li>Update the <code>actSave(_:)</code> method.</li>
+</ol>
+<pre><code>@IBAction func actSave(_ sender: UIButton) {
+  // Step 1 - get the UserDefaults object
+  let defaults = UserDefaults.standard
+  
+  // Step 2 - get the value for the desired key
+  defaults.set(true, forKey: &#34;booleanValue&#34;)
+  defaults.set(12, forKey: &#34;integerValue&#34;)
+  defaults.set(34.56, forKey: &#34;doubleValue&#34;)
+  defaults.set(&#34;Hello World!&#34;, forKey: &#34;stringValue&#34;)
+  
+  // Step 3 - force changes to be committed
+  defaults.synchronize()
+}</code></pre>
+<ol type="1" start="7">
+<li>Run the application, press the <strong>Save</strong> button, and press the <strong>Load</strong> button. The values were saved to UserDefaults when the <strong>Save</strong> button was pressed, and retrieved from the UserDefaults when the <strong>Load</strong> button was pressed, hence we get the output shown below.</li>
+</ol>
+<pre><code>booleanValue is true
+integerValue is 12
+doubleValue is 34.56
+stringValue is Optional(&#34;Hello World!&#34;)</code></pre>
+<ol type="1" start="8">
+<li>Run the application again and press the <strong>Load</strong> button. We get the same output as above, proving that the data is persistent across application restarts.</li>
+<li>Quit the simulator. Run the application again and press the <strong>Load</strong> button. We get the same output as above, proving that the data is persistent across device reboots.</li>
+<li>It is common practice to use the nil-coalescing operator when using <code>string(forKey:)</code>. As an example, the code in <code>actLoad(_:)</code> could be modified as such:</li>
+</ol>
+<pre><code>@IBAction func actLoad(_ sender: UIButton) {
+  // Step 1 - get the UserDefaults object
+  let defaults = UserDefaults.standard
+  
+  // Step 2 - get the value for the desired key
+  let booleanValue = defaults.bool(forKey: &#34;booleanValue&#34;)
+  let integerValue = defaults.integer(forKey: &#34;integerValue&#34;)
+  let doubleValue = defaults.double(forKey: &#34;doubleValue&#34;)
+  let stringValue = defaults.string(forKey: &#34;stringValue&#34;) ?? &#34;no value&#34;
+  
+  // print out the values for debugging purposes
+  print(&#34;booleanValue is \(booleanValue)&#34;)
+  print(&#34;integerValue is \(integerValue)&#34;)
+  print(&#34;doubleValue is \(doubleValue)&#34;)
+  print(&#34;stringValue is \(stringValue)&#34;)
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2 - UserDefaults" duration="15">
+        <p>Create a playground called Exercise02. Keep the <code>import UIKit</code> statement at the top of the playground so that we have access to the UserDefaults class. Write the following code:</p>
+<ul>
+<li>Retrieve the value associated with the key <code>favouriteMovie</code> to a variable <code>movie</code>; if there is no associated value, use the nil-coalescing operator to set the value of <code>movie</code> to <strong>Big Hero 6</strong>; print the value of movie</li>
+<li>For the key <code>favouriteMovie</code><strong>, </strong>store the value <strong>Star Trek</strong> to UserDefaults</li>
+<li>Retrieve the value associated with the key <code>favouriteMovie</code> to <code>movie</code> and print the value of movie</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Registering default values for UserDefaults" duration="10">
+        <p>In the examples so far, if the key does not exist, we get the default values of zero, false or nil. It is possible to register a default value to return if a particular key does not exist. This is achieved by creating a dictionary of keys and default values, then registering that dictionary to the UserDefaults object. Sample code is shown below:</p>
+<pre><code>// create a dictionary to hold key-value pairs
+var myAppDefaults = [String: Any]()
+
+// add key-values pairs to the dictionary
+myAppDefaults[&#34;integerValue&#34;] = 7
+myAppDefaults[&#34;doubleValue&#34;] = 8.8
+myAppDefaults[&#34;stringValue&#34;] = &#34;happiness&#34;
+
+// register the defaults
+let defaults = UserDefaults.standard
+defaults.register(defaults:myAppDefaults)</code></pre>
+<aside class="warning"><p>The retrieved value for a key then becomes dependent on whether a default value was registered or if the key already exists with an associated value.</p>
+<p>The retrieved value for a key is equal to:</p>
+<ul>
+<li>the associated value if a value has been set, otherwise</li>
+<li>the default value if a default value has been registered, otherwise</li>
+<li>0, false, or nil depending on the method used to retrieve the value</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Registering default values for UserDefaults" duration="15">
+        <ol type="1" start="1">
+<li>Create a new project <strong>SampleProject03</strong> using the Single View Application template.</li>
+<li>We will investigate the 4 scenarios stated below:</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Scenario</p>
+</td><td colspan="1" rowspan="1"><p>Default registered?</p>
+</td><td colspan="1" rowspan="1"><p>Key exists?</p>
+</td><td colspan="1" rowspan="1"><p>Retrieved value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Scenario1</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td><td colspan="1" rowspan="1"><p>0, false or nil depending on the method used to retrieve the value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Scenario2</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td><td colspan="1" rowspan="1"><p>registered default value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Scenario3</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td><td colspan="1" rowspan="1"><p>associated value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Scenario4</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td><td colspan="1" rowspan="1"><p>associated value</p>
+</td></tr>
+</table>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="3">
+<li>Update the viewDidLoad() method:</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let defaults = UserDefaults.standard
+    
+    // register the default values for scenario 2 and scenario 4
+    var myAppDefaults = [String: Any]()
+    myAppDefaults[&#34;scenario2&#34;] = &#34;scenario 2 registered default value&#34;
+    myAppDefaults[&#34;scenario4&#34;] = &#34;scenario 4 registered default value&#34;
+    defaults.register(defaults: myAppDefaults)
+    
+    // set the associated values for scenario 3 and scenario 4
+    defaults.set(&#34;scenario 3 associated value&#34;, forKey: &#34;scenario3&#34;)
+    defaults.set(&#34;scenario 4 associated value&#34;, forKey: &#34;scenario4&#34;)
+    
+    // read back the values
+    print(&#34;S1 \(defaults.string(forKey: &#34;scenario1&#34;))&#34;)
+    print(&#34;S2 \(defaults.string(forKey: &#34;scenario2&#34;))&#34;)
+    print(&#34;S3 \(defaults.string(forKey: &#34;scenario3&#34;))&#34;)
+    print(&#34;S4 \(defaults.string(forKey: &#34;scenario4&#34;))&#34;)
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the application. You should see the following in the debug area:</li>
+</ol>
+<pre>S1 nil
+S2 Optional(&#34;scenario 2 registered default value&#34;)
+S3 Optional(&#34;scenario 3 associated value&#34;)
+S4 Optional(&#34;scenario 4 associated value&#34;)</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3 - Registering default values for UserDefaults" duration="15">
+        <p>Create a playground called Exercise03. Keep the <code>import UIKit</code> statement at the top of the playground so that we have access to the UserDefaults class. Write the following code:</p>
+<ul>
+<li>register default values for UserDefaults based on the table below</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>key</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>registered default</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>currency</code></p>
+</td><td colspan="1" rowspan="1"><p><code>SGD</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>backgroundColor</code></p>
+</td><td colspan="1" rowspan="1"><p><code>red</code></p>
+</td></tr>
+</table>
+<ul>
+<li>print the retrieved values from UserDefaults for the keys <code>currency</code> and <code>backgroundColor</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Settings Bundle" duration="20">
+        <p><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html" target="_blank">https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html</a></p>
+<p>The keys stored in UserDefaults are often called preferences and the associated values are called preference values. These preference values are used to customise the behaviour of the app according to the user&#39;s preferences; for example, an app could have a preference for the background color which would allow the user to choose from a list of colors.</p>
+<p>There are two options to present a user interface for users to see and manage preferences:</p>
+<ul>
+<li>create a custom user interface inside your app to get the user&#39;s preferences, and write the associated code to store it to the UserDefaults</li>
+<li>create a Settings Bundle which will be used by the Settings App which comes on all iOS devices</li>
+</ul>
+<p>A settings bundle describes the structure and presentation of your preferences in the Settings app. The figure below shows 5 preference control types: Group, Text Field, Multi Value, Toggle Switch and Slider. 2 other types: Title and Child pane, are not shown in the figure, but are described in the table.</p>
+<p class="image-container"><img style="width: 314.00px" src="img/f62f4d29367d637f.png"></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Control type</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Group</p>
+</td><td colspan="1" rowspan="1"><p>The group type is for organizing groups of preferences on a single page. The group type does not represent a configurable preference. It simply contains a title string that is displayed immediately before one or more configurable preferences.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Text field</p>
+</td><td colspan="1" rowspan="1"><p>The text field type displays a title (optional) and an editable text field. You can use this type for preferences that require the user to specify a custom string value.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Multivalue</p>
+</td><td colspan="1" rowspan="1"><p>The multivalue type lets the user select one value from a list of values. You can use this type for a preference that supports a set of mutually exclusive values. The values can be of any type.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Toggle switch</p>
+</td><td colspan="1" rowspan="1"><p>The toggle switch type displays an ON/OFF toggle button. You can use this type to configure a preference that can have only one of two values. Although you typically use this type to represent preferences containing Boolean values, you can also use it with preferences containing non-Boolean values.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Slider</p>
+</td><td colspan="1" rowspan="1"><p>The slider type displays a slider control. You can use this type for a preference that represents a range of values. The value for this type is a real number whose minimum and maximum value you specify.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Title</p>
+</td><td colspan="1" rowspan="1"><p>The title type displays a read-only string value. You can use this type to display read-only preference values. (If the preference contains cryptic or nonintuitive values, this type lets you map the possible values to custom strings.)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Child pane</p>
+</td><td colspan="1" rowspan="1"><p>The child pane type lets the user navigate to a new page of preferences. You use this type to implement hierarchical preferences. For more information on how you configure and use this preference type, see Hierarchical Preferences.</p>
+</td></tr>
+</table>
+<h2 is-upgraded><strong>Getting notified of changes to preference values in Settings app</strong></h2>
+<p>An app is not automatically aware of changes made to the preference values in the Settings app. The following code needs to be added to any view controller which wants to be notified when changes are made.</p>
+<pre><code>override func viewDidLoad() {
+  super.viewDidLoad()
+  
+  let center = NotificationCenter.default
+  center.addObserver(self,
+                     selector: #selector(self.settingsChanged(_:)),
+                     name: UserDefaults.didChangeNotification,
+                     object: nil)
+}
+ 
+@objc func settingsChanged(_ notification: NSNotification) {
+  // do something with the updated preferences
+}</code></pre>
+<h2 is-upgraded><strong>Synchronising settings bundle defaults with preference defaults</strong></h2>
+<p>The default values for the preferences in the Settings Bundle are only used for display purposes in the Settings App. In <code>AppDelegate.swift</code>, add the helper function <code>registerDefaultsFromSettingsBundle()</code> and call the helper function in <code>application(_:didFinishLaunchingWithOptions:)</code>. This will register the default values in the Settings Bundle as default values for the UserDefaults object.</p>
+<pre><code>func registerDefaultsFromSettingsBundle()
+{
+  let settingsUrl = Bundle.main.url(forResource: &#34;Settings&#34;, withExtension: &#34;bundle&#34;)!.appendingPathComponent(&#34;Root.plist&#34;)
+  let settingsPlist = NSDictionary(contentsOf:settingsUrl)!
+  let preferences = settingsPlist[&#34;PreferenceSpecifiers&#34;] as! [NSDictionary]
+  
+  var defaultsToRegister = Dictionary&lt;String, Any&gt;()
+  
+  for preference in preferences {
+    guard let key = preference[&#34;Key&#34;] as? String else {
+      continue
+    }
+    defaultsToRegister[key] = preference[&#34;DefaultValue&#34;]
+  }
+  UserDefaults.standard.register(defaults: defaultsToRegister)
+}</code></pre>
+<pre><code>func application(_ application: UIApplication,
+                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    registerDefaultsFromSettingsBundle()
+    
+    return true
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Settings Bundle" duration="20">
+        <ol type="1" start="1">
+<li>Create a new project SampleProject04 using the Single View Application template.</li>
+<li>Run the application. From the Simulator menu bar, select <code>Device</code>, <code>Erase All Content and Settings...</code></li>
+</ol>
+<p><strong>In Main.storyboard</strong></p>
+<ol type="1" start="3">
+<li>Add 3 labels with the IBOutlet properties <code>outLabelName</code>, <code>outLabelEnabled</code>, <code>outLabelSlider</code>. Follow the user interface shown below:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/27b0b724e5b182f3.png"></p>
+<p><strong>In Project Navigator</strong></p>
+<ol type="1" start="4">
+<li>Create a new file by selecting <code>iOS</code>, <code>Resource</code>, <code>Settings Bundle</code>. Save the file as <strong>Settings</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f2cf1f2c1b04fc53.png"></p>
+<ol type="1" start="5">
+<li>Select <code>Settings.bundle</code>, <code>Root.plist</code> and it will appear in the editor window. Note that the Settings Bundle created uses the following control types: Group, Text Field, Toggle Switch and Slider. For the Text Field, Toggle Switch and Slider, the Identifier will be used as keys in UserDefaults, and the Default Value will be registered as default values for those keys. Take note of the identifiers <code>name_preference</code>, <code>enabled_preference</code> and <code>slider_preference</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/23534e91a8ad2069.png"></p>
+<ol type="1" start="6">
+<li>Run the app from Xcode. Press Shift-Cmd-H to get to the home screen. Swipe to the first screen of apps for the Settings app (Screenshot 1). Launch the Settings app, scroll to the bottom and click on SampleProject04 (Screenshot 2). The preferences for SampleProject04 are shown (Screenshot 3).</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Screenshot 1</p>
+</td><td colspan="1" rowspan="1"><p>Screenshot 2</p>
+</td><td colspan="1" rowspan="1"><p>Screenshot 3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 194.00px" src="img/99515684a2fb66c7.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 194.00px" src="img/59e2987de693f438.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 194.00px" src="img/3202a6ff0366620.png"></p>
+</td></tr>
+</table>
+<p><strong>In ViewController.swift:</strong></p>
+<ol type="1" start="7">
+<li>Update ViewController</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+
+  @IBOutlet weak var outLabelName: UILabel!
+  @IBOutlet weak var outLabelEnabled: UILabel!
+  @IBOutlet weak var outLabelSlider: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    retrievePreferences()
+  }
+  
+  func retrievePreferences() {
+    // Step 1 - get the UserDefaults object
+    let defaults = UserDefaults.standard
+    
+    // Step 2 - get the value for the desired key (keys match the preference identifiers)
+    let name = defaults.string(forKey: &#34;name_preference&#34;) ?? &#34;no value&#34;
+    let enabled = defaults.bool(forKey: &#34;enabled_preference&#34;)
+    let slider = defaults.double(forKey: &#34;slider_preference&#34;)
+    
+    // show the values for debugging purposes
+    outLabelName.text = &#34;\(name)&#34;
+    outLabelEnabled.text = &#34;\(enabled)&#34;
+    outLabelSlider.text = &#34;\(slider)&#34;
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the app from Xcode. You should see the following:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/dd8d988e524d53a1.png"></p>
+<aside class="warning"><p>In the Settings App, the default value for the switch was true and the default value of the slider was 0.5. These default values are only used for display purposes in the Settings App.</p>
+</aside>
+<ol type="1" start="9">
+<li>Go to the settings page for SampleProject04 and set the name as John Tan.</li>
+<li>Run the app from Xcode. You should see the following:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/485e8882459ebb5b.png"></p>
+<aside class="warning"><p>The Settings app only saves the preference values for those which have been altered by the user.</p>
+</aside>
+<ol type="1" start="11">
+<li>Go to the settings page for SampleProject04. Toggle the switch to false, then true again. Move the slider to the maximum value. </li>
+<li>Run the app from Xcode. You should see the following:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/80f584511693641f.png"></p>
+<h2 is-upgraded><strong>Getting notified of changes to preference values in Settings app</strong></h2>
+<ol type="1" start="13">
+<li>If we want the app to be notified when there are changes made via the Settings App, we need to add the following code to the view controller that wants to be notified.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+
+  @IBOutlet weak var outLabelName: UILabel!
+  @IBOutlet weak var outLabelEnabled: UILabel!
+  @IBOutlet weak var outLabelSlider: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let center = NotificationCenter.default
+    center.addObserver(self,
+                       selector: #selector(self.settingsChanged(_:)),
+                       name: UserDefaults.didChangeNotification,
+                       object: nil)
+    
+    retrievePreferences()
+  }
+  
+  func retrievePreferences() {
+    // Step 1 - get the UserDefaults object
+    let defaults = UserDefaults.standard
+    
+    // Step 2 - get the value for the desired key (keys match the preference identifiers)
+    let name = defaults.string(forKey: &#34;name_preference&#34;) ?? &#34;no value&#34;
+    let enabled = defaults.bool(forKey: &#34;enabled_preference&#34;)
+    let slider = defaults.double(forKey: &#34;slider_preference&#34;)
+    
+    // show the values for debugging purposes
+    outLabelName.text = &#34;\(name)&#34;
+    outLabelEnabled.text = &#34;\(enabled)&#34;
+    outLabelSlider.text = &#34;\(slider)&#34;
+  }
+   
+  @objc func settingsChanged(_ notification: NSNotification) {
+    retrievePreferences()
+  }
+
+}</code></pre>
+<ol type="1" start="14">
+<li>Run the app from Xcode. Go to the settings page for SampleProject04 and set the name as <strong>David Lee</strong>.</li>
+<li>Run the app from the home screen. You should see the updated name.</li>
+</ol>
+<h2 is-upgraded><strong>Synchronising settings bundle defaults with preference defaults</strong></h2>
+<p><strong>In AppDelegate.swift:</strong></p>
+<ol type="1" start="16">
+<li>Add the helper function <code>registerDefaultsFromSettingsBundle()</code></li>
+</ol>
+<pre><code>func registerDefaultsFromSettingsBundle()
+{
+  let settingsUrl = Bundle.main.url(forResource: &#34;Settings&#34;, withExtension: &#34;bundle&#34;)!.appendingPathComponent(&#34;Root.plist&#34;)
+  let settingsPlist = NSDictionary(contentsOf:settingsUrl)!
+  let preferences = settingsPlist[&#34;PreferenceSpecifiers&#34;] as! [NSDictionary]
+  
+  var defaultsToRegister = Dictionary&lt;String, Any&gt;()
+  
+  for preference in preferences {
+    guard let key = preference[&#34;Key&#34;] as? String else {
+      continue
+    }
+    defaultsToRegister[key] = preference[&#34;DefaultValue&#34;]
+  }
+  UserDefaults.standard.register(defaults: defaultsToRegister)
+}</code></pre>
+<ol type="1" start="17">
+<li>Call the helper function in <code>application(_:didFinishLaunchingWithOptions:)</code>.</li>
+</ol>
+<pre><code>func application(_ application: UIApplication,
+                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+    registerDefaultsFromSettingsBundle()
+    
+    return true
+}</code></pre>
+<ol type="1" start="18">
+<li>Run the application. From the Simulator menu bar, select <code>Device</code>, <code>Erase All Content and Settings...</code></li>
+<li>Run the app from Xcode. The defaults specified in the Settings Bundle are now registered as default values for those preferences defined in the Settings Bundle. You should see the following:</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/ce96c9336e3643d0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 4 - Settings Bundle" duration="20">
+        <ul>
+<li>Create a project called Exercise04. Follow the tutorial <strong>Configuring a Settings Page: A Tutorial</strong> at <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html#//apple_ref/doc/uid/10000059i-CH6-SW14" target="_blank">https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html#//apple_ref/doc/uid/10000059i-CH6-SW14</a></li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/c123f73522e4b25d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 5 - Settings Bundle" duration="20">
+        <ul>
+<li>Create a project called Exercise05.</li>
+<li>The Settings page for Exercise05 will show a list of colors, which determines the background color of your app.</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 298.00px" src="img/a1ad9eda3edbab58.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 298.00px" src="img/1b3507e5a2fb013a.png"></p>
+</td></tr>
+</table>
+<ul>
+<li>The initial background color of your app should match the initial default value from the Settings App.</li>
+<li>Your app should be aware when changes are made via the Settings App, and it should show the correct background color when it appears.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Codable and FileManager</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/BasicOperators.html</a></li>
+<li><a href="https://developer.apple.com/reference/foundation/userdefaults" target="_blank">https://developer.apple.com/reference/foundation/userdefaults</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html" target="_blank">https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/Preferences/Preferences.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

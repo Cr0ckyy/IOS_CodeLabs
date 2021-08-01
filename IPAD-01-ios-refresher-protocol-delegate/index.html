@@ -1,0 +1,797 @@
+
+<!doctype html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <meta name="theme-color" content="#4F7DC9">
+        <meta charset="UTF-8">
+        <title>Refresher and protocol-delegate pattern</title>
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+        <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+        <style>
+            .success {
+                color: #1e8e3e;
+            }
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+    <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+    <google-codelab codelab-gaid=""
+                    id="01-ios-refresher-protocol-delegate"
+                    title="Refresher and protocol-delegate pattern"
+                    environment="web"
+                    feedback-link="mailto:ryan_low@rp.edu.sg">
+
+        <google-codelab-step label="Introduction" duration="5">
+            <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+            <ul class="checklist">
+                <li>recap the creation and use of IBOutlet properties and IBAction methods for user interface objects</li>
+                <li>recap the development of multi-view applications and use of segues</li>
+                <li>recap the configuration for a UITableViewController to display a list of items</li>
+                <li>recap the use of a DataController to manage data</li>
+                <li>create and use a protocol</li>
+            </ul>
+            <h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+            <ul>
+                <li>Mac running macOS (Mojave or Catalina)</li>
+                <li>Xcode 11</li>
+            </ul>
+            <h2 is-upgraded><strong>Videos for the activities can be obtained from:</strong></h2>
+            <ul>
+                <li>LEO2</li>
+                <li>Dropbox (<a href="https://www.dropbox.com/sh/mn1oqi1ajlqfca9/AACM_4DK5MW_pDA0VbNgPFx-a" target="_blank">https://www.dropbox.com/sh/mn1oqi1ajlqfca9/AACM_4DK5MW_pDA0VbNgPFx-a</a>)</li>
+                <li>Google Drive (<a href="https://drive.google.com/open?id=111i4J6EBWYFIVcyJTXLb5VDKXXD7he1z" target="_blank">https://drive.google.com/open?id=111i4J6EBWYFIVcyJTXLb5VDKXXD7he1z</a>)</li>
+                <li>YouTube</li>
+            </ul>
+            <p>Lesson 1 Activity 1 - passing data (<a href="https://youtu.be/E0yFkbmO3No" target="_blank">https://youtu.be/E0yFkbmO3No</a>)</p>
+            <p>Lesson 1 Activity 2 - programmatic segue (<a href="https://youtu.be/TvgYH--KOIM" target="_blank">https://youtu.be/TvgYH--KOIM</a>)</p>
+            <p>Lesson 1 Activity 3 - table view controller (<a href="https://youtu.be/lMHqK_xg0tY" target="_blank">https://youtu.be/lMHqK_xg0tY</a>)</p>
+            <p>Lesson 1 Activity 4 - data controller (<a href="https://youtu.be/kOsLpsx3gLw" target="_blank">https://youtu.be/kOsLpsx3gLw</a>)</p>
+            <p>Lesson 1 Activity 5 - protocols and delegates (<a href="https://youtu.be/DZ7mRp_Z9W0" target="_blank">https://youtu.be/DZ7mRp_Z9W0</a>)</p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="IBOutlet properties" duration="5">
+            <ul>
+                <li>Found in view controller objects</li>
+                <li>Is a reference to a user interface object found in Main.storyboard</li>
+                <li>Used to configure, control and access a user interface object</li>
+                <li>Managed via connections inspector</li>
+            </ul>
+            <p><strong>Steps</strong></p>
+            <ol type="1" start="1">
+                <li>Assistant Editor mode, Control-Left-Drag or Right-Drag from user interface object to view controller</li>
+                <li>Set the Name and Type in the Outlet connection dialog</li>
+            </ol>
+            <p class="image-container"><img style="width: 280.00px" src="img/7d573a73e8d89453.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="IBAction methods" duration="5">
+            <ul>
+                <li>Found in view controller objects</li>
+                <li>Is a method tied to an event experienced by a user interface object found in Main.storyboard</li>
+                <li>Used to group code to be executed when a user interface object experiences an event</li>
+                <li>Managed via connections inspector</li>
+            </ul>
+            <p><strong>Steps</strong></p>
+            <ol type="1" start="1">
+                <li>Assistant Editor mode, Control-Left-Drag or Right-Drag from user interface object to view controller</li>
+                <li>Set the Name, Type and Event in the Action connection dialog</li>
+            </ol>
+            <p class="image-container"><img style="width: 280.00px" src="img/537ce7c678acb9b2.png"></p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Multi-view applications and segues" duration="15">
+            <p class="image-container"><img style="width: 624.00px" src="img/f1764e7e7ae7964f.png"></p>
+            <p><strong>In a storyboard, a scene represents one screen of content and one view controller</strong></p>
+            <ul>
+                <li>The user interface objects are laid out in the UIView object controlled by the view controller</li>
+                <li>View controllers are of type UIViewController or one of its subclasses; the class for the view controller is set via the Identity Inspector. View controllers implement the application behavior by managing and controlling the model and the view.</li>
+            </ul>
+            <p><strong>Steps when adding a new view controller to the storyboard</strong></p>
+            <ol type="1" start="1">
+                <li>Create a subclass of UIViewController or one of its subclasses</li>
+                <li>Drag the corresponding view controller object from the Object Library to the storyboard</li>
+                <li>Set the class of the view controller object in the storyboard to the created subclass via the Identity Inspector</li>
+            </ol>
+            <p><strong>Segues are transitions between one scene and another scene</strong></p>
+            <ul>
+                <li>Segues can be created between a user interface object in one view controller to another view controller; these segues are performed when the user interface object experiences an event (e.g. Touch Up Inside event for UIButton)</li>
+                <li>Segues can be created between one view controller and another view controller; these kind of segues can only be performed programmatically by calling the performSegue(withIdentifier:sender:) method</li>
+            </ul>
+            <p><strong>Types of segues</strong></p>
+            <ul>
+                <li>Show - Used in conjunction with a UINavigationController, pushes a view controller onto the navigation stack and provides a Back button to return to the previous view controller</li>
+                <li>Modal - No UINavigationController required so no Back button provided, used to present a view controller which the user must purposefully interact with</li>
+                <li>Unwind - A segue in the reverse direction from a show segue or modal segue</li>
+            </ul>
+            <p><strong>Steps when creating a segue</strong></p>
+            <ol type="1" start="1">
+                <li>Decide if the segue should be between a user interface object in one view controller to another view controller, or from one view controller to another view controller</li>
+                <li>Always use modal segue if no UINavigationController present; if a UINavigationController is present, choose between a show segue and a modal segue as appropriate</li>
+                <li>Provide the segue with an identifier for segues to be performed programmatically, and when the view controller has multiple segues; otherwise, provide an identifier for all your segues when in doubt</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="The prepare(for:sender:) method" duration="10">
+            <p>Before a segue is performed, the <code>prepare(for:sender:)</code> in the current view controller is called. </p>
+            <p>The first parameter is a UIStoryboardSegue object which has:</p>
+            <ul>
+                <li>a property called <code>identifier</code> which provides the identifier of the segue about to be performed</li>
+                <li>a property called <code>destination</code> which is the next view controller to be loaded</li>
+            </ul>
+            <p>The <code>prepare(for:sender:)</code> can be used by the current view controller to set properties on the next view controller. This allows data to be passed from the current view controller to the next view controller.</p>
+            <p>A sample <code>prepare(for:sender:)</code> method is shown below. It gets the segue identifier from the UIStoryboardSegue object, and checks the identifier value. Upon a match, it gets the next view controller object, and proceeds to set a property on that object. When the next view controller is loaded, it has access to the property value that was set.</p>
+            <pre><code>// this method is called before a segue is performed from this view controller
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+  // the UIStoryboardSegue object has a property called identifier
+  // which holds the identifier of the segue
+  let identifier = segue.identifier
+ 
+  if (identifier == &#34;next&#34;) {
+        // the UIStoryboardSegue object has a property called destination
+        // which holds the destination view controller
+        // we need to cast the destination view controller to the actual type
+        // in this specific example, the destination view controller is NextViewController
+        let vc = segue.destination as! NextViewController
+ 
+        // we can set properties on the destination view controller
+        // in this specific example, NextViewController has a property called passedString
+        vc.passedString = outTextField.text!
+  }
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 1 - Passing data" duration="20">
+            <ol type="1" start="1">
+                <li>Start Xcode, select <code>Create a new Xcode project</code></li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/72dbf25da7bfbea9.png"></p>
+            <ol type="1" start="2">
+                <li>Select <code>iOS</code> and <code>Single View App</code>.</li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/538998b69a511f81.png"></p>
+            <ol type="1" start="3">
+                <li>Enter the <code>Product Name</code>. Follow the rest of the settings shown in the screenshot but update with your student number for the <code>Organization Identifier</code>. </li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/92add72bf09db0a2.png"></p>
+            <ol type="1" start="4">
+                <li>Change the simulator to <code>iPhone 8</code>. </li>
+                <li>Create <code>ViewControllerA</code> : <code>UIViewController</code> and <code>ViewControllerB</code> : <code>UIViewController</code>.</li>
+            </ol>
+            <p>In Main.storyboard:</p>
+            <ol type="1" start="6">
+                <li>Change the <code>View as:</code> to <code>iPhone 8</code> or <code>iPhone SE (2nd generation)</code></li>
+            </ol>
+            <p class="image-container"><img style="width: 624.00px" src="img/41ab40758859a932.png"></p>
+            <ol type="1" start="7">
+                <li>Use the Identity Inspector to set the class for the view controller to <code>ViewControllerA</code>.</li>
+                <li>Add another View Controller object and set the class as <code>ViewControllerB</code>.</li>
+                <li>In ViewControllerA, add a <code>UITextField</code> (IBOutlet <code>outTextField</code>) and a <code>UIButton</code>. From the UIButton, create a modal segue to ViewControllerB. For the modal segue, use the Attributes Inspector to set the <code>Presentation</code> to <code>Full Screen</code>.</li>
+                <li>In ViewControllerB, add a UILabel (IBOutlet <code>outLabel</code>).</li>
+            </ol>
+            <p>In ViewControllerB:</p>
+            <ol type="1" start="11">
+                <li>Declare a property to receive the data. In the <code>viewDidLoad()</code> method, show the text in the label.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewControllerB: UIViewController {
+  @IBOutlet weak var outLabel: UILabel!
+  
+  // declare a property to receive the data
+  var text : String!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // show the text in the label
+    outLabel.text = text
+  }
+}</code></pre>
+            <p>In ViewControllerA:</p>
+            <ol type="1" start="12">
+                <li>Override the <code>prepare(for:sender:)</code> method. Inside this method, get the destination view controller and cast it as <code>ViewControllerB</code>. Get the text from the text field, then pass the text to the ViewControllerB object.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewControllerA: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // override the prepare(for:sender:) method
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the destination view controller and cast it as ViewControllerB
+    let vc = segue.destination as! ViewControllerB
+    // get the text from the text field
+    let text = outTextField.text
+    // pass the text to the ViewControllerB object
+    vc.text = text
+  }
+}</code></pre>
+            <ol type="1" start="13">
+                <li>Run the project in an iPhone 8 simulator. Verify that you can pass the data from the text field in ViewControllerA to the label in ViewControllerB.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 2 - Programmatic segue" duration="15">
+            <ol type="1" start="1">
+                <li>Continue with <code>SampleProject</code>.</li>
+            </ol>
+            <p>In Main.storyboard:</p>
+            <ol type="1" start="2">
+                <li>Delete the modal segue.</li>
+                <li>Create a modal segue from <code>ViewControllerA</code> to <code>ViewControllerB</code>. For the modal segue, use the Attributes Inspector to set the <code>Presentation</code> to <code>Full Screen</code>, and set the segue identifier to <code>next</code>.</li>
+                <li>Create an <code>IBAction</code> method (<code>actButton</code>) for the UIButton in ViewControllerA.</li>
+            </ol>
+            <p>In ViewControllerA:</p>
+            <ol type="1" start="5">
+                <li>Update <code>actButton(_:)</code> to call the <code>performSegue(withIdentifier:sender:)</code> method.</li>
+                <li>Update the <code>prepare(for:sender:)</code> method to retrieve the segue identifier and check against the segue identifier.</li>
+            </ol>
+            <pre><code>import UIKit
+class ViewControllerA: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // Update actButton(_:) to call the performSegue(withIdentifier:sender:) method
+  @IBAction func actButton(_ sender: UIButton) {
+    performSegue(withIdentifier: &#34;next&#34;, sender: self)
+  }
+  
+  // override the prepare(for:sender:) method
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // retrieve the segue identifier
+    let identifer = segue.identifier
+    // check against the segue identifier
+    if (identifer == &#34;next&#34;) {
+      // get the destination view controller and cast it as ViewControllerB
+      let vc = segue.destination as! ViewControllerB
+      // get the text from the text field
+      let text = outTextField.text
+      // pass the text to the ViewControllerB object
+      vc.text = text
+    }
+  }
+}</code></pre>
+            <ol type="1" start="7">
+                <li>Run the project in an iPhone 8 simulator. Verify that you can pass the data from the text field in ViewControllerA to the label in ViewControllerB.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Table view controller" duration="15">
+            <p><a href="https://developer.apple.com/documentation/uikit/views_and_controls/table_views" target="_blank">https://developer.apple.com/documentation/uikit/views_and_controls/table_views</a></p>
+            <p>Table views are versatile user interface objects frequently found in iOS apps. A table view presents data in a scrollable list of multiple rows that may be divided into sections. Table views have many purposes:</p>
+            <ul>
+                <li>To let users navigate through hierarchically structured data</li>
+                <li>To present an indexed list of items</li>
+                <li>To display information and controls in visually distinct groupings</li>
+                <li>To present a selectable list of options (single selection or multiple selection)</li>
+            </ul>
+            <p>The UITableViewController has a UITableView object and acts as the delegate and datasource for that UITableView object based on the UITableViewDelegate and UITableViewDataSource protocols.</p>
+            <p>Typical steps when using a UITableViewController:</p>
+            <ol type="1" start="1">
+                <li>Create a subclass of UITableViewController.</li>
+                <li>Add a Table View Controller object to Main.storyboard and set the class to the created subclass via the Identity Inspector</li>
+                <li>Set the cell identifier.</li>
+                <li>In the table view controller class, declare a property for a data container such as an array, dictionary or data controller, where necessary.</li>
+                <li>Update the numberOfSections(in:) method, typically return 1.</li>
+                <li>Update the tableView(_:numberOfRowsInSection:) method to return the size of the data container.</li>
+                <li>Update the tableView(_:cellForRowAt:) method. Get the cell using the appropriate cell identifier. Get the row number from the index path, and use that to get the appropriate data from the data container. Update the cell with the data.</li>
+            </ol>
+            <pre><code>import UIKit
+class TableViewController: UITableViewController {
+  
+  // data container
+  var items = [&#34;Simon&#34;, &#34;Linda&#34;, &#34;Rachel&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  // returns the number of sections
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    return 1
+  }
+  
+  // returns the number of rows
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    return items.count
+  }
+  
+  // returns the cell for a particular IndexPath (row and section)
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+    -&gt; UITableViewCell {
+      // dequeue a cell which was identified in the storyboard
+      let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+      // get the corresponding row number
+      let row = indexPath.row
+      // get the corresponding data from the data container and do something with it
+      if let label = cell.textLabel {
+        label.text = items[row]
+      }
+      // return the cell
+      return cell
+  }
+}</code></pre>
+            <p>If you need to get the index path of the selected row (single selection mode), use the <code>indexPathForSelectedRow</code> property of the table view object:</p>
+            <pre><code>// get the index path of the selected row (single selection mode)
+let selectedIndexPath = tableView.indexPathForSelectedRow</code></pre>
+            <p>If you need to get the index paths of the selected rows (multiple selection mode), use the <code>indexPathsForSelectedRows</code> property of the table view object:</p>
+            <pre><code>// get the index path(s) of the selected row(s) (multiple selection mode)
+let selectedIndexPaths = tableView.indexPathsForSelectedRows</code></pre>
+            <p>If you need to respond to user selection of a row, implement the <code>tableView(_:didSelectRowAt:)</code> method. Note that the index path of the selected row is provided in the second parameter.</p>
+            <pre><code>override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+  // get the row number
+  let row = indexPath.row
+  // use the row number to get the corresponding item
+}</code></pre>
+            <p>UITableViewController objects are almost always used in conjunction with a UINavigationController.</p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="UINavigationController" duration="10">
+            <p>A navigation controller manages a stack of controllers to support multiple controller applications. A navigation controller allows easy transition from one controller to another. The first controller in the stack is embedded in a navigation controller. Subsequent controllers are added to the navigation stack and presented using a show segue. Navigation backwards through the stack is achieved by a Back button, which is automatically created in the navigation bar.</p>
+            <p>The code below shows how a view controller can pop itself off the navigation stack, or to pop to the root of the navigation stack.</p>
+            <pre><code>// pop this view controller off the stack
+if let nc = self.navigationController {
+  nc.popViewController(animated: true)
+}
+// pop to root
+if let nc = self.navigationController {
+  nc.popToRootViewController(animated: true)
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 3 - Table view controller" duration="25">
+            <ol type="1" start="1">
+                <li>Create <code>SampleProject2</code>.</li>
+                <li>Change the simulator to <code>iPhone 8</code>. </li>
+                <li>Create <code>TableViewController</code> : <code>UITableViewController</code></li>
+            </ol>
+            <p>In Main.storyboard:</p>
+            <ol type="1" start="4">
+                <li>Change the <code>View as:</code> to <code>iPhone 8</code> or <code>iPhone SE (2nd generation)</code></li>
+                <li>Delete the view controller.</li>
+                <li>Add a Table View Controller object and set the class as <code>TableViewController</code>.</li>
+                <li>Embed the Table View Controller in a <code>UINavigationController</code>.</li>
+                <li>Select the UINavigationController and use the Attributes Inspector to set the UINavigationController as the initial view controller.</li>
+                <li>Set the <code>identifier</code> of the table view cell to <code>cell</code>.</li>
+                <li>Set the <code>Style</code> of the cell to <code>Subtitle</code>.</li>
+            </ol>
+            <p>In TableViewController:</p>
+            <ol type="1" start="11">
+                <li>Update the code to declare a String array and configure the UITableViewDelegate and UITableViewDataSource methods.</li>
+            </ol>
+            <pre><code>import UIKit
+class TableViewController: UITableViewController {
+  // declare a String array
+  var fruits = [&#34;apple&#34;, &#34;orange&#34;, &#34;guava&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    // return 1 since we only have 1 section
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    // return the count of items in the array
+    return fruits.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    // update the cell identifier to match the value in Main.storyboard
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    // get the row from the IndexPath object
+    let row = indexPath.row
+    // get the corresponding item from the array
+    let item = fruits[row]
+    // get textLabel from the cell using optional binding
+    if let label = cell.textLabel {
+      label.text = item
+    }
+    return cell
+  }
+}</code></pre>
+            <ol type="1" start="12">
+                <li>Run the project in an iPhone 8 simulator. Verify that the table shows the list of fruits.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Data controller" duration="10">
+            <p>The DataController class typically has an application programming interface (API) to store and retrieve data objects. It implements the singleton pattern to share data across the entire application. One or more data classes are used to package the data for storage and retrieval; you can use a custom data class or an existing class, e.g. String.</p>
+            <p>A DataController class which uses an array to store data.</p>
+            <pre><code>import Foundation
+class DataController {
+  // the singleton object
+  static let sharedInstance = DataController()
+  
+  // private init prevents external creation
+  private init() {
+  }
+  
+  private var items : [String] = []
+  
+  var count : Int {
+    return items.count
+  }
+  
+  func getItem(at index : Int) -&gt; String {
+    return items[index]
+  }
+}</code></pre>
+            <p>A DataController class which uses a dictionary to store data.</p>
+            <pre><code>import Foundation
+class DataController {
+  // the singleton object
+  static let sharedInstance = DataController()
+  
+  // private init prevents external creation
+  private init() {
+  }
+  
+  private var items : [String : String] = [:]
+  
+  var count : Int {
+    return items.count
+  }
+  
+  func getItem(for key : String) -&gt; String! {
+    return items[key]
+  }
+}</code></pre>
+            <p>These DataController classes will be expanded upon when we learn about persistence, and web services. We will also be able to perform validation checking if necessary. Changes to the DataController classes will have minimal impact on our views and controllers.</p>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 4 - Data controller" duration="15">
+            <ol type="1" start="1">
+                <li>Continue with <code>SampleProject2</code>.</li>
+                <li>Create a swift class called <code>DataController</code>. Update the DataController class with the code shown below.</li>
+            </ol>
+            <pre><code>import Foundation
+class DataController {
+  // singleton pattern
+  static let sharedInstance = DataController()
+  private init() {
+  }
+  
+  // array to hold the items
+  private var items = [&#34;apple&#34;, &#34;orange&#34;, &#34;guava&#34;]
+  
+  // computed property to return the count of items
+  var count : Int {
+    return items.count
+  }
+  
+  // returns the item at a given index
+  func getItem(at index:Int) -&gt; String {
+    // get the item at the given index
+    let item = items[index]
+    // return the item
+    return item
+  }
+}</code></pre>
+            <p>In TableViewController:</p>
+            <ol type="1" start="3">
+                <li>Update the code to use the DataController.</li>
+            </ol>
+            <pre><code>import UIKit
+class TableViewController: UITableViewController {
+  // get the DataController singleton
+  let dc = DataController.sharedInstance
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    // return 1 since we only have 1 section
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    // return the count of items from the DataController
+    return dc.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    // update the cell identifier to match the value in Main.storyboard
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    // get the row from the IndexPath object
+    let row = indexPath.row
+    // get the corresponding item from the DataController
+    let item = dc.getItem(at: row)
+    // get textLabel from the cell using optional binding
+    if let label = cell.textLabel {
+      label.text = item
+    }
+    return cell
+  }
+}</code></pre>
+            <ol type="1" start="4">
+                <li>Run the project in an iPhone 8 simulator. Verify that the table shows the list of fruits.</li>
+            </ol>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Protocols and the protocol delegate pattern" duration="10">
+            <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Protocols.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Protocols.html</a></p>
+            <p>A protocol defines a blueprint of methods, properties, and other requirements that suit a particular task or piece of functionality. The protocol can then be adopted by a class, structure, or enumeration to provide an actual implementation of those requirements. Any type that satisfies the requirements of a protocol is said to conform to that protocol.</p>
+            <p>In addition to specifying requirements that conforming types must implement, you can extend a protocol to implement some of these requirements or to implement additional functionality that conforming types can take advantage of.</p>
+            <p>You define protocols in a very similar way to classes, structures, and enumerations:</p>
+            <pre><code>protocol RandomNumberGenerator {
+  func random() -&gt; Double
+}</code></pre>
+            <p>Note that you do not put the curly brackets after each function declaration.</p>
+            <p><strong>Using the protocol delegate pattern for communication across view controllers</strong></p>
+            <p class="image-container"><img style="width: 523.00px" src="img/2ed8a120159b4a46.png"></p>
+            <p>Consider the scenario above. For VCA to communicate with VCB, it is easy for VCA to get a reference to VCB inside the prepare(for:sender:) method. For VCB to communicate with VCA, it is possible to do an unwind segue and use the prepare(for:sender:) method for VCB to get a reference to VCA; however, this approach is not ideal as VCB needs to know that VCA came before it. This makes the view controllers tightly coupled, which generally leads to design issues as the app becomes more complicated.</p>
+            <p>A better approach is to use the protocol delegate pattern. The steps are as follows:</p>
+            <ol type="1" start="1">
+                <li>Create a protocol for communicating with VCA</li>
+                <li>In VCB, create a delegate property; the data type of this property is the protocol</li>
+                <li>In VCB, call the protocol methods on the delegate object </li>
+                <li>In VCA, declare conformance to the protocol and implement the protocol methods</li>
+                <li>In VCA, set the delegate property in VCB with the delegate object, which is VCA</li>
+            </ol>
+            <p>The code examples are given here:</p>
+            <pre><code>// 1.  Create a protocol for communicating with VCA
+import Foundation
+protocol VCAProtocol {
+  func receiveData(data : String)
+}</code></pre>
+            <pre><code>import UIKit
+class VCB: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+  
+  // 2.  In VCB, create a delegate property; the data type of this property is the protocol
+  var delegate : VCAProtocol!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actButton(_ sender: UIButton) {
+    // 3.  In VCB, call the protocol methods on the delegate object
+    delegate.receiveData(data: outTextField.text!)
+    
+    if let nc = self.navigationController {
+      nc.popViewController(animated: true)
+    }
+  }
+}</code></pre>
+            <pre><code>import UIKit
+// 4.  In VCA, declare conformance to the protocol and implement the protocol methods
+class VCA: UIViewController, VCAProtocol {
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let vc = segue.destination as! VCB
+    // 5.  In VCA, set the delegate property in VCB with the delegate object, which is VCA
+    vc.delegate = self
+  }
+  
+  // 4.  In VCA, declare conformance to the protocol and implement the protocol methods
+  func receiveData(data: String) {
+    outLabel.text = data
+  }
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Activity 5 - Protocol delegate pattern" duration="30">
+            <ol type="1" start="1">
+                <li>Continue with <code>SampleProject2</code>.</li>
+                <li>Create <code>AddViewController</code> : <code>UIViewController</code>.</li>
+                <li>Update <code>DataController</code> to have the <code>addItem(item:)</code> method.</li>
+            </ol>
+            <pre><code>import Foundation
+class DataController {
+  // singleton pattern
+  static let sharedInstance = DataController()
+  private init() {
+  }
+  
+  // array to hold the items
+  private var items = [&#34;apple&#34;, &#34;orange&#34;, &#34;guava&#34;]
+  
+  // computed property to return the count of items
+  var count : Int {
+    return items.count
+  }
+  
+  // returns the item at a given index
+  func getItem(at index:Int) -&gt; String {
+    // get the item at the given index
+    let item = items[index]
+    // return the item
+    return item
+  }
+
+  // adds an item
+  func addItem(item : String) {
+    // add the item to the array
+    items.append(item)
+  }
+}</code></pre>
+            <p>In Main.storyboard:</p>
+            <ol type="1" start="4">
+                <li>Add a View Controller and set the class to <code>AddViewController</code>. Add a UITextField (IBOutlet <code>outTextField</code>) and a UIButton (IBAction <code>actAdd</code>, title <code>Add</code>).</li>
+                <li>Add a <code>UIBarButtonItem</code> to the navigation bar in TableViewController. Set the <code>Style</code> to <code>Add</code>. Create a show segue from the UIBarButtonItem to AddViewController.</li>
+            </ol>
+            <p>In AddViewController:</p>
+            <ol type="1" start="6">
+                <li>Update the actAdd(_:) method to read the text from the text field and add it to the DataController.</li>
+            </ol>
+            <pre><code>import UIKit
+class AddViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    // read the text from the text field
+    if let text = outTextField.text {
+      // get the DataController object
+      let dc = DataController.sharedInstance
+      // add the text to the DataController
+      dc.addItem(item: text)
+    }
+  }
+}</code></pre>
+            <p>Run the project in an iPhone 8 simulator. You should observe the following:</p>
+            <ol type="1" start="7">
+                <li>When the <code>+</code> button is pressed, AddViewController is shown.</li>
+                <li>When a value is entered into the text field and the <code>Add</code> button is pressed, and the Back button is pressed, the recently added value is not shown in the table view</li>
+            </ol>
+            <p>In Xcode:</p>
+            <ol type="1" start="9">
+                <li>Create a protocol FruitDelegate. Add the following code to FruitDelegate.</li>
+            </ol>
+            <pre><code>import Foundation
+protocol FruitDelegate {
+  func itemAdded()
+}</code></pre>
+            <p>In AddViewController:</p>
+            <ol type="1" start="10">
+                <li>Declare a property for a FruitDelegate object. After adding an item to the DataController, tell the delegate that an item was added.</li>
+            </ol>
+            <pre><code>import UIKit
+class AddViewController: UIViewController {
+  @IBOutlet weak var outTextField: UITextField!
+
+  // declare a property for a FruitDelegate object
+  var delegate : FruitDelegate!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    // read the text from the text field
+    if let text = outTextField.text {
+      // get the DataController object
+      let dc = DataController.sharedInstance
+      // add the text to the DataController
+      dc.addItem(item: text)
+      // tell the delegate that an item was added
+      delegate.itemAdded()
+    }
+  }
+}</code></pre>
+            <p>In TableViewController:</p>
+            <ol type="1" start="11">
+                <li>Declare that TableViewController conforms to the <code>FruitDelegate</code> protocol and implement the FruitDelegate protocol method. Override the <code>prepare(for:sender:)</code> method and set the <code>delegate</code> property of the <code>AddViewController</code> object.</li>
+            </ol>
+            <pre><code>import UIKit
+// declare that this class conforms to the FruitDelegate protocol
+class TableViewController: UITableViewController, FruitDelegate {
+  // get the DataController singleton
+  let dc = DataController.sharedInstance
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in tableView: UITableView) -&gt; Int {
+    // return 1 since we only have 1 section
+    return 1
+  }
+  
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+    // return the count of items from the DataController
+    return dc.count
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    // update the cell identifier to match the value in Main.storyboard
+    let cell = tableView.dequeueReusableCell(withIdentifier: &#34;cell&#34;, for: indexPath)
+    // get the row from the IndexPath object
+    let row = indexPath.row
+    // get the corresponding item from the DataController
+    let item = dc.getItem(at: row)
+    // get textLabel from the cell using optional binding
+    if let label = cell.textLabel {
+      label.text = item
+    }
+    return cell
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the next view controller and cast it as AddViewController
+    let vc = segue.destination as! AddViewController
+    // set the delegate object
+    vc.delegate = self
+  }
+  
+  // implement the FruitDelegate protocol itemAdded() method
+  func itemAdded() {
+    // reload the table
+    tableView.reloadData()
+  }
+}</code></pre>
+
+
+        </google-codelab-step>
+
+        <google-codelab-step label="Next" duration="0">
+            <ul>
+                <li>Debugging</li>
+            </ul>
+            <p><strong>Reference docs</strong></p>
+            <ul>
+                <li><a href="https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift52.epub" target="_blank">https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift52.epub</a></li>
+            </ul>
+
+
+        </google-codelab-step>
+
+    </google-codelab>
+
+    <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+    <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

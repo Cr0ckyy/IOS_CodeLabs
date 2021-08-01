@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-01T19:12:08Z",
+  "id": "03-ios-iboutlet-ibaction",
+  "duration": 75,
+  "title": "IBOutlet and IBAction",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to create and use IBOutlet properties and IBAction methods",
+  "source": "1evHAvJkFkDVu85cnvjCV13B8kDwkE-mS8sZQWWYjSGE",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "03-ios-iboutlet-ibaction"
+}

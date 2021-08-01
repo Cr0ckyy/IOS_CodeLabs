@@ -1,0 +1,996 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UICollectionView</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="06-ios-uicollectionview"
+                  title="UICollectionView"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Create and configure a UICollectionView to show items in a grid</li>
+<li>Create custom cells, headers and footers with user interface objects for use in the UICollectionView</li>
+<li>Configure a layout object to control the display of the cells in the UICollectionView</li>
+<li>Change the appearance of selected and highlighted cells to provide user with feedback about cell interactions</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+<h2 is-upgraded><strong>Videos for the activities can be obtained from:</strong></h2>
+<ul>
+<li><a href="https://myleo.rp.edu.sg/" target="_blank">LEO2</a></li>
+<li><a href="https://myrp-my.sharepoint.com/:f:/g/personal/rahim_low_myrp_edu_sg/EtQb0YJSKv5BsUDo0R-Etb0B7cYSGq-oTeHQ7N50KLhhPw" target="_blank">OneDrive</a></li>
+<li>YouTube</li>
+</ul>
+<p><a href="https://youtu.be/nzpqv1sj4mI" target="_blank">C349 Lesson06 Introduction</a></p>
+<p><a href="https://youtu.be/2GDWfHShqn0" target="_blank">C349 Lesson06 Activity01 UICollectionViewController</a></p>
+<p><a href="https://youtu.be/5KwX5Y6VUSU" target="_blank">C349 Lesson06 Activity02 Subclassing UICollectionViewCell</a></p>
+<p><a href="https://youtu.be/1rhWSFljuqA" target="_blank">C349 Lesson06 Activity03 Supplementary Views</a></p>
+<p><a href="https://youtu.be/CDAIrtSLsE8" target="_blank">C349 Lesson06 Activity04 UICollectionViewFlowLayout</a></p>
+<p><a href="https://youtu.be/NDZ2l8UGS7g" target="_blank">C349 Lesson06 Activity05 Changing the Appearance of Selected and Highlighted Cells (1)</a></p>
+<p><a href="https://youtu.be/fIE30MA2JGQ" target="_blank">C349 Lesson06 Activity06 Changing the Appearance of Selected and Highlighted Cells (2)</a></p>
+<aside class="warning"><p>Watch <a href="https://youtu.be/nzpqv1sj4mI" target="_blank">C349 Lesson06 Introduction</a> for a quick overview of this lesson</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITableView, UITableViewDataSource, UITableViewDelegate, UITableViewController" duration="5">
+        <aside class="special"><p>Refer to codelabs 06-ios-uitableview for a summary of some of the properties and methods for UITableView, UITableViewDataSource, UITableViewDelegate and UITableViewController.</p>
+</aside>
+<p><strong>UITableView</strong></p>
+<ul>
+<li>Display a single column of vertically scrolling content divided into rows. </li>
+<li>Each row contains one piece of your app&#39;s content. </li>
+<li>Table displays a single long list of rows or related rows can be grouped into sections.</li>
+</ul>
+<p><strong>UITableViewDataSource</strong></p>
+<ul>
+<li>Methods for managing data for the table view and provides cells for the table view.</li>
+</ul>
+<p><strong>UITableViewDelegate</strong></p>
+<ul>
+<li>Methods for managing selection and highlighting.</li>
+</ul>
+<p><strong>UITableViewController</strong></p>
+<ul>
+<li>A view controller that specializes in managing a table view.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UICollectionView" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionview" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionview</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/CollectionViewBasics/CollectionViewBasics.html" target="_blank">https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/CollectionViewBasics/CollectionViewBasics.html</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionView</li>
+</ul>
+<p><strong>UICollectionView</strong></p>
+<ul>
+<li>An object that manages an ordered collection of data items and presents them using customizable layouts.</li>
+<li>Most common use for collection views is to present items in a grid-like arrangement</li>
+<li>Each data item is represented by a <code>UICollectionViewCell</code> object</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/fa42e8d9c6052933.png"></p>
+<p>To present its content on-screen, a collection view cooperates with many different objects:</p>
+<ul>
+<li>the <strong>data source object</strong> provides information about cell content</li>
+<li>the <strong>delegate object</strong> handles user interaction</li>
+<li>the <strong>layout object</strong> provides information (layout attributes) about cell layout</li>
+<li>the collection view object merges the content and layout information to achieve the final appearance</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/133349260d3873b8.png"></p>
+<p><strong>Properties</strong></p>
+<p><code>var dataSource: UICollectionViewDataSource?</code></p>
+<p>The object that provides the data for the collection view.</p>
+<p><code>var delegate: UICollectionViewDelegate?</code></p>
+<p>The object that acts as the delegate of the collection view.</p>
+<p><code>var allowsSelection: Bool</code></p>
+<p>A Boolean value that indicates whether users can select items in the collection view.</p>
+<p><code>var allowsMultipleSelection: Bool</code></p>
+<p>A Boolean value that determines whether users can select more than one item in the collection view.</p>
+<p><strong>Methods</strong></p>
+<p><code>func dequeueReusableCell(withReuseIdentifier: String, for: IndexPath) -&gt; UICollectionViewCell</code></p>
+<p>Returns a reusable cell object located by its identifier</p>
+<p><code>func dequeueReusableSupplementaryView(ofKind: String, withReuseIdentifier: String, for: IndexPath) -&gt; UICollectionReusableView</code></p>
+<p>Returns a reusable supplementary view located by its identifier and kind.</p>
+<p><code>func insertItems(at: [IndexPath])</code></p>
+<p>Inserts new items at the specified index paths.</p>
+<p><code>func moveItem(at: IndexPath, to: IndexPath)</code></p>
+<p>Moves an item from one location to another in the collection view.</p>
+<p><code>func deleteItems(at: [IndexPath])</code></p>
+<p>Deletes the items at the specified index paths.</p>
+<p><code>var indexPathsForSelectedItems: [IndexPath]?</code></p>
+<p>The index paths for the selected items.</p>
+<p><code>func selectItem(at: IndexPath?, animated: Bool, scrollPosition: UICollectionView.ScrollPosition)</code></p>
+<p>Selects the item at the specified index path and optionally scrolls it into view.</p>
+<p><code>func deselectItem(at: IndexPath, animated: Bool)</code></p>
+<p>Deselects the item at the specified index.</p>
+<p><code>func cellForItem(at: IndexPath) -&gt; UICollectionViewCell?</code></p>
+<p>Returns the visible cell object at the specified index path.</p>
+<p><code>func reloadData()</code></p>
+<p>Reloads all of the data for the collection view.</p>
+<p><code>func reloadSections(IndexSet)</code></p>
+<p>Reloads the data in the specified sections of the collection view.</p>
+<p><code>func reloadItems(at: [IndexPath])</code></p>
+<p>Reloads just the items at the specified index paths.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UICollectionViewDataSource" duration="5">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdatasource" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdatasource</a></li>
+</ul>
+<p><strong>UICollectionViewDataSource</strong></p>
+<ul>
+<li>Methods for managing data for the collection view and provides cells for the collection view.</li>
+</ul>
+<p><strong>Methods</strong></p>
+<p><code>func collectionView(UICollectionView, numberOfItemsInSection: Int) -&gt; Int</code></p>
+<p>Asks your data source object for the number of items in the specified section.</p>
+<p><code>func numberOfSections(in: UICollectionView) -&gt; Int</code></p>
+<p>Asks your data source object for the number of sections in the collection view.</p>
+<p><code>func collectionView(UICollectionView, cellForItemAt: IndexPath) -&gt; UICollectionViewCell</code></p>
+<p>Asks your data source object for the cell that corresponds to the specified item in the collection view.</p>
+<p><code>func collectionView(UICollectionView, viewForSupplementaryElementOfKind: String, at: IndexPath) -&gt; UICollectionReusableView</code></p>
+<p>Asks your data source object to provide a supplementary view to display in the collection view.</p>
+<p><code>func collectionView(UICollectionView, canMoveItemAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks your data source object whether the specified item can be moved to another location in the collection view.</p>
+<p><code>func collectionView(UICollectionView, moveItemAt: IndexPath, to: IndexPath)</code></p>
+<p>Tells your data source object to move the specified item to its new location.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UICollectionViewDelegate" duration="5">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdelegate" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdelegate</a></li>
+</ul>
+<p><strong>UICollectionViewDelegate</strong></p>
+<ul>
+<li>Methods for managing selection and highlighting.</li>
+</ul>
+<p><strong>Methods</strong></p>
+<p><code>func collectionView(UICollectionView, shouldSelectItemAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the delegate if the specified item should be selected.</p>
+<p><code>func collectionView(UICollectionView, didSelectItemAt: IndexPath)</code></p>
+<p>Tells the delegate that the item at the specified index path was selected.</p>
+<p><code>func collectionView(UICollectionView, shouldDeselectItemAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the delegate if the specified item should be deselected.</p>
+<p><code>func collectionView(UICollectionView, didDeselectItemAt: IndexPath)</code></p>
+<p>Tells the delegate that the item at the specified path was deselected.</p>
+<p><code>func collectionView(UICollectionView, shouldHighlightItemAt: IndexPath) -&gt; Bool</code></p>
+<p>Asks the delegate if the item should be highlighted during tracking.</p>
+<p><code>func collectionView(UICollectionView, didHighlightItemAt: IndexPath)</code></p>
+<p>Tells the delegate that the item at the specified index path was highlighted.</p>
+<p><code>func collectionView(UICollectionView, didUnhighlightItemAt: IndexPath)</code></p>
+<p>Tells the delegate that the highlight was removed from the item at the specified index path.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UICollectionViewController" duration="5">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewcontroller</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionViewController</li>
+</ul>
+<p><strong>UICollectionViewController</strong></p>
+<ul>
+<li>A view controller that specializes in managing a collection view.</li>
+</ul>
+<p><strong>Properties</strong></p>
+<p><code>var collectionView: UICollectionView!</code></p>
+<p>The collection view object managed by this view controller.</p>
+<aside class="warning"><p><strong>Note the following for UICollectionViewController</strong></p>
+<ul>
+<li>The UICollectionViewController has a property called collectionView for the UICollectionView it is managing</li>
+<li>Do not declare conformance to UICollectionViewDelegate and UICollectionViewDataSource; it is already declared in the class definition for UICollectionViewController</li>
+<li>The override keyword is added before the protocol methods</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity01 UICollectionViewController" duration="10">
+        <p>Watch the video <a href="https://youtu.be/2GDWfHShqn0" target="_blank"><strong>Activity01 UICollectionViewController</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project <strong>SampleProject01</strong> using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Create <code>CollectionViewController</code> : <code>UICollectionViewController</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>View as: <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Delete the <code>View Controller Scene</code></li>
+<li>Add a Collection View Controller from the object library</li>
+<li>Set the class of the collection view controller as CollectionViewController</li>
+<li>Set the Collection View Controller as the Initial View Controller</li>
+<li>Embed the Collection View Controller in a Navigation Controller</li>
+<li>Set the cell identifier for the cell in the collection view in CollectionViewController as <code>cell</code></li>
+<li>Change the background color of the <strong>Content View</strong> in the cell to Orange</li>
+</ol>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="12">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewController: UICollectionViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+    return 1
+  }
+
+  override func collectionView(_ collectionView: UICollectionView,
+                               numberOfItemsInSection section: Int) -&gt; Int {
+    return 1
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;, for: indexPath)
+    return cell
+  }
+}</code></pre>
+<aside class="warning"><p><strong>Note the following for subclasses of UICollectionViewController</strong></p>
+<ul>
+<li>When a subclass of UICollectionViewController is created, there is a line of code in viewDidLoad()</li>
+</ul>
+<p><code>self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)</code></p>
+<ul>
+<li>This line of code must be removed, otherwise nothing will show in the collection view controller</li>
+</ul>
+</aside>
+<ol type="1" start="13">
+<li>Run the project. There should be a collection view with a single orange cell.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/28748561466248f5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Subclassing UICollectionViewCell" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewcell" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewcell</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionViewCell</li>
+</ul>
+<p><strong>Steps to create and use a subclass of UICollectionViewCell</strong></p>
+<p>In project navigator:</p>
+<ul>
+<li>create a new subclass of UICollectionViewCell</li>
+</ul>
+<p>In Main.storyboard:</p>
+<ul>
+<li>use the Identity Inspector to set the class of the cell</li>
+<li>use the Attributes Inspector to set the reuse identifier of the cell</li>
+<li>add user interface objects to the cell</li>
+<li>use the Assistant Editor to create IBOutlet properties for the user interface objects</li>
+</ul>
+<p>In the class implementing the UICollectionViewDataSource <code>collectionView(_:cellForItemAt:)</code> method:</p>
+<ul>
+<li>cast the cell to the custom cell type</li>
+<li>configure the cell</li>
+<li>return the cell</li>
+</ul>
+<pre><code>  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    // cast the cell to the custom cell type
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;,
+                                                  for: indexPath) as! CollectionViewCell
+    // configure the cell
+    cell.outLabel.text = &#34;Hi&#34;
+    // return the cell
+    return cell
+  }</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity02 Subclassing UICollectionViewCell" duration="10">
+        <p>Watch the video <a href="https://youtu.be/5KwX5Y6VUSU" target="_blank"><strong>Activity02 Subclassing UICollectionViewCell</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with project <strong>SampleProject01</strong></li>
+<li>Create <code>CollectionViewCell</code> : <code>UICollectionViewCell</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>Use the Identity Inspector to set the class of the cell as CollectionViewCell</li>
+<li>Add a label to the cell, apply constraints center horizontally and center vertically</li>
+<li>Show the Assistant Editor and click on the Content View of the cell; if CollectionViewCell does not automatically show in the right panel, click on <strong>Automatic</strong>, <strong>Automatic (2)</strong>, <strong>CollectionViewCell</strong></li>
+<li>Create an IBOutlet outLabel for the label</li>
+</ol>
+<p><strong>In CollectionViewCell:</strong></p>
+<ol type="1" start="7">
+<li>The code should look as follows:</li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewCell: UICollectionViewCell {
+  @IBOutlet weak var outLabel: UILabel!
+}</code></pre>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="8">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewController: UICollectionViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+    return 1
+  }
+
+  override func collectionView(_ collectionView: UICollectionView,
+                               numberOfItemsInSection section: Int) -&gt; Int {
+    return 1
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    // cast the cell to the custom cell type
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;,
+      for: indexPath) as! CollectionViewCell
+
+    // configure the cell
+    let section = indexPath.section
+    let item = indexPath.item
+    cell.outLabel.text = &#34;\(section), \(item)&#34;
+
+    // return the cell
+    return cell
+  }
+}</code></pre>
+<aside class="warning"><p>When dealing with a collection view, use <code>item</code> from the IndexPath object instead of <code>row</code>. A table view has rows, but a collection view has items.</p>
+</aside>
+<ol type="1" start="9">
+<li>Run the project. There should be a collection view with a single orange cell. The cell has a label which shows <strong>0, 0</strong>. The first number is the section number and the second number is the row number.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/ced737cb6faa95d8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Supplementary Views" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionreusableview" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionreusableview</a></li>
+<li><a href="https://www.raywenderlich.com/9477-uicollectionview-tutorial-reusable-views-selection-and-reordering" target="_blank">https://www.raywenderlich.com/9477-uicollectionview-tutorial-reusable-views-selection-and-reordering</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionView header and footer</li>
+</ul>
+<p><strong>Supplementary Views</strong></p>
+<ul>
+<li>A collection view section can have supplementary views such as headers and footers</li>
+<li>These supplementary views subclass UICollectionReusableView</li>
+</ul>
+<p><strong>Steps to create and use a subclass of UICollectionReusableView</strong></p>
+<p>In project navigator:</p>
+<ul>
+<li>create a new subclass of UICollectionReusableView</li>
+</ul>
+<p>In Main.storyboard:</p>
+<ul>
+<li>From the document outline, select the collection view object, then use the attributes inspector to check <strong>Section Header</strong>; a UICollectionReusableView appears as a header above the cell</li>
+<li>use the Identity Inspector to set the class of the header</li>
+<li>use the Attributes Inspector to set the reuse identifier of the header</li>
+<li>add user interface objects to the header</li>
+<li>use the Assistant Editor to create IBOutlet properties for the user interface objects</li>
+</ul>
+<p>In the class implementing the UICollectionViewDataSource <code>collectionView(_:viewForSupplementaryElementOfKind:at:)</code> method:</p>
+<ul>
+<li>check for the kind of supplementary view</li>
+<li>for the header, dequeue the header cell, cast to the class of the header, configure the header and return the header</li>
+</ul>
+<pre><code>override func collectionView(_ collectionView: UICollectionView,
+                             viewForSupplementaryElementOfKind kind: String,
+                             at indexPath: IndexPath) -&gt; UICollectionReusableView {
+  if (kind == UICollectionView.elementKindSectionHeader) {
+    // cast the header to the class of the header
+    let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+      withReuseIdentifier: &#34;header&#34;, for: indexPath) as! HeaderView
+    // configure the header
+    // return the header
+    return header
+  } else if (kind == UICollectionView.elementKindSectionFooter) {
+    // cast the footer to the class of the footer
+    let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+      withReuseIdentifier: &#34;footer&#34;, for: indexPath) as! FooterView
+    // configure the footer
+    // return the footer
+    return footer
+  }
+  fatalError(&#34;\(kind) is not a recognized supplementary element&#34;)
+}</code></pre>
+<p>The steps for creating a section footer are very similar. Check the <strong>Section Footer</strong> box in the attributes inspector and use similar code when the kind is UICollectionView.elementKindSectionFooter.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity03 Supplementary Views" duration="10">
+        <p>Watch the video <a href="https://youtu.be/1rhWSFljuqA" target="_blank"><strong>Activity03 Supplementary Views</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with project <strong>SampleProject01</strong></li>
+<li>Create <code>HeaderView</code> : <code>UICollectionReusableView</code></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>From the document outline, select the collection view object, then use the attributes inspector to check <strong>Section Header</strong>; a UICollectionReusableView appears as a header above the cell</li>
+</ol>
+<p class="image-container"><img style="width: 516.00px" src="img/4567fe35ae39fa5d.png"></p>
+<ol type="1" start="4">
+<li>use the Identity Inspector to set the class of the header as <strong>HeaderView</strong></li>
+<li>use the Attributes Inspector to set the reuse identifier of the header to <strong>header</strong> and change the background color to green</li>
+<li>Add a label to the header, apply constraints center horizontally and center vertically</li>
+<li>Show the Assistant Editor and create an IBOutlet outLabel for the label</li>
+</ol>
+<p><strong>In HeaderView:</strong></p>
+<ol type="1" start="8">
+<li>The code should look as follows:</li>
+</ol>
+<pre><code>import UIKit
+class HeaderView: UICollectionReusableView {
+  @IBOutlet weak var outLabel: UILabel!
+}</code></pre>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="9">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewController: UICollectionViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+    return 1
+  }
+
+  override func collectionView(_ collectionView: UICollectionView,
+                               numberOfItemsInSection section: Int) -&gt; Int {
+    return 1
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    // cast the cell to the custom cell type
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;,
+      for: indexPath) as! CollectionViewCell
+
+    // configure the cell
+    let section = indexPath.section
+    let item = indexPath.item
+    cell.outLabel.text = &#34;\(section), \(item)&#34;
+
+    // return the cell
+    return cell
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               viewForSupplementaryElementOfKind kind: String,
+                               at indexPath: IndexPath) -&gt; UICollectionReusableView {
+    if (kind == UICollectionView.elementKindSectionHeader) {
+      // cast the header to the class of the header
+      let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+        withReuseIdentifier: &#34;header&#34;, for: indexPath) as! HeaderView
+      // configure the header
+      header.outLabel.text = &#34;header&#34;
+      // return the header
+      return header
+    }
+    fatalError(&#34;\(kind) is not a recognized supplementary element&#34;)
+  }
+}</code></pre>
+<ol type="1" start="10">
+<li>Run the project. There should be a header above the cell..</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/2455dd88dca42574.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise01 Supplementary Views" duration="10">
+        <p>Copy project SampleProject01 to a new folder called Exercise01. For project Exercise01:</p>
+<ul>
+<li>Create and display a footer</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UICollectionViewFlowLayout" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewflowlayout" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewflowlayout</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html" target="_blank">https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionViewFlowLayout</li>
+</ul>
+<p><strong>UICollectionViewFlowLayout</strong></p>
+<ul>
+<li>A layout object that organizes items into a grid with optional header and footer views for each section.</li>
+<li>The items in the collection view flow from one row or column (depending on the scrolling direction) to the next, with each row comprising as many cells as will fit. </li>
+<li>Cells can be the same sizes or different sizes.</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/422cf38e50aa0075.png"></p>
+<p class="image-container"><img style="width: 746.00px" src="img/911c7cb732581bfe.png"></p>
+<p><strong>Interitem spacing</strong></p>
+<ul>
+<li>The minimum interitem spacing is the minimum spacing to use between items in the same row.</li>
+<li>The actual interitem spacing may be larger than that depending on the screen size</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/f6b5ee971be295ba.png"></p>
+<p><strong>Line spacing</strong></p>
+<ul>
+<li>The minimum line spacing is the minimum spacing to use between lines of items in the grid.</li>
+<li>The actual line spacing may be larger than that if the items are of different sizes</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/d6d7db0bb19f2230.png"></p>
+<p><strong>Section insets</strong></p>
+<ul>
+<li>Section insets are a way to adjust the space available for laying out cells</li>
+<li>Insets can be used to insert space after a section&#39;s header view and before its footer view. </li>
+<li>Insets can be used to insert space around the sides of the content. </li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/174efc069c07191.png"></p>
+<p><strong>Attributes Inspector</strong></p>
+<ul>
+<li>The cell size, header size, footer size, minimum cell (interitem) spacing, minimum line spacing and section insets can be set in the <strong>Size Inspector</strong> for the Collection View Flow Layout object</li>
+<li>For the cell size to take effect, Estimate Size should be set to <strong>None</strong></li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/20ddce735db0e454.png"></p>
+<p><strong>Attributes</strong></p>
+<p><code>var scrollDirection: UICollectionView.ScrollDirection</code></p>
+<p>The scroll direction of the grid.</p>
+<p><code>var minimumLineSpacing: CGFloat</code></p>
+<p>The minimum spacing to use between lines of items in the grid.</p>
+<p><code>var minimumInteritemSpacing: CGFloat</code></p>
+<p>The minimum spacing to use between items in the same row.</p>
+<p><code>var itemSize: CGSize</code></p>
+<p>The default size to use for cells.</p>
+<p><code>var sectionInset: UIEdgeInsets</code></p>
+<p>The margins used to lay out content in a section</p>
+<p><code>var headerReferenceSize: CGSize</code></p>
+<p>The default sizes to use for section headers.</p>
+<p><code>var footerReferenceSize: CGSize</code></p>
+<p>The default sizes to use for section footers.</p>
+<aside class="warning"><p><strong>Vertical scrolling vs horizontal scrolling</strong></p>
+<p class="image-container"><img style="width: 731.00px" src="img/b48c05b239c443c6.png"></p>
+<p>The difference between interitem spacing and line spacing depends on the scroll direction:</p>
+<ul>
+<li>In vertical scrolling, where items are laid out from left to right in a line (row) and continue to the line below, a is the interitem spacing and b is the line spacing.</li>
+<li>In horizontal scrolling, where items are laid from top to bottom in a line (column) and continue to the line on the right, b is the interitem spacing and a is the line spacing</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity04 UICollectionViewFlowLayout" duration="15">
+        <p>Watch the video <a href="https://youtu.be/CDAIrtSLsE8" target="_blank"><strong>Activity04 UICollectionViewFlowLayout</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with project <strong>SampleProject01</strong></li>
+</ol>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the code with the code shown below. The changes are in the return values for <code>numberOfSections(in:)</code> and <code>collectionView(_:numberOfItemsInSection:)</code></li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewController: UICollectionViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+    return 5
+  }
+
+  override func collectionView(_ collectionView: UICollectionView,
+                               numberOfItemsInSection section: Int) -&gt; Int {
+    return 10
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    // cast the cell to the custom cell type
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;,
+      for: indexPath) as! CollectionViewCell
+
+    // configure the cell
+    let section = indexPath.section
+    let item = indexPath.item
+    cell.outLabel.text = &#34;\(section), \(item)&#34;
+
+    // return the cell
+    return cell
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               viewForSupplementaryElementOfKind kind: String,
+                               at indexPath: IndexPath) -&gt; UICollectionReusableView {
+    if (kind == UICollectionView.elementKindSectionHeader) {
+      // cast the header to the class of the header
+      let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+        withReuseIdentifier: &#34;header&#34;, for: indexPath) as! HeaderView
+      // configure the header
+      header.outLabel.text = &#34;header&#34;
+      // return the header
+      return header
+    }
+    fatalError(&#34;\(kind) is not a recognized supplementary element&#34;)
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. The collection view should have 3 sections. Each section should have 15 cells. Scroll vertically to view the cells at the bottom.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/1bac3f5071744a7f.png"></p>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>Select the Collection View Flow Layout object and view the Size Inspector.</li>
+</ol>
+<p class="image-container"><img style="width: 516.00px" src="img/e1fd8fa1462cf1fd.png"></p>
+<aside class="warning"><p><strong>Microsoft Teams Exercise</strong></p>
+<ul>
+<li>Within your group, assign each person a sequence number from 1 to the number of people in your group</li>
+<li>Person #1 will do Task #1, Person 2 will do Task #2 and so on. When you&#39;ve reached the last person, cycle back to Person #1, then Person #2 and so on.</li>
+<li>After each task, post a screenshot of your simulator (press Command-S to take a screenshot, the created file should be on the desktop) together with your observations for the task to your group chat. You may want to add markings to your screenshot to illustrate your observations.</li>
+</ul>
+</aside>
+<ol type="1" start="5">
+<li>Task #1 - change the cell size to 80 x 80 and change Estimate Size to <strong>None</strong></li>
+<li>Task #2 - change the header size to 100 x 100</li>
+<li>Task #3 - change the min spacing for cells to 30</li>
+<li>Task #4 - change the min spacing for lines to 30</li>
+<li>Task #5 - change the top inset to 20</li>
+<li>Task #6 - change the bottom inset to 20 (take an appropriate screenshot)</li>
+<li>Task #7 - change the left inset to 20</li>
+<li>Task #8 - change the right inset to 20</li>
+<li>Task #9 - change the Scroll Direction to Horizontal (in the attributes inspector for the Collection View Flow Layout object)</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Changing the Appearance of Selected and Highlighted Cells" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/changing_the_appearance_of_selected_and_highlighted_cells" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/changing_the_appearance_of_selected_and_highlighted_cells</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>UICollectionView cell selection and highlighting</li>
+</ul>
+<aside class="special"><p>The UICollectionViewDelegate protocol contains methods which are called during the cell selection and cell highlighting process.</p>
+</aside>
+<p>When the user taps a cell, the app has to determine the state of the cell and change the cell&#39;s appearance to indicate the transition between the 3 states: unselected, highlighted, and selected.</p>
+<p>UICollectionView supports single and multiple selection. For multiple selection, set the <code>allowsMultipleSelection</code> property to <code>true</code>.</p>
+<p><strong>Single selection</strong></p>
+<p>For single selection, when the user clicks on a cell, the system will call <code>collectionView(_:shouldSelectItemAt:)</code> and check the return value.</p>
+<p>If the return value is false, nothing happens.</p>
+<p>If the return value is true:</p>
+<ul>
+<li>If there is a previously selected cell, deselect the previously selected cell and call <code>collectionView(_:didDeselectItemAt:)</code> for the previously selected cell</li>
+<li>Select the current cell and call <code>collectionView(_:didSelectItemAt:)</code></li>
+</ul>
+<p><strong>Multiple selection</strong></p>
+<p>For multiple selection, when the user clicks on a cell, the system will perform the following sequence: </p>
+<p>If the cell is currently deselected, iOS will call <code>collectionView(_:shouldSelectItemAt:)</code> and check the return value.</p>
+<ul>
+<li>If the return value is false, nothing happens.</li>
+<li>If the return value is true, the cell will be selected and iOS will call <code>collectionView(_:didSelectItemAt:)</code></li>
+</ul>
+<p>If the cell is currently selected, iOS will call <code>collectionView(_:shouldDeselectItemAt:)</code> and check the return value.</p>
+<ul>
+<li>If the return value is false, nothing happens.</li>
+<li>If the return value is true, the cell will be deselected and iOS will call <code>collectionView(_:didDeselectItemAt:)</code></li>
+</ul>
+<p><strong>Highlighting</strong></p>
+<p>A cell is highlighted when the user presses the cell and does not release. The highlighted cell becomes unhighlighted when the press is released. </p>
+<p>When the cell is pressed, iOS will call collectionView(_:shouldHighlightItemAt:). </p>
+<ul>
+<li>If the return value is false, nothing happens.</li>
+<li>If the return value is true, the cell will be highlighted and iOS will call <code>collectionView(_:didHighlightItemAt:)</code> </li>
+</ul>
+<p>When the press is released, iOS will call <code>collectionView(_:didUnhighlightItemAt:)</code> </p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity05 Changing the Appearance of Selected and Highlighted Cells (1)" duration="10">
+        <p>Watch the video <a href="https://youtu.be/NDZ2l8UGS7g" target="_blank"><strong>Activity05 Changing the Appearance of Selected and Highlighted Cells (1)</strong></a><strong> </strong>and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with project <strong>SampleProject01</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Reset the attributes for the Collection View Flow Layout object</li>
+</ol>
+<p class="image-container"><img style="width: 516.00px" src="img/e1fd8fa1462cf1fd.png"></p>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="3">
+<li>Update the code with the code shown below.</li>
+</ol>
+<pre><code>import UIKit
+class CollectionViewController: UICollectionViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  override func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+    return 1
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               numberOfItemsInSection section: Int) -&gt; Int {
+    return 10
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+    // cast the cell to the custom cell type
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: &#34;cell&#34;,
+                                                  for: indexPath) as! CollectionViewCell
+    
+    // configure the cell
+    let section = indexPath.section
+    let item = indexPath.item
+    cell.outLabel.text = &#34;\(section), \(item)&#34;
+    
+    // return the cell
+    return cell
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView,
+                               viewForSupplementaryElementOfKind kind: String,
+                               at indexPath: IndexPath) -&gt; UICollectionReusableView {
+    if (kind == UICollectionView.elementKindSectionHeader) {
+      // cast the header to the class of the header
+      let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+        withReuseIdentifier: &#34;header&#34;, for: indexPath) as! HeaderView
+      // configure the header
+      header.outLabel.text = &#34;header&#34;
+      // return the header
+      return header
+    }
+    fatalError(&#34;\(kind) is not a recognized supplementary element&#34;)
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -&gt; Bool {
+    print(#function, indexPath)
+    return true
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    print(#function, indexPath)
+    if let cell = collectionView.cellForItem(at: indexPath) {
+      cell.contentView.backgroundColor = .blue
+    }
+  }
+
+  override func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -&gt; Bool {
+    print(#function, indexPath)
+    return true
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    print(#function, indexPath)
+    if let cell = collectionView.cellForItem(at: indexPath) {
+      cell.contentView.backgroundColor = .orange
+    }
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+    print(#function, indexPath)
+    if let cell = collectionView.cellForItem(at: indexPath) {
+      cell.contentView.backgroundColor = .cyan
+    }
+  }
+
+  override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+    print(#function, indexPath)
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. There should be a collection view with one section. In that section is a header and 10 cells.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/6aae962bec9d19af.png"></p>
+<ol type="1" start="5">
+<li>Press cell 0, 0 but do not release. The cell changes to cyan. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]</pre>
+<ol type="1" start="6">
+<li>Release. The cell changes to blue. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]</pre>
+<ol type="1" start="7">
+<li>Press cell 0, 1 but do not release. Cell 0, 1 changes to cyan. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]
+collectionView(_:didHighlightItemAt:) [0, 1]</pre>
+<ol type="1" start="8">
+<li>Release. Cell 0, 0 changes to orange. Cell 0, 1 changes to blue. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]
+collectionView(_:didHighlightItemAt:) [0, 1]
+collectionView(_:didUnhighlightItemAt:) [0, 1]
+collectionView(_:shouldSelectItemAt:) [0, 1]
+collectionView(_:didDeselectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 1]</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity06 Changing the Appearance of Selected and Highlighted Cells (2)" duration="10">
+        <p>Watch the video <a href="https://youtu.be/fIE30MA2JGQ" target="_blank"><strong>Activity06 Changing the Appearance of Selected and Highlighted Cells (2)</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with project <strong>SampleProject01</strong></li>
+</ol>
+<p><strong>In CollectionViewController:</strong></p>
+<ol type="1" start="2">
+<li>Update the viewDidLoad method with the code shown below to allow for <strong>multiple selection</strong>.</li>
+</ol>
+<pre><code>override func viewDidLoad() {
+  super.viewDidLoad()
+  self.collectionView.allowsMultipleSelection = true
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. </li>
+<li>Press cell 0, 0 but do not release. The cell changes to cyan. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]</pre>
+<ol type="1" start="5">
+<li>Release. The cell changes to blue. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]</pre>
+<ol type="1" start="6">
+<li>Press cell 0, 1 but do not release. Cell 0, 1 changes to cyan. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]
+collectionView(_:didHighlightItemAt:) [0, 1]</pre>
+<ol type="1" start="7">
+<li>Release. Cell 0, 0 remains blue. Cell 0, 1 changes to blue. The debug output shows:</li>
+</ol>
+<pre>collectionView(_:didHighlightItemAt:) [0, 0]
+collectionView(_:didUnhighlightItemAt:) [0, 0]
+collectionView(_:shouldSelectItemAt:) [0, 0]
+collectionView(_:didSelectItemAt:) [0, 0]
+collectionView(_:didHighlightItemAt:) [0, 1]
+collectionView(_:didUnhighlightItemAt:) [0, 1]
+collectionView(_:shouldSelectItemAt:) [0, 1]
+collectionView(_:didSelectItemAt:) [0, 1]</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise02 Horizontal scroll" duration="20">
+        <p>Modify the music player user interface screen from the previous week to show a section of horizontal scrolling albums or playlists</p>
+<ul>
+<li>Do not use a UICollectionViewController; instead use a UIViewController with a UICollectionView object</li>
+<li>Create a user interface that is adaptive, appealing and interesting, and has all the appropriate constraints</li>
+</ul>
+<p class="image-container"><img style="width: 591.00px" src="img/5ef23c33d3d015c2.jpeg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise03 Tic-Tac-Toe" duration="30">
+        <p>Create a tic-tac-toe game for 2 human players to play with the following requirements:</p>
+<ul>
+<li>Do not use a UICollectionViewController; instead use a UIViewController with a UICollectionView object</li>
+<li>Create a user interface that is adaptive, appealing and interesting, and has all the appropriate constraints</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise04 Reaction Speed Game" duration="45">
+        <p>Create a reaction speed game with the following requirements:</p>
+<ul>
+<li>Do not use a UICollectionViewController; instead use a UIViewController with a UICollectionView object</li>
+<li>Responds to cell selection</li>
+<li>Create a user interface that is adaptive, appealing and interesting, and has all the appropriate constraints</li>
+</ul>
+<p>Code to tell the difference in seconds between two times</p>
+<pre><code>// the first Date object, think about where this needs to be created
+let startTime = Date()
+// the second Date object, think about where this needs to be created
+let endTime = Date()
+// time difference in seconds
+let difference = endTime.timeIntervalSince(startDate)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UIImagePickerController</li>
+</ul>
+<p><strong>Reference docs</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionview" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionview</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/CollectionViewBasics/CollectionViewBasics.html" target="_blank">https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/CollectionViewBasics/CollectionViewBasics.html</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdatasource" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdatasource</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdelegate" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdelegate</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewcontroller" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewcontroller</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewcell" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewcell</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionreusableview" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionreusableview</a></li>
+<li><a href="https://www.raywenderlich.com/9477-uicollectionview-tutorial-reusable-views-selection-and-reordering" target="_blank">https://www.raywenderlich.com/9477-uicollectionview-tutorial-reusable-views-selection-and-reordering</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewflowlayout" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewflowlayout</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html" target="_blank">https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/changing_the_appearance_of_selected_and_highlighted_cells" target="_blank">https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/changing_the_appearance_of_selected_and_highlighted_cells</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

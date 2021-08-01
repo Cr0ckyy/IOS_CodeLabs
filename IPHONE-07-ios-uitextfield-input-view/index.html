@@ -1,0 +1,481 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UITextField Input View</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="07-ios-uitextfield-input-view"
+                  title="UITextField Input View"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Write code to use a UIDatePicker and UIPickerView as the inputView, and a UIToolbar with UIBarButtonItem objects as the inputAccessoryView for a UITextField</li>
+<li>Write code to programmatically create user interface objects</li>
+<li>Write code to link methods to respond to touch events (e.g. UIBarButtonItem)</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIToolBar" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uitoolbar" target="_blank">https://developer.apple.com/documentation/uikit/uitoolbar</a></p>
+<aside class="special"><p>A control that displays one or more buttons along the bottom edge of your interface.</p>
+</aside>
+<p>In the image below, the toolbar is the light gray rectangle which is located along the bottom edge of the interface.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/526775de4878012f.png"></p>
+<p>In the image below, the toolbar is the light gray rectangle which is located above the UIDatePicker.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/b398e75367b3f5ce.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIBarButtonItem" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uibarbuttonitem" target="_blank">https://developer.apple.com/documentation/uikit/uibarbuttonitem</a></p>
+<aside class="special"><p>A button specialized for placement on a toolbar or tab bar.</p>
+</aside>
+<p>In the image below, the UIBarButton objects are the blue icons. In between the two UIBarButton objects is a flexible space bar button item.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/526775de4878012f.png"></p>
+<p>In the image below, the UIBarButtonItem object is the blue Done button. To the left of the Done button is a flexible space bar button item.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/b398e75367b3f5ce.png"></p>
+<aside class="warning"><p><strong>Note</strong></p>
+<ul>
+<li>Use UIBarButtonItem objects in a UIToolBar. </li>
+<li>Do not use UIButton objects.</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITextField" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uitextfield" target="_blank">https://developer.apple.com/documentation/uikit/uitextfield</a></p>
+<aside class="special"><p>An object that displays an editable text area in your interface.</p>
+</aside>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var inputView: UIView?</code> - The custom input view to display when the text field becomes the first responder.</li>
+<li><code>var inputAccessoryView: UIView?</code> - The custom accessory view to display when the text field becomes the first responder</li>
+</ul>
+<p>Typically, the keyboard is the inputView when the user taps on the UITextField object. However, it is possible to set the inputView as a UIDatePicker (for Date input) or a UIPickerView (for input from a list of predefined choices).</p>
+<p>In addition, we can add a UIToolBar as an inputAccessoryView. The UIToolBar can be configured with UIBarButtonItem objects to allow the user to carry out some predefined actions, such as reading the data from the inputView and dismissing the inputView.</p>
+<aside class="warning"><p><strong>Why?</strong></p>
+<ul>
+<li>We want to replace the input view for the text field from a keyboard to a date picker or a picker view so that we can restrict the possible input values</li>
+<li>We need some way to let the user indicate that a selection has been made and dismiss the input view. We need to have a button that the user can press to indicate this.</li>
+<li>One approach is to put a UIBarButtonItem in a UIToolBar. Then, set the UIToolBar as the input accessory view for the text field. In this manner, the button appears just above the input view.</li>
+</ul>
+<p class="image-container"><img style="width: 610.00px" src="img/b398e75367b3f5ce.png"></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - UITextField and UIDatePicker" duration="10">
+        <aside class="special"><ul>
+<li>The code in this activity consists of a helper function to make the process of adding a UIToolBar and UIBarButtonItem easier. It is important to understand what the helper function is doing.</li>
+<li>The input view and input accessory view for the text field can only be created using code and cannot be done directly in Main.storyboard.</li>
+<li>The input view must be a property, so that it exists as long as the view is shown. If the input view is created as a variable in a function, it only exists when the function is executed.</li>
+</ul>
+</aside>
+<p>Create project <code>SampleProject01</code></p>
+<ol type="1" start="1">
+<li>Add the helper method <code>createToolbar(action:)</code> which will be used to create a toolbar, the Done UIBarButtonItem and link a method to the Done UIBarButtonItem.</li>
+<li><strong>Add a </strong><strong><code>UITextField</code></strong><strong> (IBOutlet </strong><code>outTextField</code><strong>) to Main.storyboard</strong></li>
+<li><strong>Create and configure the inputView for the text field</strong></li>
+<li><strong>Create the method to be executed when the Done button is pressed</strong></li>
+<li><strong>Set up the inputView and inputAccessoryView for the text field</strong></li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  // 02 Add a UITextField (IBOutlet outTextField) to Main.storyboard
+  @IBOutlet weak var outTextField: UITextField!
+  
+  // 03 Create the inputView for the text field
+  let picker = UIDatePicker()
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // 03 Configure the inputView for the text field
+    picker.preferredDatePickerStyle = .wheels
+    
+    // 05 Set up the inputView and inputAccessoryView for the text field
+    outTextField.inputView = picker
+    outTextField.inputAccessoryView = createToolbar(action:#selector(pickerDone))
+  }
+  
+  // 04 Create the method to be executed when the Done button is pressed
+  @objc func pickerDone() {
+    // dismiss the inputView
+    outTextField.resignFirstResponder()
+    
+    // read the input from the inputView
+    let date = picker.date
+    
+    // create a DateFormatter object
+    let dateFormatter = DateFormatter()
+    // specify the format string
+    dateFormatter.dateFormat = &#34;dd-MM-YYYY HH:mm&#34;
+    // use the DateFormatter to create a String object from the Date object
+    let strDate = dateFormatter.string(from: date)
+    
+    // display the input in the text field
+    outTextField.text = strDate
+  }
+
+  // 01 Add the helper method createToolbar(action:) which will be used to
+  // create a toolbar, the Done button and link a method to the Done button
+  func createToolbar(action:Selector) -&gt; UIToolbar {
+    // create a toolbar
+    let toolbar = UIToolbar()
+    // create a flexible space
+    let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                 target: nil,
+                                 action: nil)
+    // create a button
+    let button = UIBarButtonItem(title: &#34;Done&#34;,
+                                 style: .plain,
+                                 target: self,
+                                 action: action)
+    // add flexible space and button to the toolbar
+    toolbar.setItems([spacer, button], animated: false)
+    toolbar.sizeToFit()
+    
+    return toolbar
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. Click on the text field. Notice that instead of a keyboard, there is a UIDatePicker. Select a date and click on the Done button. The formatted date shows up in the text field.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/c3bcacb0625853b7.png"></p>
+<aside class="special"><p>When dealing with multiple UITextField objects, steps 2 to 5 have to be done for each set of UITextField and UIDatePicker.</p>
+</aside>
+<aside class="warning"><p><strong>Note</strong></p>
+<ul>
+<li>To identify which method to call when the button is pressed, we need to create a <code>Selector</code> to the method using <strong><code>#selector</code></strong><code>(methodName)</code></li>
+<li>The method to be called must have the <strong><code>@objc</code></strong> attribute before the func keyword.</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - UITextField and UIPickerView" duration="10">
+        <p>Create project <code>SampleProject02</code></p>
+<ol type="1" start="1">
+<li><em>Declare conformance to picker view protocols</em></li>
+<li><em>Add the helper method createToolbar(action:) which will be used to create a toolbar, the Done button and link a method to the Done button</em></li>
+<li><strong>Add a </strong><strong><code>UITextField</code></strong><strong> (IBOutlet </strong><strong><code>outTextFieldFruits</code></strong><strong>) to Main.storyboard</strong></li>
+<li><strong>Create the inputView for the text field</strong></li>
+<li><strong>Declare an array for the picker</strong></li>
+<li><strong>Set up dataSource and delegate for the picker</strong></li>
+<li><strong>Implement the protocol methods</strong></li>
+<li><strong>Create the method to be executed when the Done button is pressed</strong></li>
+<li><strong>Set up the inputView and inputAccessoryView for the text field</strong></li>
+</ol>
+<pre><code>import UIKit
+// 01 Declare conformance to picker view protocols
+class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+  
+  // 03 Add a UITextField (IBOutlet outTextFieldFruits) to Main.storyboard
+  @IBOutlet weak var outTextFieldFruits: UITextField!
+  
+  // 04 Create the inputView for the text field
+  let fruitPicker = UIPickerView()
+  
+  // 05 Declare an array for the picker
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+ 
+    // 06 Set up dataSource and delegate for the picker
+    fruitPicker.dataSource = self
+    fruitPicker.delegate = self
+    
+    // 09 Set up the inputView and inputAccessoryView for the text field
+    outTextFieldFruits.inputView = fruitPicker
+    outTextFieldFruits.inputAccessoryView = createToolbar(action:#selector(fruitPickerDone))
+  }
+
+  // 07 Implement the protocol methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    if (pickerView == fruitPicker) {
+      return 1
+    }
+    return 0
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -&gt; Int {
+    if (pickerView == fruitPicker) {
+      return fruits.count
+    }
+    return 0
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    if (pickerView == fruitPicker) {
+      return fruits[row]
+    }
+    return nil
+  }
+  
+  // 08 Create the method to be executed when the Done button is pressed
+  @objc func fruitPickerDone() {
+    // dismiss the inputView
+    outTextFieldFruits.resignFirstResponder()
+    
+    // get the selected row
+    let index = fruitPicker.selectedRow(inComponent: 0)
+    // get the selected item
+    var item = fruits[index]
+    // display the input in the text field
+    outTextFieldFruits.text = item
+  }
+
+  // 02 Add the helper method createToolbar(action:) which will be used to
+  // create a toolbar, the Done button and link a method to the Done button
+  func createToolbar(action:Selector) -&gt; UIToolbar {
+    // create a toolbar
+    let toolbar = UIToolbar()
+    // create a flexible space
+    let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                 target: nil,
+                                 action: nil)
+    // create a button
+    let button = UIBarButtonItem(title: &#34;Done&#34;,
+                                 style: .plain,
+                                 target: self,
+                                 action: action)
+    // add flexible space and button to the toolbar
+    toolbar.setItems([spacer, button], animated: false)
+    toolbar.sizeToFit()
+    
+    return toolbar
+  }
+}</code></pre>
+<ol type="1" start="10">
+<li>Run the project. Click on the text field. Notice that instead of a keyboard, there is a UIPickerView. Select an item and click on the Done button. The selected item shows up in the text field.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/54f49e584edc40f9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Multiple UITextField and UIPickerView" duration="10">
+        <aside class="special"><p>When dealing with multiple UITextField objects, steps 3 to 9 have to be done for each set of UITextField and UIPickerView. Note that for step 7, there can only be one set of protocol methods. Inside those methods, you have to check for the picker view.</p>
+</aside>
+<p>Continue with <code>SampleProject02</code></p>
+<ol type="1" start="1">
+<li><em>Declare conformance to picker view protocols (completed in previous activity)</em></li>
+<li><em>Add the helper method createToolbar(action:) which will be used to create a toolbar, the Done button and link a method to the Done button (completed in previous activity)</em></li>
+<li><strong>Add a </strong><strong><code>UITextField</code></strong><strong> (IBOutlet </strong><strong><code>outTextFieldColors</code></strong><strong>) to Main.storyboard</strong></li>
+<li><strong>Create the inputView for the text field</strong></li>
+<li><strong>Declare an array for the picker</strong></li>
+<li><strong>Set up dataSource and delegate for the picker</strong></li>
+<li><strong>Implement the protocol methods</strong></li>
+<li><strong>Create the method to be executed when the Done button is pressed</strong></li>
+<li><strong>Set up the inputView and inputAccessoryView for the text field</strong></li>
+</ol>
+<pre><code>import UIKit
+// 01 Declare conformance to picker view protocols
+class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+  
+  // 03 Add a UITextField (IBOutlet outTextFieldFruits) to Main.storyboard
+  @IBOutlet weak var outTextFieldFruits: UITextField!
+  // 03 Add a UITextField (IBOutlet outTextFieldColors) to Main.storyboard
+  @IBOutlet weak var outTextFieldColors: UITextField!
+
+  // 04 Create the inputView for the text field
+  let fruitPicker = UIPickerView()
+  let colorPicker = UIPickerView()
+
+  // 05 Declare an array for the picker
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  var colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // 06 Set up dataSource and delegate for the picker
+    fruitPicker.dataSource = self
+    fruitPicker.delegate = self
+    colorPicker.dataSource = self
+    colorPicker.delegate = self
+
+    // 09 Set up the inputView and inputAccessoryView for the text field
+    outTextFieldFruits.inputView = fruitPicker
+    outTextFieldFruits.inputAccessoryView = createToolbar(action:#selector(fruitPickerDone))
+    outTextFieldColors.inputView = colorPicker
+    outTextFieldColors.inputAccessoryView = createToolbar(action:#selector(colorPickerDone))
+  }
+
+  // 07 Implement the protocol methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    if (pickerView == fruitPicker) {
+      return 1
+    } else if (pickerView == colorPicker) {
+      return 1
+    }
+    return 0
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -&gt; Int {
+    if (pickerView == fruitPicker) {
+      return fruits.count
+    } else if (pickerView == colorPicker) {
+      return colors.count
+    }
+    return 0
+  }
+  
+  func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -&gt; String? {
+    if (pickerView == fruitPicker) {
+      return fruits[row]
+    } else if (pickerView == colorPicker) {
+      return colors[row]
+    }
+    return nil
+  }
+  
+  // 08 Create the method to be executed when the Done button is pressed
+  @objc func fruitPickerDone() {
+    // dismiss the inputView
+    outTextFieldFruits.resignFirstResponder()
+    
+    // get the selected row
+    let index = fruitPicker.selectedRow(inComponent: 0)
+    // get the selected item
+    var item = fruits[index]
+    // display the input in the text field
+    outTextFieldFruits.text = item
+  }
+
+  @objc func colorPickerDone() {
+    // dismiss the inputView
+    outTextFieldColors.resignFirstResponder()
+    
+    // get the selected row
+    let index = colorPicker.selectedRow(inComponent: 0)
+    // get the selected item
+    var item = colors[index]
+    // display the input in the text field
+    outTextFieldColors.text = item
+  }
+
+  // 02 Add the helper method createToolbar(action:) which will be used to
+  // create a toolbar, the Done button and link a method to the Done button
+  func createToolbar(action:Selector) -&gt; UIToolbar {
+    // create a toolbar
+    let toolbar = UIToolbar()
+    // create a flexible space
+    let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                 target: nil,
+                                 action: nil)
+    // create a button
+    let button = UIBarButtonItem(title: &#34;Done&#34;,
+                                 style: .plain,
+                                 target: self,
+                                 action: action)
+    // add flexible space and button to the toolbar
+    toolbar.setItems([spacer, button], animated: false)
+    toolbar.sizeToFit()
+    
+    return toolbar
+  }
+}</code></pre>
+<ol type="1" start="10">
+<li>Run the project. The result is similar to the previous activity. Each text field has its own picker view with its own set of data.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The user will choose a number between 00 to 99 from the picker</p>
+<p>When the user presses the Unlock button </p>
+<ul>
+<li>if the chosen number is divisible by 17, the label will show Unlocked</li>
+<li>if the chosen number is not divisible by 17, the label will show Locked</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/e85c8e90efabafcd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The user will choose a discount from the picker</p>
+<p>When the user presses the Calculate button </p>
+<ul>
+<li>The label will show the amount payable after applying the discount to the amount entered in the text field </li>
+</ul>
+<p class="image-container"><img style="width: 423.00px" src="img/7ce5f1ff202522f8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The user presses the Toss button to toss a virtual coin</p>
+<ul>
+<li>The result of the toss is shown in the label just above the button</li>
+<li>While the app is running, the number of heads or tails is tallied and displayed in labels</li>
+</ul>
+<p class="image-container"><img style="width: 423.00px" src="img/95a0bb501433f55d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Multiview applications</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uitoolbar" target="_blank">https://developer.apple.com/documentation/uikit/uitoolbar</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uibarbuttonitem" target="_blank">https://developer.apple.com/documentation/uikit/uibarbuttonitem</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uitextfield" target="_blank">https://developer.apple.com/documentation/uikit/uitextfield</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

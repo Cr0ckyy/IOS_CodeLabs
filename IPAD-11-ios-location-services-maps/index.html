@@ -1,0 +1,1086 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>iOS Location services and maps</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="11-ios-location-services-maps"
+                  title="iOS Location services and maps"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Add location services to an application to obtain information about the user&#39;s location</li>
+<li>Discuss the different authorization levels for locations services and choose the appropriate level based on the application features</li>
+<li>Perform geocoding and reverse geocoding to translate between geographic coordinates and user-friendly names associated with locations</li>
+<li>Configure a map based on centering coordinates, display region, map type and display of user location</li>
+<li>Add annotations to a map to provide users with additional information on locations found on the map</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Location services and maps" duration="5">
+        <p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html</a></p>
+<p>Using location-based information in your app is a great way to keep the user connected to the surrounding world. Whether you use this information for practical purposes (such as navigation) or for entertainment, location-based information can enhance the overall user experience.</p>
+<p>Location-based information consists of two pieces: <strong>location services</strong> and <strong>maps</strong>. </p>
+<ul>
+<li><strong>Location services</strong> are provided by the Core Location framework, which defines interfaces for obtaining information about the user&#39;s location and heading (the direction in which a device is pointing). </li>
+<li><strong>Maps</strong> are provided by the Map Kit framework, which supports both the display and annotation of maps similar to those found in the Maps app.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Location services" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject01</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+import CoreLocation
+
+/*
+ * Include the NSLocationWhenInUseUsageDescription key in the app&#39;s Info.plist file
+ * and set the value of that key to a string that tells the user why the app is
+ * requesting access to the user&#39;s location information while the app is running
+ * in the foreground.
+ */
+class ViewController: UIViewController {
+  // Store a strong reference to the CLLocationManager object
+  var locationManager: CLLocationManager!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    setupLocationManager()
+  }
+}
+
+/*
+ * The following extension contains the steps to add location services to the app.
+ * Call setupLocationManager() in the viewDidLoad() method.
+ */
+extension ViewController: CLLocationManagerDelegate {
+  
+  func setupLocationManager() {
+    // 1. Check if the device supports location services
+    guard CLLocationManager.locationServicesEnabled(), CLLocationManager.significantLocationChangeMonitoringAvailable() else {
+      print(&#34;Location services not supported&#34;)
+      return
+    }
+    
+    if (locationManager == nil) {
+      // 2. Configure the desired location services
+      // Create an instance of the CLLocationManager class
+      // Assign a custom object to the delegate property
+      locationManager = CLLocationManager()
+      locationManager.delegate = self
+      
+      // 3. Ask the user for permission to access their location
+      locationManager.requestWhenInUseAuthorization()
+      
+      // 4. Start location services
+      locationManager.startMonitoringSignificantLocationChanges()
+    }
+  }
+  
+  // 4. Receive events
+  // Tells the delegate when the app creates the location manager and when
+  // the authorization status changes.
+  func locationManager(_ manager: CLLocationManager,
+                       didChangeAuthorization status: CLAuthorizationStatus) {
+    if (status == .authorizedWhenInUse) {
+      print(&#34;authorised&#34;)
+      manager.startUpdatingLocation()
+    } else {
+      print(&#34;not authorised&#34;)
+      manager.stopUpdatingLocation()
+    }
+  }
+  
+  // Tells the delegate that the location manager was unable to retrieve a
+  // location value.
+  func locationManager(_ manager: CLLocationManager,
+                       didFailWithError error: Error) {
+    if error._code == CLError.denied.rawValue {
+      print(&#34;didFailWithError denied&#34;)
+      manager.stopUpdatingLocation()
+    } else {
+      print(&#34;didFailWithError \(error._code)&#34;)
+    }
+  }
+  
+  // Tells the delegate that new location data is available.
+  func locationManager(_ manager: CLLocationManager,
+                       didUpdateLocations locations: [CLLocation]) {
+    // The locations parameter always contains at least one location and
+    // may contain more than one. Locations are always reported in the
+    // order in which they were determined, so the most recent location is
+    // always the last item in the array
+    let lastLocation = locations.last!
+    print(&#34;coord:\(lastLocation.coordinate), time:\(lastLocation.timestamp)&#34;)
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the application. You should see the following output in the debug area:</li>
+</ol>
+<pre>2020-08-02 14:00:53.439859+0800 SampleProject01[41049:605385] This app has attempted to access privacy-sensitive data without a usage description. The app&#39;s Info.plist must contain an &#34;NSLocationWhenInUseUsageDescription&#34; key with a string value explaining to the user how the app uses this data
+not authorised</pre>
+<ol type="1" start="4">
+<li>From the Project Navigator, select <code>Info.plist</code>. In the empty space after the last row, right click and select <strong>Add Row</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/ae74124e135a328e.png"></p>
+<ol type="1" start="5">
+<li>For the newly added row, set the key as <code>NSLocationWhenInUseUsageDescription</code> and the value as <code>This app requires location information</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a071e3f7d81fae74.png"></p>
+<ol type="1" start="6">
+<li>Run the application. You should see the following prompt in the iOS simulator. Click <strong>Allow While Using App</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/df054066aaff3403.png"></p>
+<ol type="1" start="7">
+<li>You should see the following output in the debug area:</li>
+</ol>
+<pre>not authorised
+authorised
+didFailWithError 0</pre>
+<ol type="1" start="8">
+<li>From the debug toolbar, click the <strong>Simulate Location</strong> button and select <code>London, England</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/343cff2020241012.png"></p>
+<ol type="1" start="9">
+<li>You should see similar output in the debug area:</li>
+</ol>
+<pre>not authorised
+authorised
+didFailWithError 0
+coord:CLLocationCoordinate2D(latitude: 51.50998, longitude: -0.1337), time:2020-08-02 14:38:13 +0000
+coord:CLLocationCoordinate2D(latitude: 51.50998, longitude: -0.1337), time:2020-08-02 14:38:13 +0000</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Core Location Framework" duration="5">
+        <p><a href="https://developer.apple.com/documentation/corelocation" target="_blank">https://developer.apple.com/documentation/corelocation</a></p>
+<p>Core Location provides services that determine a device&#39;s geographic location, altitude, and orientation. The framework gathers data using all available components on the device, including the Wi-Fi, GPS, Bluetooth, magnetometer, barometer, and cellular hardware.</p>
+<p>You use instances of the <code>CLLocationManager</code> class to configure, start, and stop the Core Location services. A location manager object supports the following location-related activities:</p>
+<ul>
+<li><strong>Standard and significant location updates</strong> - Track large or small changes in the user&#39;s current location with a configurable degree of accuracy.</li>
+<li><strong>Region monitoring</strong> - Monitor distinct regions of interest and generate location events when the user enters or leaves those regions.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Authorization Level" duration="10">
+        <p><strong>Choosing the Authorization Level for Location Services</strong></p>
+<p><a href="https://developer.apple.com/documentation/corelocation/choosing_the_authorization_level_for_location_services" target="_blank">https://developer.apple.com/documentation/corelocation/choosing_the_authorization_level_for_location_services</a></p>
+<p>To use location services, your app requests authorization and the system prompts the user to grant or deny the request. Options include <strong>Allow While Using App</strong>, <strong>Allow Once</strong> and <strong>Don&#39;t Allow</strong>.</p>
+<p>The authorization status that your app has determines if and when it receives location events. There are two types of authorization your app can request:</p>
+<ul>
+<li><strong>When In Use</strong> - Your app can use all location services and receive events while the app is in use. In general, iOS apps are considered in use when they&#39;re in the foreground or running in the background with the background location usage indicator enabled.</li>
+<li><strong>Always</strong> - Your app can use all location services and receive events even if the user is not aware that your app is running. If your app isn&#39;t running, the system launches your app and delivers the event.</li>
+</ul>
+<p><strong>Prefer When In Use Authorization</strong></p>
+<p>Whenever possible, request only <strong>When In Use</strong> authorization. This mode has powerful features, allowing your app to:</p>
+<ul>
+<li>Access all available location services while the user is using the app. If the user stops using your app, any outstanding requests suspend until the user resumes using your app.</li>
+<li>Continue to get location updates even after your app enters the background, if you&#39;ve enabled background location updates in your Xcode project.</li>
+<li>Use location notification triggers to launch. If your app can rely on your user&#39;s interaction, set up a UNLocationNotificationTrigger to notify users when they enter a relevant region. When users click through the notification, the system launches the app, making it eligible to receive the location event. This method lets users decide at a relevant moment whether to share their location with your app.</li>
+</ul>
+<p>Location services are available to apps with <code>CLAuthorizationStatus.authorizedWhenInUse</code> only while the app is &#34;in use&#34;. On all platforms that support When In Use authorization, an app is considered in use:</p>
+<ul>
+<li>When the app runs in the foreground.</li>
+<li>In the few seconds after an app leaves the foreground, a short grace period for your app to finish any current location tasks the user initiated.</li>
+<li>When the app shows the background location usage indicator (<code>showsBackgroundLocationIndicator</code>). On iOS, the indicator is a blue bar or pill at the top of the screen.</li>
+</ul>
+<p>On iOS devices, users can change location service settings at any time in the Settings app, affecting individual apps or the device as a whole. Your app receives events, including authorization changes, in your location manager&#39;s delegate object, which conforms to the <code>CLLocationManagerDelegate</code> protocol.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding Location Services to Your App" duration="15">
+        <p><a href="https://developer.apple.com/documentation/corelocation/adding_location_services_to_your_app" target="_blank">https://developer.apple.com/documentation/corelocation/adding_location_services_to_your_app</a></p>
+<p>Include the <code>NSLocationWhenInUseUsageDescription</code> key in the app&#39;s <code>Info.plist</code> file and set the value of that key to a string that tells the user why the app is requesting access to the user&#39;s location information while the app is running in the foreground.</p>
+<p>When your app runs, it should </p>
+<ol type="1" start="1">
+<li>check if the device supports location services</li>
+<li>configure and start the desired location services</li>
+<li>request authorization to receive the user&#39;s location</li>
+<li>once authorized, start location services and receive events</li>
+</ol>
+<ol type="1" start="1">
+<li><strong>Check if the device supports location services</strong></li>
+</ol>
+<p>Core Location services require hardware that may not be present on every device. Before relying on any specific location service, check if the device supports the service by calling the methods of the <code>CLLocationManager</code> object listed in the table below.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Method</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>locationServicesEnabled()</code></p>
+</td><td colspan="1" rowspan="1"><p>Returns a Boolean value indicating whether location services are enabled on the device.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>significantLocationChangeMonitoringAvailable()</code></p>
+</td><td colspan="1" rowspan="1"><p>Returns a Boolean value indicating whether the significant-change location service is available on the device.</p>
+</td></tr>
+</table>
+<p>Example:</p>
+<pre><code>// 1. Check if the device supports location services
+guard CLLocationManager.locationServicesEnabled(), CLLocationManager.significantLocationChangeMonitoringAvailable() else {
+  print(&#34;Location services not supported&#34;)
+  return
+}</code></pre>
+<ol type="1" start="2">
+<li><strong>Configure the desired location services</strong></li>
+</ol>
+<p>Create an instance of the <code>CLLocationManager</code> class and store a strong reference to it somewhere in your app. You must keep a strong reference to the location manager object until all tasks involving that object complete. Because most location manager tasks run asynchronously, storing your location manager in a local variable is insufficient.</p>
+<p>Assign a custom object to the delegate property, conforming to the <code>CLLocationManagerDelegate</code> protocol. Assign the delegate before starting any location services. The system calls your delegate object&#39;s methods from the thread in which you started the corresponding location services. That thread must itself have an active run loop, like the one found in your app&#39;s main thread.</p>
+<p>Example:</p>
+<pre><code>// 2. Configure the desired location services
+// Create an instance of the CLLocationManager class
+// Assign a custom object to the delegate property
+locationManager = CLLocationManager()
+locationManager.delegate = self</code></pre>
+<ol type="1" start="3">
+<li><strong>Ask the user for permission to access their location</strong></li>
+</ol>
+<p>Ask for authorization to use location services when your users access location related functionality in your app.</p>
+<p>Example:</p>
+<pre><code>// 3. Ask the user for permission to access their location
+locationManager.requestWhenInUseAuthorization()</code></pre>
+<ol type="1" start="4">
+<li><strong>Start location services and receive events</strong></li>
+</ol>
+<ul>
+<li>Call the appropriate method in <code>CLLocationManager</code> to start the delivery of events. Using the <a href="https://developer.apple.com/documentation/corelocation/getting_the_user_s_location/using_the_significant-change_location_service" target="_blank">Significant-Change Location Service</a> gets location updates in a power-friendly way, but less frequently than with the standard location service.</li>
+<li>Receive location and heading related updates in the associated delegate object. See the next section on <code>CLLocationManagerDelegate</code>. </li>
+<li>Call the appropriate method in <code>CLLocationManager</code> to stop the service when your app no longer needs to receive the location events.</li>
+</ul>
+<p>Example:</p>
+<pre><code>// 4. Start location services
+locationManager.startMonitoringSignificantLocationChanges()</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="CLLocationManagerDelegate" duration="15">
+        <p><a href="https://developer.apple.com/documentation/corelocation/cllocationmanagerdelegate" target="_blank">https://developer.apple.com/documentation/corelocation/cllocationmanagerdelegate</a></p>
+<p>The <code>CLLocationManagerDelegate</code> protocol contains methods that you use to receive events from an associated location manager object. The three methods below are typically used:</p>
+<pre><code>func locationManagerDidChangeAuthorization(CLLocationManager)</code></pre>
+<p>Tells the delegate when the app creates the location manager and when the authorization status changes.</p>
+<p>The system calls this method when the app creates the related object&#39;s CLLocationManager instance, and when the app&#39;s authorization status changes. The status informs the app whether it can access the user&#39;s location.</p>
+<p>Use this delegate method to manage your app&#39;s state changes in response to its ability to use location information. For example, you may wish to enable or disable your app&#39;s location-related features, as appropriate.</p>
+<pre><code>func locationManager(CLLocationManager, didFailWithError: Error)</code></pre>
+<p>Tells the delegate that the location manager was unable to retrieve a location value.</p>
+<p>If you do not implement this method, Core Location throws an exception when attempting to use location services.</p>
+<p>The location manager calls this method when it encounters an error trying to get the location or heading data. If the location service is unable to retrieve a location right away, it reports a <code>CLError.Code.locationUnknown</code> error and keeps trying. In such a situation, you can simply ignore the error and wait for a new event.</p>
+<p>If the user denies your app&#39;s use of the location service, this method reports a <code>CLError.Code.denied error</code>. Upon receiving such an error, you should stop the location service.</p>
+<pre><code>func locationManager(CLLocationManager, didUpdateLocations: [CLLocation])</code></pre>
+<p>Tells the delegate that new location data is available.</p>
+<p>The second parameter is an array of <code>CLLocation</code> objects containing the location data. This array always contains at least one object representing the current location. If updates were deferred or if multiple locations arrived before they could be delivered, the array may contain additional entries. The objects in the array are organized in the order in which they occurred. Therefore, the most recent location update is at the end of the array.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="CLLocation" duration="10">
+        <p><a href="https://developer.apple.com/documentation/corelocation/cllocation" target="_blank">https://developer.apple.com/documentation/corelocation/cllocation</a></p>
+<p>A <code>CLLocation</code> object contains the geographical location and altitude of a device, along with values indicating the accuracy of those measurements and when they were collected. In iOS, a location object also contains course information — that is, the speed and heading in which the device was moving.</p>
+<p>After you request location updates from your <code>CLLocationManager</code> object, the system uses onboard sensors to gather location data and report that data to your app. Some services also return previously collected location data, which you can use as context to improve your services. You can always retrieve the most recently collected location from the location property of your <code>CLLocationManager</code> object. </p>
+<p>You may create location objects yourself when you want to cache custom location data or calculate the distance between two geographical coordinates.</p>
+<p><strong>Initializer</strong></p>
+<pre><code>init(latitude: CLLocationDegrees, longitude: CLLocationDegrees)</code></pre>
+<p>Creates a location object with the specified latitude and longitude.</p>
+<p>Example:</p>
+<pre><code>let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)</code></pre>
+<p><strong>Properties</strong></p>
+<pre><code>var coordinate: CLLocationCoordinate2D</code></pre>
+<p>The geographical coordinate information. The <code>CLLocationCoordinate2D</code> struct has properties to get the latitude and longitude.</p>
+<p>Example (assuming you have a <code>CLLocation</code> object called location):</p>
+<pre><code>let latitude = location.coordinate.latitude
+let longitude = location.coordinate.longitude</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Location services" duration="10">
+        <ol type="1" start="1">
+<li>Examine the code for Activity 1 (shown below) and review how it maps to the theory outlined in the sections between Activity 1 and Activity 2. In general, you can use the code below as a starting point for adding location services to your application.</li>
+</ol>
+<pre><code>import UIKit
+import CoreLocation
+
+/*
+ * Include the NSLocationWhenInUseUsageDescription key in the app&#39;s Info.plist file
+ * and set the value of that key to a string that tells the user why the app is
+ * requesting access to the user&#39;s location information while the app is running
+ * in the foreground.
+ */
+class ViewController: UIViewController {
+  // Store a strong reference to the CLLocationManager object
+  var locationManager: CLLocationManager!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    setupLocationManager()
+  }
+}
+
+/*
+ * The following extension contains the steps to add location services to the app.
+ * Call setupLocationManager() in the viewDidLoad() method.
+ */
+extension ViewController: CLLocationManagerDelegate {
+  
+  func setupLocationManager() {
+    // 1. Check if the device supports location services
+    guard CLLocationManager.locationServicesEnabled(), CLLocationManager.significantLocationChangeMonitoringAvailable() else {
+      print(&#34;Location services not supported&#34;)
+      return
+    }
+    
+    if (locationManager == nil) {
+      // 2. Configure the desired location services
+      // Create an instance of the CLLocationManager class
+      // Assign a custom object to the delegate property
+      locationManager = CLLocationManager()
+      locationManager.delegate = self
+      
+      // 3. Ask the user for permission to access their location
+      locationManager.requestWhenInUseAuthorization()
+      
+      // 4. Start location services
+      locationManager.startMonitoringSignificantLocationChanges()
+    }
+  }
+  
+  // 4. Receive events
+  // Tells the delegate when the app creates the location manager and when
+  // the authorization status changes.
+  func locationManager(_ manager: CLLocationManager,
+                       didChangeAuthorization status: CLAuthorizationStatus) {
+    if (status == .authorizedWhenInUse) {
+      print(&#34;authorised&#34;)
+      manager.startUpdatingLocation()
+    } else {
+      print(&#34;not authorised&#34;)
+      manager.stopUpdatingLocation()
+    }
+  }
+  
+  // Tells the delegate that the location manager was unable to retrieve a
+  // location value.
+  func locationManager(_ manager: CLLocationManager,
+                       didFailWithError error: Error) {
+    if error._code == CLError.denied.rawValue {
+      print(&#34;didFailWithError denied&#34;)
+      manager.stopUpdatingLocation()
+    } else {
+      print(&#34;didFailWithError \(error._code)&#34;)
+    }
+  }
+  
+  // Tells the delegate that new location data is available.
+  func locationManager(_ manager: CLLocationManager,
+                       didUpdateLocations locations: [CLLocation]) {
+    // The locations parameter always contains at least one location and
+    // may contain more than one. Locations are always reported in the
+    // order in which they were determined, so the most recent location is
+    // always the last item in the array
+    let lastLocation = locations.last!
+    print(&#34;coord:\(lastLocation.coordinate), time:\(lastLocation.timestamp)&#34;)
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Geocoding and Reverse Geocoding" duration="10">
+        <p><a href="https://developer.apple.com/documentation/corelocation/converting_between_coordinates_and_user-friendly_place_names" target="_blank">https://developer.apple.com/documentation/corelocation/converting_between_coordinates_and_user-friendly_place_names</a></p>
+<p>The <code>CLLocationManager</code> object reports locations as a latitude / longitude pair. While these values uniquely represent any location on the planet, they are not values that users immediately associate with the location. Users are more familiar with names that describe a location, such as street names or city names. The <code>CLGeocoder</code> class lets you convert between geographic coordinates and the user-friendly names associated with that location. You can convert from either a latitude / longitude pair to a user friendly place name, or the other way around.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Geocoding</strong></p>
+</td><td colspan="1" rowspan="1"><p>address to lat-lng coordinates</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Reverse geocoding</strong></p>
+</td><td colspan="1" rowspan="1"><p>lat-lng coordinates to address</p>
+</td></tr>
+</table>
+<p>Geocoding example:</p>
+<pre><code>let address = &#34;Singapore 738964&#34;
+CLGeocoder().geocodeAddressString(address) { (placemarks, error) in
+  // placemarks should not be nil and should have at least one value
+  guard let placemarks = placemarks, placemarks.count != 0 else {
+    return
+  }
+  // get the first CLPlacemark object
+  let placemark = placemarks[0]
+  // get the location information
+  if let location = placemark.location {
+    // do something with the location information
+    print(&#34;lat is \(location.coordinate.latitude)&#34;)
+    print(&#34;lng is \(location.coordinate.longitude)&#34;)
+  }
+}</code></pre>
+<p>Reverse geocoding example:</p>
+<pre><code>let location : CLLocation = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
+  // placemarks should not be nil and should have at least one value
+  guard let placemarks = placemarks, placemarks.count != 0 else {
+    return
+  }
+  // get the first CLPlacemark object
+  let placemark = placemarks[0]
+  
+  // do something with the address information
+  let name = placemark.name ?? &#34;&#34;
+  let streetAddress1 = placemark.subThoroughfare ?? &#34;&#34;
+  let streetAddress2 = placemark.thoroughfare ?? &#34;&#34;
+  let country = placemark.country ?? &#34;&#34;
+  let postalCode = placemark.postalCode ?? &#34;&#34;
+  print(&#34;name is \(name)&#34;)
+  print(&#34;street address 1 is \(streetAddress1)&#34;)
+  print(&#34;street address 2 is \(streetAddress2)&#34;)
+  print(&#34;country is \(country)&#34;)
+  print(&#34;postalCode is \(postalCode)&#34;)
+}</code></pre>
+<p>Use the code examples above to perform geocoding and reverse geocoding. Add in code to do something with the location information or address information.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Geocoding" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject03</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+import CoreLocation
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    let address = &#34;Singapore 738964&#34;
+    CLGeocoder().geocodeAddressString(address) { (placemarks, error) in
+      // placemarks should not be nil and should have at least one value
+      guard let placemarks = placemarks, placemarks.count != 0 else {
+        return
+      }
+      
+      // get the first CLPlacemark object
+      let placemark = placemarks[0]
+      // get the location information
+      if let location = placemark.location {
+        // do something with the location information
+        print(&#34;lat is \(location.coordinate.latitude)&#34;)
+        print(&#34;lng is \(location.coordinate.longitude)&#34;)
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. The debug area shows the latitude and longitude of the given address.</li>
+</ol>
+<pre>2020-08-02 22:43:31.817344+0800 SampleProject02[62595:1019073] libMobileGestalt MobileGestalt.c:1647: Could not retrieve region info
+lat is 1.4437895
+lng is 103.784244</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Reverse Geocoding" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject04</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+import CoreLocation
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let location : CLLocation = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
+      // placemarks should not be nil and should have at least one value
+      guard let placemarks = placemarks, placemarks.count != 0 else {
+        return
+      }
+      // get the first CLPlacemark object
+      let placemark = placemarks[0]
+      
+      // do something with the address information
+      let name = placemark.name ?? &#34;&#34;
+      let streetAddress1 = placemark.subThoroughfare ?? &#34;&#34;
+      let streetAddress2 = placemark.thoroughfare ?? &#34;&#34;
+      let country = placemark.country ?? &#34;&#34;
+      let postalCode = placemark.postalCode ?? &#34;&#34;
+      print(&#34;name is \(name)&#34;)
+      print(&#34;street address 1 is \(streetAddress1)&#34;)
+      print(&#34;street address 2 is \(streetAddress2)&#34;)
+      print(&#34;country is \(country)&#34;)
+      print(&#34;postalCode is \(postalCode)&#34;)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. The debug area shows the address of the location at the given latitude and longitude.</li>
+</ol>
+<pre>2020-08-02 22:44:14.574638+0800 SampleProject03[62696:1020849] libMobileGestalt MobileGestalt.c:1647: Could not retrieve region info
+name is Republic Polytechnic
+street address 1 is 9
+street address 2 is Woodlands Avenue 9
+country is Singapore
+postalCode is 738964</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="MKMapView" duration="10">
+        <p><a href="https://developer.apple.com/documentation/mapkit" target="_blank">https://developer.apple.com/documentation/mapkit</a></p>
+<p>Maps are provided by the Map Kit framework, which supports both the display and annotation of maps similar to those found in the Maps app. You do not have to use MapKit together with CoreLocation. However if you need to display the device&#39;s current location on a map, you will have to use CoreLocation as well.</p>
+<p><strong>MKMapView</strong></p>
+<p><a href="https://developer.apple.com/documentation/mapkit/mkmapview" target="_blank">https://developer.apple.com/documentation/mapkit/mkmapview</a></p>
+<p>An <code>MKMapView</code> object provides an embeddable map interface, similar to the one provided by the Maps application. You use this class as-is to display map information and to manipulate the map contents from your application. You can center the map on a given coordinate, specify the size of the area you want to display, and annotate the map with custom information.</p>
+<p>There are several properties and methods of a map view you can set or use to manipulate the map. The examples below assume that there is an IBOutlet for an <code>MKMapView</code> object called <code>outMapView</code>.</p>
+<p>Centering the map at a coordinate and zoom the map to fit a region - use <code>setRegion(_:animated:)</code></p>
+<pre><code>let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)
+
+// create a region centered around a given coordinate
+// the first parameter is the coordinate to center around
+// the second parameter is the latitudinalMeters (north-south distance in meters)
+// the third parameter is the longitudinalMeters (east-west distance in meters)
+let region = MKCoordinateRegion(center: civicCentre.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+
+// set the display region
+outMapView.setRegion(region, animated: true)</code></pre>
+<p>Centering the map at a coordinate - set the <code>centerCoordindate</code> property</p>
+<pre><code>// Centering the map at a coordinate - set the centerCoordindate property
+let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+outMapView.centerCoordinate = republicPolytechnic.coordinate</code></pre>
+<p>Showing a different map type - set the <code>mapType</code> property</p>
+<pre><code>outMapView.mapType = .standard // this is the default
+outMapView.mapType = .satellite
+outMapView.mapType = .hybrid</code></pre>
+<p>Show device&#39;s location on the map - set the <code>showsUserLocation</code> property. For this to work, Core Location services must be configured and started first.</p>
+<pre><code>outMapView.showsUserLocation = true</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 05 - MKMapView" duration="25">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject05</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="2">
+<li>View as iPhone SE (2nd generation)</li>
+<li>Add a MKMapView object with constraints top (20), left (16), right (16), bottom (20), and an IBOutlet <code>outMapView</code>.</li>
+</ol>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="4">
+<li>Import MapKit</li>
+<li>ViewController should look like this</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. The simulator should show a map of Singapore.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/e68c9c4cb5e5fa68.png"></p>
+<aside class="warning"><p><strong>Zooming in, zooming out and panning the map on the simulator</strong></p>
+<p>Zoom in - double click on the map</p>
+<p>Zoom out - press option and single-click or double-click on the map</p>
+<p>Panning - click and drag on the map</p>
+</aside>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="7">
+<li>Add the code to center and zoom the map to Woodlands Civic Center</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)
+    
+    // create a region centered around a given coordinate
+    // the first parameter is the coordinate to center around
+    // the second parameter is the latitudinalMeters (north-south distance in meters)
+    // the third parameter is the longitudinalMeters (east-west distance in meters)
+    let region = MKCoordinateRegion(center: civicCentre.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    
+    // set the display region
+    outMapView.setRegion(region, animated: true)
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project. The simulator should show a map which is centered around the Woodlands Civic Center.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/21aae38d88123f0c.png"></p>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="9">
+<li>Add the code to center the map to Republic Polytechnic</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)
+    
+    // create a region centered around a given coordinate
+    // the first parameter is the coordinate to center around
+    // the second parameter is the latitudinalMeters (north-south distance in meters)
+    // the third parameter is the longitudinalMeters (east-west distance in meters)
+    let region = MKCoordinateRegion(center: civicCentre.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    
+    // set the display region
+    outMapView.setRegion(region, animated: true)
+    
+    // Centering the map at a coordinate - set the centerCoordindate property
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    outMapView.centerCoordinate = republicPolytechnic.coordinate
+  }
+}</code></pre>
+<ol type="1" start="10">
+<li>Run the project. The simulator should show a map which is centered around Republic Polytechnic.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/525c1dce5c8865d3.png"></p>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="11">
+<li>Add the code to set the map type as satellite</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)
+    
+    // create a region centered around a given coordinate
+    // the first parameter is the coordinate to center around
+    // the second parameter is the latitudinalMeters (north-south distance in meters)
+    // the third parameter is the longitudinalMeters (east-west distance in meters)
+    let region = MKCoordinateRegion(center: civicCentre.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    
+    // set the display region
+    outMapView.setRegion(region, animated: true)
+    
+    // Centering the map at a coordinate - set the centerCoordindate property
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    outMapView.centerCoordinate = republicPolytechnic.coordinate
+
+    // set the map type
+    outMapView.mapType = .satellite
+  }
+}</code></pre>
+<ol type="1" start="12">
+<li>Run the project. The simulator should show a satellite map which is centered around Republic Polytechnic.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a980f2698d138029.png"></p>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="13">
+<li>Change the map type to hybrid</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    let civicCentre = CLLocation(latitude: 1.435013, longitude: 103.786857)
+    
+    // create a region centered around a given coordinate
+    // the first parameter is the coordinate to center around
+    // the second parameter is the latitudinalMeters (north-south distance in meters)
+    // the third parameter is the longitudinalMeters (east-west distance in meters)
+    let region = MKCoordinateRegion(center: civicCentre.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    
+    // set the display region
+    outMapView.setRegion(region, animated: true)
+    
+    // Centering the map at a coordinate - set the centerCoordindate property
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    outMapView.centerCoordinate = republicPolytechnic.coordinate
+
+    // set the map type
+    outMapView.mapType = .hybrid
+  }
+}</code></pre>
+<ol type="1" start="14">
+<li>Run the project. The simulator should show a hybrid map which is centered around Republic Polytechnic.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9e2e29b3afb9f86b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="MKPointAnnotation" duration="10">
+        <p><a href="https://developer.apple.com/documentation/mapkit/mapkit_annotations" target="_blank">https://developer.apple.com/documentation/mapkit/mapkit_annotations</a></p>
+<p>To represent an annotation, we use the MKPointAnnotation class. This class defines an annotation object located at a specified point. We can use this class when we want to associate a point on the map with a title. There are 3 properties you can set on a <code>MKPointAnnotation</code> object: <code>coordinate</code>, <code>title</code> and <code>subtitle</code>.</p>
+<p>The examples below assume that there is an IBOutlet for an <code>MKMapView</code> object called <code>outMapView</code>.</p>
+<ol type="1" start="1">
+<li>Add an extension for the view controller to conform to <code>MKMapViewDelegate</code>.</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+}
+
+extension ViewController : MKMapViewDelegate {
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -&gt; MKAnnotationView? {
+    guard annotation is MKPointAnnotation else { return nil }
+    
+    let identifier = &#34;Annotation&#34;
+    var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+    
+    if annotationView == nil {
+      annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+      annotationView!.canShowCallout = true
+    } else {
+      annotationView!.annotation = annotation
+    }
+    
+    return annotationView
+  }
+}</code></pre>
+<ol type="1" start="2">
+<li>In the <code>viewDidLoad()</code> method, set the <code>delegate</code> property for the <code>MKMapView</code> object.</li>
+<li>Add the code to create an annotation and add it to the map. For this example, the code is in the <code>viewDidLoad()</code> method, but it could also be located somewhere else in your view controller.</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // set the delegate property for the MKMapView object
+    outMapView.delegate = self
+    
+    // create a CLLocation object
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    
+    // create a point annotation and configure it
+    let point = MKPointAnnotation()
+    point.coordinate = republicPolytechnic.coordinate
+    point.title = &#34;Republic Polytechnic&#34;
+    point.subtitle = &#34;9 Woodlands Avenue 9, S738964&#34;
+    
+    // add the annotation to the map
+    outMapView.addAnnotation(point)
+  }
+}
+
+extension ViewController : MKMapViewDelegate {
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -&gt; MKAnnotationView? {
+    guard annotation is MKPointAnnotation else { return nil }
+    
+    let identifier = &#34;Annotation&#34;
+    var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+    
+    if annotationView == nil {
+      annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+      annotationView!.canShowCallout = true
+    } else {
+      annotationView!.annotation = annotation
+    }
+    
+    return annotationView
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 06 - MKPointAnnotation" duration="25">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject06</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="2">
+<li>View as iPhone SE (2nd generation)</li>
+<li>Add a <code>MKMapView</code> object with constraints top (20), left (16), right (16), bottom (20), and an IBOutlet <code>outMapView</code>.</li>
+</ol>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="4">
+<li>Update ViewController by adding an extension for the view controller to conform to <code>MKMapViewDelegate</code>. In <code>viewDidLoad()</code>, set the delegate property for the <code>MKMapView</code> object. Create the annotation and add it to the map. For convenience, also add the code to center the map around Republic Polytechnic and zoom the map to fit the region around Republic Polytechnic.</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    
+    // set the delegate property for the MKMapView object
+    outMapView.delegate = self
+    
+    // create a CLLocation object
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    
+    // create a point annotation and configure it
+    let point = MKPointAnnotation()
+    point.coordinate = republicPolytechnic.coordinate
+    point.title = &#34;Republic Polytechnic&#34;
+    point.subtitle = &#34;9 Woodlands Avenue 9, S738964&#34;
+    
+    // add the annotation to the map
+    outMapView.addAnnotation(point)
+    
+    // center and zoom the map
+    let region = MKCoordinateRegion(center: republicPolytechnic.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    outMapView.setRegion(region, animated: true)
+  }
+}
+
+extension ViewController : MKMapViewDelegate {
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -&gt; MKAnnotationView? {
+    guard annotation is MKPointAnnotation else { return nil }
+    
+    let identifier = &#34;Annotation&#34;
+    var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+    
+    if annotationView == nil {
+      annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+      annotationView!.canShowCallout = true
+    } else {
+      annotationView!.annotation = annotation
+    }
+    
+    return annotationView
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. The simulator should show a map which is centered around Republic Polytechnic. Click on the pin and a callout appears with the annotation title and subtitle.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/6ad3b69cd018da3f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 07 - Showing device location on the map" duration="15">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject07</strong> using the Single View Application template.</li>
+<li>Create a GPX file called <strong>RepublicPolytechnic</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/d5ad4ec40e89a15a.png"></p>
+<ol type="1" start="3">
+<li>Edit the GPX file and set the latitude as <strong>1.4437895</strong>, longitude as <strong>103.784244</strong> and name as <strong>Republic Polytechnic</strong>.</li>
+</ol>
+<pre><code>&lt;?xml version=&#34;1.0&#34;?&gt;
+&lt;gpx version=&#34;1.1&#34; creator=&#34;Xcode&#34;&gt;
+  &lt;!--
+  Provide one or more waypoints containing a latitude/longitude pair. If you provide one
+  waypoint, Xcode will simulate that specific location. If you provide multiple waypoints,
+  Xcode will simulate a route visiting each waypoint.
+  --&gt;
+  &lt;wpt lat=&#34;1.4437895&#34; lon=&#34;103.784244&#34;&gt;
+    &lt;name&gt;Republic Polytechnic&lt;/name&gt;
+    &lt;!--
+    Optionally provide a time element for each waypoint. Xcode will interpolate movement
+    at a rate of speed based on the time elapsed between each waypoint. If you do not provide
+    a time element, then Xcode will use a fixed rate of speed.
+    
+    Waypoints must be sorted by time in ascending order.
+    --&gt;
+    &lt;time&gt;2014-09-24T14:55:37Z&lt;/time&gt;
+  &lt;/wpt&gt;
+&lt;/gpx&gt;</code></pre>
+<p><strong>Main.storyboard</strong></p>
+<ol type="1" start="4">
+<li>View as iPhone SE (2nd generation)</li>
+<li>Add a <code>MKMapView</code> object with constraints top (20), left (16), right (16), bottom (20), and an IBOutlet <code>outMapView</code>.</li>
+</ol>
+<p><strong>Info.plist</strong></p>
+<ol type="1" start="6">
+<li>Add a key <code>NSLocationWhenInUseUsageDescription</code> and set the value as <code>This app requires location information</code>.</li>
+</ol>
+<p><strong>ViewController.swift</strong></p>
+<ol type="1" start="7">
+<li>Add the extension for location services, add a property <code>locationManager: CLLocationManager!</code> and call <code>setupLocationManager()</code> in <code>viewDidLoad()</code></li>
+<li>Add the code in <code>viewDidLoad()</code> to show the device&#39;s location on the map. For convenience, also add the code to center the map around Republic Polytechnic and zoom the map to fit the region around Republic Polytechnic.</li>
+</ol>
+<pre><code>import UIKit
+import MapKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outMapView: MKMapView!
+  
+  // Store a strong reference to the CLLocationManager object
+  var locationManager: CLLocationManager!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view.
+    
+    setupLocationManager()
+    
+    // show device&#39;s location on the map
+    outMapView.showsUserLocation = true
+
+    // create a CLLocation object
+    let republicPolytechnic = CLLocation(latitude: 1.4437895, longitude: 103.784244)
+    
+    // center and zoom the map
+    let region = MKCoordinateRegion(center: republicPolytechnic.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+    outMapView.setRegion(region, animated: true)
+  }
+}
+
+/*
+ * The following extension contains the steps to add location services to the app.
+ * Call setupLocationManager() in the viewDidLoad() method.
+ */
+extension ViewController: CLLocationManagerDelegate {
+  
+  func setupLocationManager() {
+    // 1. Check if the device supports location services
+    guard CLLocationManager.locationServicesEnabled(), CLLocationManager.significantLocationChangeMonitoringAvailable() else {
+      print(&#34;Location services not supported&#34;)
+      return
+    }
+    
+    if (locationManager == nil) {
+      // 2. Configure the desired location services
+      // Create an instance of the CLLocationManager class
+      // Assign a custom object to the delegate property
+      locationManager = CLLocationManager()
+      locationManager.delegate = self
+      
+      // 3. Ask the user for permission to access their location
+      locationManager.requestWhenInUseAuthorization()
+      
+      // 4. Start location services
+      locationManager.startMonitoringSignificantLocationChanges()
+    }
+  }
+  
+  // 4. Receive events
+  // Tells the delegate when the app creates the location manager and when
+  // the authorization status changes.
+  func locationManager(_ manager: CLLocationManager,
+                       didChangeAuthorization status: CLAuthorizationStatus) {
+    if (status == .authorizedWhenInUse) {
+      print(&#34;authorised&#34;)
+      manager.startUpdatingLocation()
+    } else {
+      print(&#34;not authorised&#34;)
+      manager.stopUpdatingLocation()
+    }
+  }
+  
+  // Tells the delegate that the location manager was unable to retrieve a
+  // location value.
+  func locationManager(_ manager: CLLocationManager,
+                       didFailWithError error: Error) {
+    if error._code == CLError.denied.rawValue {
+      print(&#34;didFailWithError denied&#34;)
+      manager.stopUpdatingLocation()
+    } else {
+      print(&#34;didFailWithError \(error._code)&#34;)
+    }
+  }
+  
+  // Tells the delegate that new location data is available.
+  func locationManager(_ manager: CLLocationManager,
+                       didUpdateLocations locations: [CLLocation]) {
+    // The locations parameter always contains at least one location and
+    // may contain more than one. Locations are always reported in the
+    // order in which they were determined, so the most recent location is
+    // always the last item in the array
+    let lastLocation = locations.last!
+    print(&#34;coord:\(lastLocation.coordinate), time:\(lastLocation.timestamp)&#34;)
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. When the dialog appears asking for authorization to use your location, click <strong>Allow While Using App</strong>.</li>
+<li>From the debug toolbar, click the <strong>Simulate Location</strong> button and select <code>RepublicPolytechnic</code>. The map should show your location as a pulsating blue dot. If the Simulate Location button is not visible, run the project again.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/5ae0d8319079eb77.png"></p>
+<ol type="1" start="11">
+<li>In the debug area, there seems to be a CLLocationManager error. This seems to be a simulator issue. To fix this, click on SampleProject04 just before the simulator selection list and select <strong>Edit Scheme</strong>... Click on <strong>Run</strong>, then <strong>Options</strong>, then set the <strong>Default Location</strong> as <strong>RepublicPolytechnic</strong>. The error will disappear.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/b03d5bac42e7e401.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/e03001b7642c4f44.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Local notifications</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-01-01T22:39:14Z",
+  "id": "08-ios-multiview",
+  "duration": 235,
+  "title": "Multiple View Controllers",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to use multiple view controllers",
+  "source": "1JvSyLkRX0h1Rq8zpMLrDKz2Qg-T3kw8xAtzleMQSLP4",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "08-ios-multiview"
+}

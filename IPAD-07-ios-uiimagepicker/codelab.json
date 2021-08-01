@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-06-07T18:39:26Z",
+  "id": "07-ios-uiimagepicker",
+  "duration": 240,
+  "title": "UIImagePicker",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1R6Pl2lnziow6k8E9aXsPlkISvfcsPWwKJ56xK0VqWfY",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "07-ios-uiimagepicker"
+}

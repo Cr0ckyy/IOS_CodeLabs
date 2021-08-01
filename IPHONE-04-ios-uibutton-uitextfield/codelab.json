@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-08T17:32:52Z",
+  "id": "04-ios-uibutton-uitextfield",
+  "duration": 230,
+  "title": "UIButton and UITextField",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to use UIButton and UITextField",
+  "source": "1OqmLee7nuvyQws0Qu_mu6CLMSF6qyob3ElCRZ1KhrYw",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "04-ios-uibutton-uitextfield"
+}

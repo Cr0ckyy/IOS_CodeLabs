@@ -1,0 +1,660 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UI Components</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="05-ios-ui-components"
+                  title="UI Components"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Use and customise user interface objects to handle user input (e.g. UISegmentedControl, UIStepper) or display user output (e.g. UITextView, UIImageView)</li>
+<li>Add image resources to an iOS project </li>
+<li>Create and use arrays</li>
+<li>Control and evaluate the flow of program execution using loops</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIView" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uiview" target="_blank">https://developer.apple.com/documentation/uikit/uiview</a></p>
+<p><a href="https://developer.apple.com/documentation/uikit/views_and_controls" target="_blank">https://developer.apple.com/documentation/uikit/views_and_controls</a></p>
+<aside class="special"><p>An object that manages the content for a rectangular area on the screen.</p>
+<p>All user interface objects are a direct or indirect subclass of UIView.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview#topics" target="_blank">https://developer.apple.com/documentation/uikit/uiview#topics</a></p>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var backgroundColor: UIColor?</code> - The view&#39;s background color.</li>
+</ul>
+<p class="image-container"><img style="width: 520.00px" src="img/e3e3cde5a9edfe4d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISegmentedControl" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uisegmentedcontrol" target="_blank">https://developer.apple.com/documentation/uikit/uisegmentedcontrol</a></p>
+<aside class="special"><p>A horizontal control made of multiple segments, each segment functioning as a discrete button.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uisegmentedcontrol#topics" target="_blank">https://developer.apple.com/documentation/uikit/uisegmentedcontrol#topics</a></p>
+<p><strong>Events</strong> (refer to documentation for other events)</p>
+<p>The default event is Value Changed</p>
+<ul>
+<li>Value Changed - A touch dragging or otherwise manipulating a control, causing it to emit a series of different values.</li>
+</ul>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var selectedSegmentIndex: Int</code> - The index number identifying the selected segment (that is, the last segment touched). If no segment was previously selected, the value is -1.</li>
+</ul>
+<p class="image-container"><img style="width: 520.00px" src="img/bf804dd2e1704e9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - UISegmentedControl" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject01</code></li>
+<li>Add a <code>UISegmentedControl</code> object to Main.storyboard</li>
+<li>Create an IBAction method for the <code>UISegmentedControl</code> for the <strong>Value Changed</strong> event</li>
+<li>Create a total of 4 segments with the titles <code>First</code>, <code>Second</code>, <code>Third</code>, <code>Fourth</code>. In the Attributes Inspector, set the number of <code>Segments</code> to 4. From the dropdown list for <code>Segment</code>, select the segments one by one and set the corresponding <code>Title</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/1982b6019f7f1dd9.png"></p>
+<ol type="1" start="5">
+<li>Add a <code>print()</code> statement in the IBAction method to print the <code>selectedSegmentIndex</code> property</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actSegmentedControl(_ sender: UISegmentedControl) {
+    print(sender.selectedSegmentIndex)
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project. Observe the output as you select each segment in the iOS simulator. Notice that the segment index starts from 0.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/faee87fe7aacbb7f.png"></p>
+<ol type="1" start="7">
+<li>When the application is first launched, the first segment is selected. Pressing on the first segment will not cause the IBAction method to be executed.</li>
+</ol>
+<ol type="1" start="8">
+<li>Use the Attributes Inspector to uncheck <code>Selected</code> for Segment 0.</li>
+</ol>
+<p class="image-container"><img style="width: 520.00px" src="img/ee3e2172c101fb6d.png"></p>
+<ol type="1" start="9">
+<li>Run the project. Notice that no segments are selected when the application is first run.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9cdf4a083b6bcdd8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UISwitch" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uiswitch" target="_blank">https://developer.apple.com/documentation/uikit/uiswitch</a></p>
+<aside class="special"><p>A control that offers a binary choice, such as On/Off.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uiswitch#topics" target="_blank">https://developer.apple.com/documentation/uikit/uiswitch#topics</a></p>
+<p><strong>Events</strong> (refer to documentation for other events)</p>
+<p>The default event is Value Changed</p>
+<ul>
+<li>Value Changed - A touch dragging or otherwise manipulating a control, causing it to emit a series of different values.</li>
+</ul>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var isOn: Bool</code> - A Boolean value that determines the off/on state of the switch.</li>
+</ul>
+<p class="image-container"><img style="width: 519.00px" src="img/134d1388dedb5a4c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - UISwitch" duration="5">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject02</code></li>
+<li>Add a <code>UISwitch</code> object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/d49be96288abcd4e.png"></p>
+<ol type="1" start="3">
+<li>Create an IBAction method for the <code>UISwitch</code> for the Value Changed event</li>
+<li>Add a <code>print()</code> statement in the IBAction method to print the <code>isOn</code> property</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actSwitch(_ sender: UISwitch) {
+    print(sender.isOn)
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. Observe the output as you toggle the <code>UISwitch</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIStepper" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uistepper" target="_blank">https://developer.apple.com/documentation/uikit/uistepper</a></p>
+<aside class="special"><p>A control used to increment or decrement a value.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uistepper#topics" target="_blank">https://developer.apple.com/documentation/uikit/uistepper#topics</a></p>
+<p><strong>Events</strong> (refer to documentation for other events)</p>
+<p>The default event is Value Changed</p>
+<ul>
+<li>Value Changed - A touch dragging or otherwise manipulating a control, causing it to emit a series of different values.</li>
+</ul>
+<p><strong>Properties / Attributes</strong></p>
+<ul>
+<li><code>var isContinuous: Bool</code> - The continuous vs. noncontinuous state of the stepper.</li>
+<li><code>var autorepeat: Bool</code> - The automatic vs. nonautomatic repeat state of the stepper.</li>
+<li><code>var wraps: Bool</code> - The wrap vs. no-wrap state of the stepper.</li>
+<li><code>var minimumValue: Double</code> - The lowest possible numeric value for the stepper.</li>
+<li><code>var maximumValue: Double</code> - The highest possible numeric value for the stepper.</li>
+<li><code>var stepValue: Double</code> - The step, or increment, value for the stepper.</li>
+<li><code>var value: Double</code> - The numeric value of the stepper.</li>
+</ul>
+<p class="image-container"><img style="width: 519.00px" src="img/9184aa905bae3a6f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - UIStepper" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject03</code></li>
+<li>Add a <code>UIStepper</code> object to Main.storyboard. </li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/4f64c467afa36d47.png"></p>
+<ol type="1" start="3">
+<li>Create an IBAction method for the <code>UIStepper</code> for the Value Changed event</li>
+<li>Add a <code>print()</code> statement in the IBAction method to print the <code>value</code> property</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actStepper(_ sender: UIStepper) {
+    print(sender.value)
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Create an IBAction method for the <code>UIStepper</code> for the Value Changed event</li>
+<li>Add a <code>print()</code> statement in the IBAction method to print the <code>value</code> property</li>
+</ol>
+<ol type="1" start="6">
+<li>Run the project. Try different combinations of enabling and disabling <code>Autorepeat</code> and <code>Continuous</code> via the Attributes Inspector and observe the behaviour when the + button is pressed, held momentarily, then released. The table below shows the expected behaviour.</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Autorepeat</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Continuous</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Behaviour</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>false</p>
+</td><td colspan="1" rowspan="1"><p>false</p>
+</td><td colspan="1" rowspan="1"><p>Press and release the stepper to increment / decrement the value by <strong>one</strong> step size.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>false</p>
+</td><td colspan="1" rowspan="1"><p>true</p>
+</td><td colspan="1" rowspan="1"><p>Press and release the stepper to increment / decrement the value by <strong>one</strong> step size.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>true</p>
+</td><td colspan="1" rowspan="1"><p>false</p>
+</td><td colspan="1" rowspan="1"><p>Press and release the stepper to increment / decrement the value by a <strong>multiple</strong> of the step size (depending on the duration that the stepper is pressed)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>true</p>
+</td><td colspan="1" rowspan="1"><p>true</p>
+</td><td colspan="1" rowspan="1"><p>Press the stepper to increment / decrement the value by <strong>one</strong> step size <strong>multiple</strong> times as long as the stepper is pressed</p>
+</td></tr>
+</table>
+<ol type="1" start="7">
+<li>Try enabling <code>Autorepeat</code>, <code>Continuous</code> and <code>Wrap</code>. When the maximum value is reached, it wraps around to the minimum value, and vice versa.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Assets.xcassets" duration="5">
+        <p><a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/AddingImages.html" target="_blank">https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/AddingImages.html</a></p>
+<aside class="special"><ul>
+<li>helps you manage the images for your app</li>
+<li>asset catalog contains a list of image sets</li>
+<li>each image set contains all the versions of an image that are necessary to support various devices and scale factors</li>
+</ul>
+</aside>
+<ol type="1" start="1">
+<li>select asset catalog from project navigator to open the catalog in the editor area</li>
+<li>add icon images to your app by dragging them to the catalog in the editor area</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/b87c2d9be6a13a3e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIImageView" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uiimageview" target="_blank">https://developer.apple.com/documentation/uikit/uiimageview</a></p>
+<aside class="special"><p>An object that displays a single image or a sequence of animated images in your interface.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uiimageview#topics" target="_blank">https://developer.apple.com/documentation/uikit/uiimageview#topics</a></p>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var image: UIImage?</code> - The image displayed in the image view. Setting the value to <code>nil</code> results in no image being displayed.</li>
+</ul>
+<p><strong>Properties / Attributes from UIView</strong></p>
+<ul>
+<li><code>var contentMode: UIView.ContentMode</code> - A flag used to determine how a view lays out its content when its bounds change.</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p>scaleToFill</p>
+</td><td colspan="1" rowspan="1"><p>The option to scale the content to fit the size of itself by changing the aspect ratio of the content if necessary.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>scaleAspectFit</p>
+</td><td colspan="1" rowspan="1"><p>The option to scale the content to fit the size of the view by maintaining the aspect ratio. Any remaining area of the view&#39;s bounds is transparent.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>scaleAspectFill</p>
+</td><td colspan="1" rowspan="1"><p>The option to scale the content to fill the size of the view. Some portion of the content may be clipped to fill the view&#39;s bounds.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>center</p>
+</td><td colspan="1" rowspan="1"><p>The option to center the content in the view&#39;s bounds, keeping the proportions the same.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>top</p>
+</td><td colspan="1" rowspan="1"><p>The option to center the content aligned at the top in the view&#39;s bounds.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>bottom</p>
+</td><td colspan="1" rowspan="1"><p>The option to center the content aligned at the bottom in the view&#39;s bounds.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>left</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content on the left of the view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>right</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content on the right of the view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>topLeft</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content in the top-left corner of the view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>topRight</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content in the top-right corner of the view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>bottomLeft</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content in the bottom-left corner of the view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>bottomRight</p>
+</td><td colspan="1" rowspan="1"><p>The option to align the content in the bottom-right corner of the view.</p>
+</td></tr>
+</table>
+<p class="image-container"><img style="width: 519.00px" src="img/2d6eacda20f328ad.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - UIImageView" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject04</code></li>
+<li>Add a <code>UIImageView</code> object to Main.storyboard and create an IBOutlet property <code>outImageView</code></li>
+<li>Click on <strong>Assets.xcassets</strong> to show the asset catalog in the editor window</li>
+<li>Drag an image file from the Finder to the asset catalog in the editor window (see video <strong><code>Adding images.mov</code></strong>) e.g. logo.png</li>
+<li>Use the Attributes Inspector to set the image</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/14a2e3ff61fbc37d.png"></p>
+<ol type="1" start="6">
+<li>Alternatively, you can set the image using code. Note that the image name is without the extension. It follows the name of the image set in the asset catalog.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outImageView: UIImageView!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outImageView.image = UIImage(named: &#34;logo&#34;)
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITextView" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uitextview" target="_blank">https://developer.apple.com/documentation/uikit/uitextview</a></p>
+<aside class="special"><p>A scrollable, multiline text region.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uitextview#topics" target="_blank">https://developer.apple.com/documentation/uikit/uitextview#topics</a></p>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var text: String!</code> - The text displayed by the text view.</li>
+<li><code>var isEditable: Bool</code> - A Boolean value indicating whether the receiver is editable.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - UITextView" duration="5">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject05</code></li>
+<li>Add a <code>UITextView</code> object to Main.storyboard and create an IBOutlet property <code>outTextView</code></li>
+<li>Add the code to <code>viewDidLoad</code> to set the <code>text</code> property of <code>outTextView</code> </li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextView: UITextView!
+ 
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outTextView.text = &#34;Text for the text view&#34;
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. The text in the text view should be updated.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Arrays" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html</a></p>
+<p><a href="https://developer.apple.com/documentation/swift/array" target="_blank">https://developer.apple.com/documentation/swift/array</a></p>
+<aside class="special"><ul>
+<li>arrays are containers for data</li>
+<li>an array is a partitioned data structure to store data elements in an ordered sequence</li>
+<li>each partition is referenced via an index number which starts from 0 and increases sequentially</li>
+<li>elements in the array should have the same meaning</li>
+</ul>
+</aside>
+<p>Visual representation of an array</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Index number</strong></p>
+</td><td colspan="1" rowspan="1"><p>0</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Data element</strong></p>
+</td><td colspan="1" rowspan="1"><p>adam</p>
+</td><td colspan="1" rowspan="1"><p>beth</p>
+</td><td colspan="1" rowspan="1"><p>chad</p>
+</td><td colspan="1" rowspan="1"><p>evan</p>
+</td></tr>
+</table>
+<pre><code>// Create (empty array)
+var names_empty : [String] = []
+
+// Create (array with a repeated value)
+var names_repeating = Array(repeating: &#34;adam&#34;, count: 3)
+
+// Create (array with values)
+var names = [&#34;adam&#34;, &#34;beth&#34;, &#34;chad&#34;]
+
+// Add (insert)
+names.insert(&#34;kane&#34;, at: 0)
+
+// Add (append)
+names.append(&#34;dennis&#34;)
+
+// Add (append)
+names += [&#34;evan&#34;, &#34;jane&#34;]
+
+// Retrieve
+var name = names[0]
+
+// Update
+names[0] = &#34;simon&#34;
+
+// Remove (from any index)
+let removedName = names.remove(at: 2)
+
+// Remove (from first index)
+let nameAtStart = names.removeFirst()
+
+// Remove (from last index)
+let nameAtEnd = names.removeLast()
+
+// Sort
+names = names.sorted()
+
+// Shuffle
+names.shuffle()
+
+// Contains (exists)
+let result : Bool = names.contains(&#34;adam&#34;)
+
+// Get count
+var count : Int = names.count
+
+// Check for empty
+var isEmpty : Bool = names.isEmpty
+
+// Looping over an array
+for name in names {
+  // do something with the array element
+  print(name)
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loops" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html</a></p>
+<aside class="special"><p>Used to perform a block of code multiple times</p>
+</aside>
+<pre><code>// closed range operator ... includes first and last number
+for index in 1...4 {
+  print(&#34;\(index) times 7 is \(index * 7)&#34;)
+}
+// 1 times 7 is 7
+// 2 times 7 is 14
+// 3 times 7 is 21
+// 4 times 7 is 28
+
+// half-open range operator ... includes first number but excludes last number
+for index in 1..&lt;4 {
+  print(&#34;\(index) times 7 is \(index * 7)&#34;)
+}
+// 1 times 7 is 7
+// 2 times 7 is 14
+// 3 times 7 is 21
+
+// Looping over a numeric range created using stride(from:through:by) - closed range
+for index in stride(from: 7, through: 28, by: 7) {
+  print(&#34;\(index)&#34;)
+}
+// 7
+// 14
+// 21
+// 28
+
+// Looping over a numeric range created using stride(from:to:by) - half-open range
+for index in stride(from: 7, to: 28, by: 7) {
+  print(&#34;\(index)&#34;)
+}
+// 7
+// 14
+// 21
+
+var names = [&#34;adam&#34;, &#34;beth&#34;, &#34;chad&#34;]
+// Looping over an array
+for name in names {
+  // do something with the array element
+  print(name)
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - Arrays and loops" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject06</code></li>
+<li>Add the code to <code>viewDidLoad</code> to examine the behaviour of loops and arrays</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // closed range operator ... includes first and last number
+    print(&#34;closed range operator ... includes first and last number&#34;)
+    for index in 1...4 {
+      print(&#34;\(index) times 7 is \(index * 7)&#34;)
+    }
+    // 1 times 7 is 7
+    // 2 times 7 is 14
+    // 3 times 7 is 21
+    // 4 times 7 is 28
+    
+    // half-open range operator ... includes first number but excludes last number
+    print(&#34;half-open range operator ... includes first number but excludes last number&#34;)
+    for index in 1..&lt;4 {
+      print(&#34;\(index) times 7 is \(index * 7)&#34;)
+    }
+    // 1 times 7 is 7
+    // 2 times 7 is 14
+    // 3 times 7 is 21
+    
+    // Looping over a numeric range created using stride(from:through:by) - closed range
+    print(&#34;Looping over a numeric range created using stride(from:through:by) - closed range&#34;)
+    for index in stride(from: 7, through: 28, by: 7) {
+      print(&#34;\(index)&#34;)
+    }
+    // 7
+    // 14
+    // 21
+    // 28
+    
+    // Looping over a numeric range created using stride(from:to:by) - half-open range
+    print(&#34;Looping over a numeric range created using stride(from:to:by) - half-open range&#34;)
+    for index in stride(from: 7, to: 28, by: 7) {
+      print(&#34;\(index)&#34;)
+    }
+    // 7
+    // 14
+    // 21
+    
+    // names is [&#34;adam&#34;, &#34;beth&#34;, &#34;chad&#34;]
+    var names = [&#34;adam&#34;, &#34;beth&#34;, &#34;chad&#34;]
+    
+    // names is [&#34;steven&#34;, &#34;beth&#34;, &#34;chad&#34;]
+    names[0] = &#34;steven&#34;
+    
+    // names is [&#34;steven&#34;, &#34;mary&#34;, &#34;beth&#34;, &#34;chad&#34;]
+    names.insert(&#34;mary&#34;, at: 1)
+    
+    // names is [&#34;steven&#34;, &#34;mary&#34;, &#34;chad&#34;]
+    names.remove(at: 2)
+    
+    // value of count is 3
+    print(&#34;The names array has \(names.count) items&#34;)
+    
+    // Looping over an array
+    print(&#34;Looping over an array&#34;)
+    for name in names {
+      // do something with the array element
+      print(name)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project. The output should be shown in the debug area.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1 (optional)" duration="10">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/97afa0ca0e7018ee.png"></p>
+<p>The value of the stepper is shown in the label below it</p>
+<p>When the Multiply button is pressed, the value of the two steppers are multiplied and the result is shown in the bottom center label.</p>
+<p>The minimum and maximum value for the left stepper is 1 and 5 respectively.</p>
+<p>The minimum and maximum value for the right stepper is 1 and 10 respectively.</p>
+<p>All configurations to the user interface objects must be done in code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2 (optional)" duration="10">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The app consists of a UISegmentedControl</p>
+<p>Depending on the selected segment, the background color of the view changes accordingly.</p>
+<p>Hint: the view controller has a view property which is a UIView object.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/8901b79b519979a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/f60f0330e5422331.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/9cc3af6bafc68354.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3 (optional)" duration="10">
+        <p>Create a playground and write the code based on the instructions given in the comments.</p>
+<pre><code>// create an array with the values adam, beth, charles
+// print the first item from the array
+// change adam to simon
+// add kane to the start of the array
+// remove beth from the array
+// check if the array contains charles
+// print the count of the array
+// print out the elements of the sorted array one by one</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UIPickerView</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://developer.apple.com/documentation/uikit/uiview" target="_blank">https://developer.apple.com/documentation/uikit/uiview</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/views_and_controls" target="_blank">https://developer.apple.com/documentation/uikit/views_and_controls</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uisegmentedcontrol" target="_blank">https://developer.apple.com/documentation/uikit/uisegmentedcontrol</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uiswitch" target="_blank">https://developer.apple.com/documentation/uikit/uiswitch</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uistepper" target="_blank">https://developer.apple.com/documentation/uikit/uistepper</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/AddingImages.html" target="_blank">https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/AddingImages.html</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uiimageview" target="_blank">https://developer.apple.com/documentation/uikit/uiimageview</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uitextview" target="_blank">https://developer.apple.com/documentation/uikit/uitextview</a></li>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html</a></li>
+<li><a href="https://developer.apple.com/documentation/swift/array" target="_blank">https://developer.apple.com/documentation/swift/array</a></li>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

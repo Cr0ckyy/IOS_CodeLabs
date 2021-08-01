@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-08-02T17:42:13Z",
+  "id": "11-ios-location-services-maps",
+  "duration": 200,
+  "title": "iOS Location services and maps",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1W93umfthh1AhRO4NbqfTHWJwSoVYdFxwYNcIWOD14Y8",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "11-ios-location-services-maps"
+}

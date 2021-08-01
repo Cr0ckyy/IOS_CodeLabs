@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-05-30T11:47:29Z",
+  "id": "06-ios-uicollectionview",
+  "duration": 240,
+  "title": "UICollectionView",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1goZZLAZ5qkZOzZBNZGvDNm2GRv8a0np3ex23LS3C5NM",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "06-ios-uicollectionview"
+}

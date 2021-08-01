@@ -1,0 +1,753 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UIButton and UITextField</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="04-ios-uibutton-uitextfield"
+                  title="UIButton and UITextField"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>use and customise user interface objects to handle user interactions and input (e.g. UIButton and UITextField)</li>
+<li>explain and apply the concept of protocols and delegation (e.g. UITextField and the UITextFieldDelegate protocol)</li>
+<li>check and retrieve values from optionals using forced unwrapping, optional binding and the nil-coalescing operator</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIButton" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uibutton" target="_blank">https://developer.apple.com/documentation/uikit/uibutton</a></p>
+<aside class="special"><p>A control that executes your custom code in response to user interactions.</p>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uibutton#topics" target="_blank">https://developer.apple.com/documentation/uikit/uibutton#topics</a></p>
+<p><strong>Events</strong> (refer to documentation for other events)</p>
+<p>The default event is Touch Up Inside</p>
+<ul>
+<li>Touch Down - A touch-down event in the control</li>
+<li>Touch Up Inside - A touch-up event in the control where the finger is inside the bounds of the control</li>
+</ul>
+<p><strong>Button states</strong> (refer to documentation for other button states)</p>
+<p>A button with a default state will handle events, while a disabled button will not</p>
+<ul>
+<li>default</li>
+<li>disabled</li>
+</ul>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>isEnabled: Bool</code> - Set the value of this property to true to enable the control or false to disable it</li>
+</ul>
+<p class="image-container"><img style="width: 491.00px" src="img/90be1fdcbf6d5e3c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - UIButton (touch events)" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject01</code></li>
+<li>Add a <code>UIButton</code> object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/aeb92b805c813771.png"></p>
+<ol type="1" start="3">
+<li>Create IBAction methods for the UIButton:</li>
+</ol>
+<ul>
+<li>IBAction <code>actTouchDown</code> for Touch Down event</li>
+<li>IBAction <code>actTouchUpInside</code> for Touch Up Inside event</li>
+</ul>
+<p class="image-container"><img style="width: 519.00px" src="img/b1ab5ea36303eebb.png"></p>
+<ol type="1" start="4">
+<li>Add a <code>print(#function)</code> statement in each of the IBAction methods</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actTouchDown(_ sender: UIButton) {
+    print(#function)
+  }
+
+  @IBAction func actTouchUpInside(_ sender: UIButton) {
+    print(#function)
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project and look at the debug area</li>
+</ol>
+<ul>
+<li>when the button is pressed (but not released), actTouchDown is called</li>
+</ul>
+<pre>actTouchDown(_:)</pre>
+<ul>
+<li>when the button is pressed (and released), actTouchDown and actTouchUpInside are called</li>
+</ul>
+<pre>actTouchDown(_:)
+actTouchUpInside(_:)</pre>
+<aside class="warning"><ul>
+<li>On a tablet, a user might accidentally perform a Touch Down and try to cancel by moving the touch away from the button, then releasing. </li>
+<li>The Touch Up Inside event is a better indicator that the user has pressed the button purposefully.</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - UIButton (enable and disable)" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject01</code></li>
+<li>Create an IBOutlet (<code>outButton</code>) for the button.</li>
+<li>Add another two <code>UIButton</code> objects (title as Enable and Disable) to Main.storyboard with IBAction methods (<code>actEnable</code> and <code>actDisable</code> respectively).</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/60a3b55f7e2b356a.png"></p>
+<ol type="1" start="4">
+<li>Add the code in <code>viewDidLoad</code> to set different titles for different button states</li>
+<li>Add the code in <code>actEnable</code> to enable outButton.</li>
+<li>Add the code in <code>actDisable</code> to disable outButton.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outButton: UIButton!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    outButton.setTitle(&#34;Enabled&#34;, for: .normal)
+    outButton.setTitle(&#34;Disabled&#34;, for: .disabled)
+  }
+  
+  @IBAction func actTouchDown(_ sender: UIButton) {
+    print(#function)
+  }
+  
+  @IBAction func actTouchUpInside(_ sender: UIButton) {
+    print(#function)
+  }
+  
+  @IBAction func actEnable(_ sender: UIButton) {
+    outButton.isEnabled = true
+  }
+  
+  @IBAction func actDisable(_ sender: UIButton) {
+    outButton.isEnabled = false
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project and notice that</li>
+</ol>
+<ul>
+<li>when the Enable button is pressed, <code>outButton</code> is enabled and has a title of <code>Enabled</code></li>
+<li>when the Disable button is pressed, <code>outButton</code> is disabled and has a title of <code>Disabled</code>; also note that the title is greyed out</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/8c5784b53b6d79cf.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITextField" duration="15">
+        <p><a href="https://developer.apple.com/documentation/uikit/uitextfield" target="_blank">https://developer.apple.com/documentation/uikit/uitextfield</a></p>
+<aside class="special"><p>An object that displays an editable text area in your interface</p>
+<p>Uses two mechanisms to report changes made during editing</p>
+<ul>
+<li><code>IBAction</code> methods</li>
+<li>delegate object</li>
+</ul>
+</aside>
+<p><a href="https://developer.apple.com/documentation/uikit/uitextfield" target="_blank">https://developer.apple.com/documentation/uikit/uitextfield</a><a href="https://developer.apple.com/documentation/uikit/uislider#topics" target="_blank">#topics</a></p>
+<p><strong>Events</strong> (refer to documentation for other events)</p>
+<ul>
+<li>Editing Did Begin - text field has focus</li>
+<li>Editing Did End -  text field has lost focus</li>
+<li>Editing Changed - text in text field has changed</li>
+<li>Did End On Exit - return key on keyboard was pressed</li>
+</ul>
+<p><strong>Methods</strong> (refer to documentation for other methods)</p>
+<ul>
+<li><code>func resignFirstResponder() -&gt; Bool</code> - when this text field has focus and has a keyboard, causes the keyboard to be dismissed</li>
+</ul>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>text: String?</code> - the text displayed by the text field</li>
+<li><code>optional var keyboardType: UIKeyboardType { get set }</code> - the keyboard style associated with the text object.</li>
+</ul>
+<p class="image-container"><img style="width: 488.00px" src="img/b2f29837195e3a02.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - UITextField (IBAction methods)" duration="15">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject02</code></li>
+<li>Add two <code>UITextField</code> objects to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/2dd67914f86909d9.png"></p>
+<ol type="1" start="3">
+<li>For the <strong>upper text field only</strong>, create IBAction methods:</li>
+</ol>
+<ul>
+<li>IBAction <code>actEditingDidBegin</code> for Editing Did Begin event</li>
+<li>IBAction <code>actEditingDidEnd</code> for Editing Did End event</li>
+<li>IBAction <code>actEditingChanged</code> for Editing Changed event</li>
+<li>IBAction <code>actDidEndOnExit</code> for Did End On Exit event</li>
+</ul>
+<p class="image-container"><img style="width: 520.00px" src="img/bbdd6d7f191e613.png"></p>
+<ol type="1" start="4">
+<li>Add a <code>print(#function)</code> statement in each of the IBAction methods</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+
+  @IBAction func actEditingDidBegin(_ sender: UITextField) {
+    print(#function)
+  }
+
+  @IBAction func actEditingDidEnd(_ sender: UITextField) {
+    print(#function)
+  }
+
+  @IBAction func actEditingChanged(_ sender: UITextField) {
+    print(#function)
+  }
+
+  @IBAction func actDidEndOnExit(_ sender: UITextField) {
+    print(#function)
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project</li>
+</ol>
+<ul>
+<li>tap on the upper text field, <code>actEditingDidBegin</code> is called</li>
+<li>tap on the lower text field, <code>actEditingDidEnd</code> is called; the upper text field has lost focus, so the Editing Did End event for the upper text field was fired</li>
+<li>tap on the upper text field and type on the on-screen keyboard, <code>actEditingChanged</code> is called whenever the text in the text field is changed (note: if there is no on-screen keyboard, press CMD-K)</li>
+<li>tap on the upper text field and press the return key on the on-screen keyboard, <code>actDidEndOnExit</code> and <code>actEditingDidEnd</code> are called</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Protocols and Delegation" duration="15">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Protocols.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Protocols.html</a></p>
+<p><strong>A protocol defines a set of methods with no implementation</strong></p>
+<pre><code>// protocol definition
+protocol SomeProtocol {
+  func someMethod()
+}</code></pre>
+<p><strong>A class conforms to a protocol by implementing the methods found in that protocol</strong></p>
+<p>Add a <code>:</code> and the protocol name after the class name to show that the class conforms to the protocol.</p>
+<pre><code>// syntax to show a class conforms to a protocol
+class SomeClass : SomeProtocol {
+  // implementation of protocol method
+  func someMethod() {
+  }
+}</code></pre>
+<p>If the class is a subclass, add a comma after the superclass name to show that the class conforms to the protocol.</p>
+<pre><code>class SomeSuperClass {
+}
+
+// syntax to show a class conforms to a protocol
+class SomeSubClass : SomeSuperClass, SomeProtocol {
+  // implementation of protocol method
+  func someMethod() {
+  }
+}</code></pre>
+<p><strong>Delegation</strong></p>
+<p>Delegation is a design pattern that enables a class (known as the delegating class) to delegate some of its responsibilities to an instance of another class (known as the delegate class).</p>
+<p>To implement this design pattern:</p>
+<ol type="1" start="1">
+<li>define a protocol with methods which correspond to the responsibilities of the delegating class</li>
+<li>create a delegate class which conforms to the protocol</li>
+<li>attach an instance of the delegate class to the delegating class</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UITextFieldDelegate protocol" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uitextfielddelegate" target="_blank">https://developer.apple.com/documentation/uikit/uitextfielddelegate</a></p>
+<aside class="special"><p>A set of optional methods that you use to manage the editing and validation of text in a text field object.</p>
+</aside>
+<pre><code>// Asks the delegate if editing should begin in the specified text field.
+func textFieldShouldBeginEditing(_ textField : UITextField) -&gt; Bool {
+  return true
+}</code></pre>
+<pre><code>// Tells the delegate that editing began in the specified text field.
+func textFieldDidBeginEditing(_ textField : UITextField) {
+}</code></pre>
+<pre><code>// Asks the delegate if editing should stop in the specified text field.
+func textFieldShouldEndEditing(_ textField : UITextField) -&gt; Bool {
+  return true
+}</code></pre>
+<pre><code>// Tells the delegate that editing stopped for the specified text field.
+func textFieldDidEndEditing(_ textField : UITextField) {
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - UITextField (delegate object)" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject02</code></li>
+<li>Create an IBOutlet (<code>outTextField</code>) for the upper text field.</li>
+<li>Declare that ViewController conforms to the <code>UITextFieldDelegate</code> protocol</li>
+<li>Implement the <code>UITextFieldDelegate</code> methods</li>
+<li>Attach an instance of the delegate class to the delegating class. In this case, the delegate class is <code>ViewController</code> and the delegating class is <code>UITextField</code>. The attachment is done via the <code>delegate</code> property in <code>UITextField</code>.</li>
+</ol>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UITextFieldDelegate protocol
+class ViewController: UIViewController, UITextFieldDelegate {
+
+  // Create an IBOutlet (outTextField) for the upper text field.
+  @IBOutlet weak var outTextField: UITextField!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // Attach an instance of the delegate class (ViewController) to
+    // the delegating class (UITextField) via the delegate property
+    // in UITextField
+    outTextField.delegate = self
+  }
+  
+  @IBAction func actEditingDidBegin(_ sender: UITextField) {
+    print(#function)
+  }
+  
+  @IBAction func actEditingDidEnd(_ sender: UITextField) {
+    print(#function)
+  }
+  
+  @IBAction func actEditingChanged(_ sender: UITextField) {
+    print(#function)
+  }
+  
+  @IBAction func actDidEndOnExit(_ sender: UITextField) {
+    print(#function)
+  }
+
+  // Implement the UITextFieldDelegate methods
+
+  // Asks the delegate if editing should begin in the specified text field.
+  func textFieldShouldBeginEditing(_ textField : UITextField) -&gt; Bool {
+    print(#function)
+    return true
+  }
+  
+  // Tells the delegate that editing began in the specified text field.
+  func textFieldDidBeginEditing(_ textField : UITextField) {
+    print(#function)
+  }
+  
+  // Asks the delegate if editing should stop in the specified text field.
+  func textFieldShouldEndEditing(_ textField : UITextField) -&gt; Bool {
+    print(#function)
+    return true
+  }
+  
+  // Tells the delegate that editing stopped for the specified text field.
+  func textFieldDidEndEditing(_ textField : UITextField) {
+    print(#function)
+  }
+}</code></pre>
+<ol type="1" start="6">
+<li>Run the project</li>
+</ol>
+<ul>
+<li>tap on the upper text field, the following is observed in the debug area</li>
+</ul>
+<pre>textFieldShouldBeginEditing(_:)
+actEditingDidBegin(_:)
+textFieldDidBeginEditing(_:)</pre>
+<ul>
+<li>tap on the lower text field, the following is observed in the debug area</li>
+</ul>
+<pre>textFieldShouldEndEditing(_:)
+actEditingDidEnd(_:)
+textFieldDidEndEditing(_:)</pre>
+<ol type="1" start="7">
+<li>Use the <code>textFieldShouldEndEditing(_:)</code> method to validate the text. For example, if we expect the text field to only have the text <code>hello</code> we would <strong>modify</strong> the code as shown below:</li>
+</ol>
+<pre><code>func textFieldShouldEndEditing(_ textField : UITextField) -&gt; Bool {
+  if textField.text == &#34;hello&#34; {
+    return true
+  }
+  return false
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project</li>
+</ol>
+<ul>
+<li>tap on the upper text field, type <code>goodbye</code></li>
+<li>tap on the lower text field, we are unable to shift focus to the lower text field and the focus remains on the upper text field</li>
+<li>type <code>hello</code> in the upper text field</li>
+<li>tap on the lower text field, we are able to shift focus to the lower text field</li>
+</ul>
+<aside class="warning"><p>Note that if you have multiple text fields, you should:</p>
+<ul>
+<li>Create IBOutlet properties for each text field</li>
+<li>Check the text field within the methods</li>
+</ul>
+</aside>
+<pre><code>@IBOutlet weak var outTextField1: UITextField!
+@IBOutlet weak var outTextField2: UITextField!
+
+@IBAction func actEditingDidBegin(_ sender: UITextField) {
+  if (sender == outTextField1) {
+  } else if (sender == outTextField2) {
+  }
+}
+
+func textFieldDidBeginEditing(_ textField : UITextField) {
+  if (textField == outTextField1) {
+  } else if (textField == outTextField2) {
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optionals" duration="20">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></p>
+<aside class="special"><p><strong>An optional represents two possibilities</strong></p>
+<ul>
+<li>either there is a value, and you can unwrap the optional to access that value, or </li>
+<li>there isn&#39;t a value at all (nil)</li>
+</ul>
+<p><strong>The actual value is wrapped inside the optional and needs to be unwrapped before use</strong></p>
+<ul>
+<li>if statements and forced unwrapping</li>
+<li>optional binding</li>
+<li>nil-coalescing operator</li>
+</ul>
+<p><strong>Optionals are declared using</strong></p>
+<ul>
+<li><code>?</code> (e.g. <code>Int?</code>)</li>
+<li><code>!</code> (e.g. <code>Int!</code>) - implicitly unwrapped optional, does not need to be unwrapped before use</li>
+</ul>
+</aside>
+<p><strong>Non-optional</strong></p>
+<ul>
+<li>Variable must contain a value of that type</li>
+</ul>
+<pre><code>let number1 : Int = 1
+let total1 = number1 + number1
+print(total1)</code></pre>
+<p><strong>Optional - </strong>if statement and forced unwrapping</p>
+<ul>
+<li>Check for non-nil value before unwrapping by using the forced unwrapping operator <code>!</code></li>
+</ul>
+<pre><code>let number2 : Int? = 2
+
+// if statements and forced unwrapping
+// if number2 is not nil, execute the statements within the curly brackets
+// unwrap number2 by using the forced unwrapping operator (!)
+if (number2 != nil) {
+  let total2 = number2! + number2!
+  print(total2)
+}</code></pre>
+<p><strong>Optional - </strong>optional binding</p>
+<p>If the optional has a value:</p>
+<ol type="1" start="1">
+<li>the optional is unwrapped and the value is assigned to a new constant</li>
+<li>code in curly brackets after optional binding statement will be executed </li>
+</ol>
+<p>Note that:</p>
+<ul>
+<li>the new constant can have the same name as the optional variable</li>
+<li>the new constant exists only within the curly brackets</li>
+</ul>
+<pre><code>let number2 : Int? = 2
+ 
+// optional binding
+// if number2 is not nil, unwrap number2 and assign it to a new constant called num
+// execute the statements within the curly brackets
+// note that num and total2 exists only within the curly brackets
+if let num = number2 {
+  let total2 = num + num
+  print(total2)
+}</code></pre>
+<p>Note that:</p>
+<ul>
+<li>you can include as many optional bindings and Boolean conditions in a single if statement as you need to, separated by commas. If any of the values in the optional bindings are nil or any Boolean condition evaluates to false, the whole if statement&#39;s condition is considered to be false, and the code in the curly brackets will not be executed.</li>
+</ul>
+<pre><code>if let firstNumber = Int(&#34;4&#34;), let secondNumber = Int(&#34;42&#34;),
+  firstNumber &lt; secondNumber &amp;&amp; secondNumber &lt; 100 {
+    print(&#34;\(firstNumber) &lt; \(secondNumber) &lt; 100&#34;)
+}</code></pre>
+<p><strong>Optional - </strong>nil-coalescing operator</p>
+<p>If the optional has a value, unwrap the optional and assign it to the new variable</p>
+<p>If the optional does not have a value, assign the value after the nil-coalescing operator <code>??</code> to the new variable</p>
+<pre><code>var number2 : Int? = 2
+
+// nil-coalescing operator
+// if number2 is not nil, unwrap number2 and assign it to newnumber2
+// if number2 is nil, assign 0 to newnumber2
+let newnumber2 = number2 ?? 0
+let total2 = newnumber2 + newnumber2
+print(total2)</code></pre>
+<p><strong>implicitly unwrapped optional</strong></p>
+<ul>
+<li>does not need to be unwrapped before use</li>
+</ul>
+<pre><code>let number3 : Int! = 3
+let total3 = number3 + number3
+print(total3)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - UITextField" duration="15">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject03</code></li>
+<li>Add two <code>UITextField</code> objects (IBOutlet <code>outTextField1</code> and <code>outTextField2</code>), one <code>UILabel</code> object (IBOutlet <code>outLabel</code>) and one <code>UIButton</code> object (IBAction <code>actAdd</code>) to Main.storyboard.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/d9880a1cfdc36fbb.png"></p>
+<ol type="1" start="3">
+<li>Write the code to add the numbers in the text field and show the sum in the label</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField1: UITextField!
+  @IBOutlet weak var outTextField2: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    // optional binding
+    if let text1 = outTextField1.text,
+      let text2 = outTextField2.text,
+      let number1 = Int(text1),
+      let number2 = Int(text2) {
+      let sum = number1 + number2
+      outLabel.text = &#34;\(sum)&#34;
+    }
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project</li>
+</ol>
+<ul>
+<li>enter <code>3</code> and <code>4</code> into the two text fields respectively,  and press the add button - the sum is shown in the label</li>
+<li>enter <code>two</code> into <code>outTextField1</code> and press the add button - nothing happens because the optional binding fails (Int conversion of <code>two</code> results in <code>nil</code>)</li>
+</ul>
+<aside class="warning"><p>Note that you could change the keyboard type for the text fields to <code>Number Pad</code>.</p>
+<ul>
+<li>On the simulator, the user can still use the mac keyboard to enter text</li>
+<li>On the actual device, the user can still paste text into the text field by copying some text and doing a long press on the text field and selecting <code>Paste</code></li>
+</ul>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/38bef3ac3a9841d5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - UITextField (keyboard dismissal)" duration="15">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject03</code></li>
+<li>Write the code to dismiss the keyboard by calling the <code>resignFirstResponder()</code> method on outTextField1</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outTextField1: UITextField!
+  @IBOutlet weak var outTextField2: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    // optional binding
+    if let text1 = outTextField1.text,
+      let text2 = outTextField2.text,
+      let number1 = Int(text1),
+      let number2 = Int(text2) {
+      let sum = number1 + number2
+      outLabel.text = &#34;\(sum)&#34;
+    }
+
+    // dismiss the keyboard for outTextField1
+    outTextField1.resignFirstResponder()
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the project</li>
+</ol>
+<ul>
+<li>enter <code>3</code> into <code>outTextField1</code> and <code>4</code> into <code>outTextField2</code>,  and press the add button - the sum is shown in the label, but they keyboard remains</li>
+<li>click on <code>outTextField1</code> and press the add button - the keyboard is dismissed</li>
+</ul>
+<aside class="warning"><p>Note that if you have multiple text fields:</p>
+<ul>
+<li>you would have to call the resignFirstResponder method on every text field because you would not know which is the last active text field</li>
+</ul>
+<p>A better solution is to track the active text field by using the UITextFieldDelegate methods and calling resignFirstResponder on the active text field</p>
+<ul>
+<li>declare conformance to <code>UITextFieldDelegate</code></li>
+<li>create IBOutlet properties for all required text field objects</li>
+<li>declare a property (<code>activeTextField : UITextField!</code>) to keep track of the active field</li>
+<li>in <code>viewDidLoad()</code> set the delegate for all required text field objects</li>
+<li>implement textFieldDidBeginEditing to save to <code>activeTextField</code></li>
+<li>implement textFieldDidEndEditing to reset <code>activeTextField</code></li>
+<li>anywhere the keyboard needs to be dismissed, call <code>resignFirstResponder()</code> on <code>activeTextField</code></li>
+</ul>
+</aside>
+<pre><code>import UIKit
+// step 1 - declare conformance to UITextFieldDelegate
+class ViewController: UIViewController, UITextFieldDelegate {
+  // step 2 - create IBOutlet properties for all required text field objects
+  @IBOutlet weak var outTextField1: UITextField!
+  @IBOutlet weak var outTextField2: UITextField!
+  @IBOutlet weak var outLabel: UILabel!
+
+  // step 3 - declare a property to keep track of the active field
+  var activeTextField : UITextField!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // step 4 - set the delegate for all required text field objects
+    outTextField1.delegate = self
+    outTextField2.delegate = self
+  }
+
+  // step 5 - implement textFieldDidBeginEditing
+  func textFieldDidBeginEditing(_ textField: UITextField) {
+    activeTextField = textField
+  }
+
+  // step 6 - implement textFieldDidEndEditing
+  func textFieldDidEndEditing(_ textField: UITextField) {
+    activeTextField = nil
+  }
+
+  @IBAction func actAdd(_ sender: UIButton) {
+    // optional binding
+    if let text1 = outTextField1.text,
+      let text2 = outTextField2.text,
+      let number1 = Int(text1),
+      let number2 = Int(text2) {
+      let sum = number1 + number2
+      outLabel.text = &#34;\(sum)&#34;
+    }
+
+    // step 7 - dismiss the keyboard for the active field
+    if (activeTextField != nil) {
+      activeTextField.resignFirstResponder()
+    }
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<p>The app allows the user to enter a first name and a last name in two separate text fields; there is a clear indication to the user which text field is for the first name and which text field is for the last name.</p>
+<p>When the user presses the Join button, the first name and last name are joined together and displayed in a label; the size of the text in this label is in bold and is 24 points.</p>
+<p>Any visible keyboard should be dismissed when the Join button is pressed; this should be accomplished by tracking the last active text field.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2" duration="15">
+        <p class="image-container"><img style="width: 624.00px" src="img/5dae19e665050f1e.png"></p>
+<p><strong>Create an app with the following software requirements:</strong></p>
+<p>When the <code>Check</code> button is pressed, the application checks if there is a remainder when the number in text field <code>outFirst</code> is divided by the number in text field <code>outSecond</code></p>
+<p>The result is shown in label <code>outResult</code></p>
+<ul>
+<li>when there is no remainder, the label shows <code>There is no remainder</code></li>
+<li>when there is a remainder, the label shows the remainder (see screenshot above)</li>
+<li>when there is an error in the inputs, the label shows an error message</li>
+</ul>
+<p>Note how the remainder operator behaves in Swift:</p>
+<pre><code>var result = 10 % 5 // value of result is 0
+var result = 10 % 7 // value of result is 3</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="25">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>This application keeps track of the balance in your bank account</li>
+<li>The user is allowed to enter an amount to withdraw, and the balance will be updated.</li>
+<li>The user is allowed to enter an amount to deposit, and the balance will be updated.</li>
+<li>You should design and create a separate class to keep track of the balance in your bank account, perform a deposit and perform a withdrawal.</li>
+<li>The balance in the bank account should never be allowed to be negative.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 4" duration="25">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>User can input annual salary into the application and find out the income tax payable (this is the same as the exercise in week 1)</li>
+<li>You should design and create a separate class to calculate the income tax payable</li>
+<li><a href="https://www.iras.gov.sg/irashome/Individuals/Locals/Working-Out-Your-Taxes/Income-Tax-Rates/" target="_blank">https://www.iras.gov.sg/irashome/Individuals/Locals/Working-Out-Your-Taxes/Income-Tax-Rates/</a></li>
+<li>Consider the various user interface objects your have learnt to date and choose the most appropriate user interface object for your application</li>
+<li><strong>In the comments for your ViewController, explain why you chose that user interface object and not the other alternatives</strong></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>More user interface components</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://help.apple.com/xcode/mac/current/" target="_blank">https://help.apple.com/xcode/mac/current/</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uibutton" target="_blank">https://developer.apple.com/documentation/uikit/uibutton</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uitextfield" target="_blank">https://developer.apple.com/documentation/uikit/uitextfield</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

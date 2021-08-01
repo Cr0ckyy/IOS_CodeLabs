@@ -1,0 +1,726 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Adaptable Interfaces - Advanced Auto Layout</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="05-ios-advancedautolayout"
+                  title="Adaptable Interfaces - Advanced Auto Layout"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Align two user interface objects using any combination of suitable attributes</li>
+<li>Manage the content-hugging and compression-resistance priorities for a series of views to fill up a space</li>
+<li>Use a scroll view to manage content for smaller screens and for keyboard management.</li>
+<li>Create self-sizing table view cells which dynamically adjust their height based on the content of the cell</li>
+<li>Use size classes to create adaptable interfaces across varying device types and orientations </li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+<h2 is-upgraded><strong>Videos for the activities can be obtained from:</strong></h2>
+<ul>
+<li><a href="https://myleo.rp.edu.sg/" target="_blank">LEO2</a></li>
+<li><a href="https://myrp-my.sharepoint.com/:f:/g/personal/rahim_low_myrp_edu_sg/EtQb0YJSKv5BsUDo0R-Etb0B7cYSGq-oTeHQ7N50KLhhPw" target="_blank">OneDrive</a></li>
+<li>YouTube</li>
+</ul>
+<p><a href="https://www.youtube.com/watch?v=jjdhhEcXA_Y" target="_blank">C349 Lesson05 Activity01 Center X and Center Y constraints</a></p>
+<p><a href="https://www.youtube.com/watch?v=td6ei2yBqRg" target="_blank">C349 Lesson05 Activity02 CHCR</a></p>
+<p><a href="https://www.youtube.com/watch?v=ejU08JytpDM" target="_blank">C349 Lesson05 Activity03 UIScrollView</a></p>
+<p><a href="https://www.youtube.com/watch?v=qAJUsmPXiB4" target="_blank">C349 Lesson05 Activity04 UIScrollView keyboard management</a></p>
+<p><a href="https://www.youtube.com/watch?v=xjl3YT7SnU8" target="_blank">C349 Lesson05 Activity05 Self-sizing table view cells</a></p>
+<p><a href="https://www.youtube.com/watch?v=S8uCAFT4jDQ" target="_blank">C349 Lesson05 Activity06 Size classes (1)</a></p>
+<p><a href="https://www.youtube.com/watch?v=88Qoh6Xv9a0" target="_blank">C349 Lesson05 Activity07 Size classes (2)</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Center X and Center Y constraints" duration="5">
+        <p>From the previous lesson, we have been able to use constraints to:</p>
+<ul>
+<li>align objects to the top, bottom, left and right of the safe area</li>
+<li>centrally align objects to the center x and center y of the safe area</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/bf42fdda71cc7492.png"></p>
+<p>It is also possible to align the top, bottom, left and right of objects to the center x and center y of the safe area. Activity01 shows how this can be done.</p>
+<p class="image-container"><img style="width: 746.00px" src="img/8e9f64b8480e2e3f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity01 Center X and Center Y constraints" duration="10">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=jjdhhEcXA_Y" target="_blank"><strong>Activity01 Center X and Center Y constraints</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project <strong>Activity01</strong> using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>View as: <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Show the preview for an iPhone 8 and iPhone 11 Pro Max</li>
+<li>Add a label</li>
+<li>Select the label and use the <strong>Align tool</strong> to add constraints center horizontally in container and center vertically in container</li>
+<li>Select the constraint <code>Label.centerX = centerX</code> and use the attributes inspector to change <code>Label.centerX</code> to <code>Label.trailing</code></li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/79e261438cb7d1f3.png"></p>
+<ol type="1" start="9">
+<li>Select the constraint <code>Label.centerY = centerY</code> and use the attributes inspector to change <code>Label.centerY</code> to <code>Label.bottom</code></li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/34c87f493bcbcdc9.png"></p>
+<ol type="1" start="10">
+<li>View the position of the label in Interface Builder and in the preview, note the constraints for the label are:</li>
+</ol>
+<ul>
+<li><code>Label.trailing = centerX</code></li>
+<li><code>Label.bottom = centerY</code></li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/6174c12145c5a19b.png"></p>
+<ol type="1" start="11">
+<li>Delete the constraint <code>Label.bottom = centerY</code></li>
+<li>Create a constraint <code>Label.top = Safe Area.top + 20</code></li>
+<li>View the position of the label in Interface Builder and in the preview, note the constraints for the label are:</li>
+</ol>
+<ul>
+<li><code>Label.trailing = centerX</code></li>
+<li><code>Label.top = Safe Area.top + 20</code></li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/20b80a7a6326c5de.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise01" duration="10">
+        <p>Create a project Exercise01 with the following requirements:</p>
+<ul>
+<li>achieve the layout shown below</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/ed3a09aedadd4397.png"></p>
+<ul>
+<li>use these image files in the project</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 100.00px" src="img/431e04cbb3e3559e.jpeg"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 100.00px" src="img/37b1bb082d224a34.jpeg"></p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Content Hugging and Compression Resistance (CHCR)" duration="15">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html</a> (section on Intrinsic Content Size onwards)</li>
+<li><a href="https://medium.com/@dineshk1389/content-hugging-and-compression-resistance-in-ios-35a0e8f19118" target="_blank">https://medium.com/@dineshk1389/content-hugging-and-compression-resistance-in-ios-35a0e8f19118</a></li>
+<li><a href="https://krakendev.io/blog/autolayout-magic-like-harry-potter-but-real" target="_blank">https://krakendev.io/blog/autolayout-magic-like-harry-potter-but-real</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>content hugging compression resistance</li>
+</ul>
+<p><strong>Intrinsic Content Size</strong></p>
+<p>Intrinsic content size is the <strong>natural size</strong> (height, width, or both) a view has based on the <strong>content</strong> of the view. The screenshot below shows some example views with their bounds rectangles visible:</p>
+<ul>
+<li>a label or button&#39;s intrinsic content size is based on the amount of text shown and the font used</li>
+<li>a text field and a switch has an intrinsic height and width</li>
+<li>a slider has an intrinsic height, but no intrinsic width</li>
+<li>an empty image view does not have an intrinsic content size, but as soon as an image is assigned, its intrinsic content size is set to the image&#39;s size</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/c0822c47467c2854.png"></p>
+<p>Some views (e.g. UIView) do not have an intrinsic content size, while for some other views (e.g. text views and image views) the intrinsic content size can vary.</p>
+<p>Whenever possible, use the view&#39;s intrinsic content size in your layout. It lets your layout dynamically adapt as the view&#39;s content changes. It also reduces the number of constraints you need to create a non-ambiguous, non-conflicting layout, but you will need to manage the view&#39;s content-hugging and compression-resistance (CHCR) priorities.</p>
+<p><strong>Content Hugging and Compression Resistance (CHCR)</strong></p>
+<p>Auto Layout represents a view&#39;s intrinsic content size using a pair of constraints for each dimension (vertical and horizontal)</p>
+<ul>
+<li>the <strong>content hugging</strong> pulls the view inward so that it fits snugly around the content</li>
+<li>the <strong>compression resistance</strong> pushes the view outward so that it does not clip the content</li>
+</ul>
+<p class="image-container"><img alt="image: ../Art/intrinsic_content_size_2x.png" style="width: 358.67px" src="img/2c08f123404c6c2e.png"></p>
+<p>Simplified Content-Hugging and Compression-Resistance constraint equations</p>
+<pre><code>// Content Hugging
+View.width &lt;= IntrinsicWidth
+View.height &lt;= IntrinsicHeight
+// Compression Resistance
+View.width &gt;= IntrinsicWidth
+View.height &gt;= IntrinsicHeight</code></pre>
+<p>Each of these constraints can have its own priority. By default, views have</p>
+<ul>
+<li>a 250 priority for their content hugging</li>
+<li>a 750 priority for their compression resistance</li>
+</ul>
+<p>Therefore, it&#39;s easier to stretch a view than it is to shrink it. For most controls, this is the desired behavior. For example, you can safely stretch a button larger than its intrinsic content size; however, if you shrink it, its content may become clipped.</p>
+<aside class="warning"><p><strong>CHCR priorities need to be modified</strong> when stretching a series of views to fill a space. If all the views have an identical content-hugging priority, the layout is ambiguous because Auto Layout doesn&#39;t know which view should be stretched.</p>
+<p>A common example is a label and text field pair. The text field should stretch to fill the extra space while the label remains at its intrinsic content size. To achieve this, the text field&#39;s horizontal content-hugging priority must be lower than the label&#39;s. This example is so common that Interface Builder automatically handles it by setting the content-hugging priority for all labels to 251 while text fields maintain a priority of 250.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity02 CHCR" duration="15">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=td6ei2yBqRg" target="_blank"><strong>Activity02 CHCR</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project <strong>Activity02</strong> using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>View as: <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Show the preview for an <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/a74f9c7a7fffdbac.png"></p>
+<ol type="1" start="6">
+<li>With reference to the screenshot above:</li>
+</ol>
+<ul>
+<li>add 2 labels and rename as <strong>oLabel</strong> (text is <strong>Name</strong>, background color is <strong>Orange</strong>) and <strong>gLabel</strong> (text is <strong>John Tan</strong>, background color is <strong>Green</strong>) in the document outline</li>
+<li>add the following constraints</li>
+</ul>
+<p class="image-container"><img style="width: 670.00px" src="img/8e686bb3d9270a1c.png"></p>
+<ul>
+<li>View the autolayout error:</li>
+</ul>
+<p class="image-container"><img style="width: 670.00px" src="img/51f14c41ccbd1899.png"></p>
+<ul>
+<li>View the Content Hugging Priority (CH) and Content Compression Resistance Priority (CR) for the labels via the Size Inspector, the values should be:</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/d385337e360392ce.png"></p>
+<ol type="1" start="7">
+<li>Set oLabel CH to 252. oLabel CH is greater than gLabel CH, so oLabel fits snugly while gLabel expands.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/cbf06228626cdc3f.png"></p>
+<ol type="1" start="8">
+<li>Set oLabel CH to 250. gLabel CH is greater than oLabel CH, so gLabel fits snugly while oLabel expands.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/ef06f1670aec3901.png"></p>
+<aside class="special"><p><strong>Content Hugging </strong>pulls the view inward so that it fits snugly around the content.</p>
+</aside>
+<ol type="1" start="9">
+<li>Change oLabel text to <strong>The quick brown fox jumps over the</strong></li>
+<li>Add a preview for iPhone 11 Pro Max</li>
+<li>Set oLabel CR to 751. oLabel CR is greater than gLabel CR, so oLabel is not clipped.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/efc72ff4e793b07a.png"></p>
+<ol type="1" start="12">
+<li>Set oLabel CR to 749. gLabel CR is greater than oLabel CR, so gLabel is not clipped.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/b6a0359d3bf3c30a.png"></p>
+<aside class="special"><p><strong>Compression resistance</strong> pushes the view outward so that it does not clip the content</p>
+</aside>
+<aside class="warning"><p>Notice the iPhone 8 preview when:</p>
+<ul>
+<li>oLabel CH is 250, gLabel CH is 251 (gLabel should fit snugly)</li>
+<li>oLabel CR is 751, gLabel CR is 750 (oLabel should not be clipped)</li>
+</ul>
+<p>When faced with choosing between the 2 options (gLabel should fit snugly and oLabel should not be clipped), the system chooses the one which prevents clipping. This makes sense when you think about the Content-Hugging and Compression-Resistance constraint equations for this scenario:</p>
+<p><code>// Content Hugging</code></p>
+<p><code>gLabel.width &lt;= IntrinsicWidthOfgLabel</code></p>
+<p><code>// Compression Resistance</code></p>
+<p><code>oLabel.width &gt;= IntrinsicWidthOfoLabel</code></p>
+<p>The only way to achieve this is for oLabel.width to be the intrinsic width of oLabel and gLabel.width to be less than the intrinsic width of gLabel.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIScrollView" duration="10">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithScrollViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithScrollViews.html</a></li>
+<li><a href="https://useyourloaf.com/blog/scroll-view-layouts-with-interface-builder/" target="_blank">https://useyourloaf.com/blog/scroll-view-layouts-with-interface-builder/</a></li>
+<li><a href="https://fluffy.es/move-view-when-keyboard-is-shown/" target="_blank">https://fluffy.es/move-view-when-keyboard-is-shown/</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>iOS uiscrollview autolayout</li>
+</ul>
+<p><strong>UIScrollView for smaller screens</strong></p>
+<p>By embedding a view (e.g. UIView or UIStackView) in a UIScrollView, the user is able to scroll to view user interface objects (which are in the embedded view) which may not fit in one screen on iOS devices with smaller screens. See Activity03.</p>
+<p>The steps involved are:</p>
+<ul>
+<li>Constrain the <strong>scroll view</strong> to the <strong>Safe Area</strong> (leading, top, trailing, bottom)</li>
+<li>Constrain the <strong>embedded view</strong> to the <strong>Content Layout Guide</strong> of the scroll view (leading, top, trailing, bottom)</li>
+<li>Constrain the <strong>embedded view</strong> width and <strong>Frame Layout Guide</strong> width of the scroll view to be equal </li>
+</ul>
+<p><strong>UIScrollView for keyboard management</strong></p>
+<p>A scroll view can also be used to push the content upwards if a keyboard blocks a text field which is being edited. See Activity04.</p>
+<p>The steps involved are:</p>
+<ul>
+<li>Create an IBOutlet for the scroll view called <code>scrollView</code></li>
+<li>Add the code to the viewDidLoad method to receive notifications when the keyboard shows and the keyboard hides</li>
+</ul>
+<pre><code>  override func viewDidLoad() {
+    super.viewDidLoad()
+    // code to receive notifications when the keyboard shows and the keyboard hides
+    NotificationCenter.default.addObserver(self, selector: #selector(ViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(ViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+  }</code></pre>
+<ul>
+<li>Add the methods to be executed when the keyboard shows and the keyboard hides</li>
+</ul>
+<pre><code>  // called when keyboard show notification is received
+  @objc func keyboardWillShow(notification: NSNotification) {
+    if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+      // create a keyboard high inset to push the scroll view up
+      let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.height , right: 0.0)
+      scrollView.contentInset = contentInsets
+      scrollView.scrollIndicatorInsets = contentInsets
+    }
+  }
+  
+  // called when keyboard hide notification is received
+  @objc func keyboardWillHide(notification: NSNotification) {
+    // create an empty inset to push the scroll view down
+    let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+    scrollView.contentInset = contentInsets
+    scrollView.scrollIndicatorInsets = contentInsets
+  }</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity03 UIScrollView" duration="15">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=ejU08JytpDM" target="_blank"><strong>Activity03 UIScrollView</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project <strong>Activity03</strong> using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="3">
+<li>View as: <strong>iPhone 11</strong></li>
+<li>Rename the root view to <strong>rootView</strong></li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/c4e6f3be75dac9b4.png"></p>
+<ol type="1" start="5">
+<li>Add a scroll view, resize the scroll view to fit within the Safe Area and left layout guide. Right-click-drag from the Scroll View to Safe Area. Press SHIFT on the keyboard, and click the constraints shown below. Click anywhere outside the dialog box when done.</li>
+</ol>
+<ul>
+<li>Leading Space to Safe Area</li>
+<li>Top Space to Safe Area</li>
+<li>Trailing Space to Safe Area</li>
+<li>Bottom Space to Safe Area</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/eeb2ef6023f9fd32.png"></p>
+<ol type="1" start="6">
+<li>Add a UIView to the scroll view, resize the view to fit the scroll view. Right-click-drag from the embedded view to the Content Layout Guide of the scroll view. Press SHIFT on the keyboard, and click the constraints shown below. Click anywhere outside the dialog box when done.</li>
+</ol>
+<ul>
+<li>Leading Space to Content Layout Guide</li>
+<li>Top Space to Content Layout Guide</li>
+<li>Trailing Space to Content Layout Guide</li>
+<li>Bottom Space to Content Layout Guide</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/e701a4188ed71e7f.png"></p>
+<ol type="1" start="7">
+<li>Change the constant to 0 for </li>
+</ol>
+<ul>
+<li>View.trailing = Content Layout Guide.trailing</li>
+<li>View.bottom = Content Layout Guide.bottom</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/671995d341bb599e.png"></p>
+<ol type="1" start="8">
+<li>Right-click drag from <strong>Frame Layout Guide</strong> of the scroll view to the embedded view. Press SHIFT on the keyboard, and click the constraints shown below. Click anywhere outside the dialog box when done.</li>
+</ol>
+<ul>
+<li>Equal Widths</li>
+<li>Equal Height (only needed for this demonstration)</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/a182cd49c4ae53f4.png"></p>
+<ol type="1" start="9">
+<li>Select Frame Layout Guide.height = View.height and change the priority to 250 (only needed for this demonstration)</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/5d25347ece2c8f51.png"></p>
+<aside class="warning"><p>The steps above have created a view which is embedded in a scroll view. Items in the view which extend beyond the visible area can be accessed by scrolling downwards.</p>
+</aside>
+<ol type="1" start="10">
+<li>Add a label to the top left hand corner of the view, set the text as <strong>Top Label</strong>, use the <strong>Add New Constraints tool</strong> to add constraints top <strong>8</strong> and left <strong>8 </strong></li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/99249e631ee39743.png"></p>
+<ol type="1" start="11">
+<li>Add a label to the bottom left hand corner of the view, set the text as <strong>Bottom Label</strong>, use the <strong>Add New Constraints tool</strong> to add constraints bottom <strong>8</strong>, left <strong>8</strong> and top <strong>760</strong>. The top constraint is to force the distance between Top Label and Bottom Label; in practice, this would not be necessary if you have properly constrained user interface objects laid out from the top of the view to the bottom of the view.</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/14b683a75dc5bf36.png"></p>
+<ol type="1" start="12">
+<li>Run the project in an <strong>iPhone 11</strong>. Both labels are visible.</li>
+<li>Run the project in an <strong>iPhone 8</strong>. Top Label is visible. Scrolling down reveals Bottom Label.</li>
+</ol>
+<aside class="warning"><p>To add more user interface objects beyond the &#34;typical&#34; device height:</p>
+<ul>
+<li>In Main.storyboard, select the view controller</li>
+<li>At the size inspector, change Simulated Size to Freeform and change the height to the desired value</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity04 UIScrollView keyboard management" duration="10">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=qAJUsmPXiB4" target="_blank"><strong>Activity04 UIScrollView keyboard management</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li><strong>Start from the project given in Activity04.zip</strong></li>
+<li>Run the project in an iPhone 11. Click on the first text field and notice that the keyboard hides the text field.</li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<p class="image-container"><img style="width: 746.00px" src="img/670f99916ce98991.png"></p>
+<ol type="1" start="4">
+<li>The constraints for the scroll view and the stack view have been set up. The code for tracking the active keyboard and dismissing the keyboard with the Done button are already included (refer to C348 codelabs 06-ios-uibutton-uitextfield-protocol-delegate Activity06) </li>
+<li>Create an IBOutlet property for the scroll view as <strong>scrollView</strong></li>
+<li>Update ViewController with the code shown below</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController, UITextFieldDelegate {
+  // property to track the last edited text field
+  var activeTextField : UITextField? = nil
+  
+  @IBOutlet weak var scrollView: UIScrollView!
+  @IBOutlet weak var outTextField1: UITextField!
+  @IBOutlet weak var outTextField2: UITextField!
+  @IBOutlet weak var outTextField3: UITextField!
+  @IBOutlet weak var outTextField4: UITextField!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    outTextField1.delegate = self
+    outTextField2.delegate = self
+    outTextField3.delegate = self
+    outTextField4.delegate = self
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(ViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(ViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+  }
+  
+  // called when the text field identified by textField starts being edited
+  func textFieldDidBeginEditing(_ textField: UITextField) {
+    // track the currently edited text field
+    self.activeTextField = textField
+  }
+  
+  // called when the text field identified by textField stops being edited
+  func textFieldDidEndEditing(_ textField: UITextField) {
+    // reset the property
+    self.activeTextField = nil
+  }
+  
+  @IBAction func actDone(_ sender: UIBarButtonItem) {
+    if let activeTextField = activeTextField {
+      activeTextField.resignFirstResponder()
+    }
+  }
+  
+  // called when keyboard show notification is received
+  @objc func keyboardWillShow(notification: NSNotification) {
+    if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+      // create a keyboard high inset to push the scroll view up
+      let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.height , right: 0.0)
+      scrollView.contentInset = contentInsets
+      scrollView.scrollIndicatorInsets = contentInsets
+    }
+  }
+  
+  // called when keyboard hide notification is received
+  @objc func keyboardWillHide(notification: NSNotification) {
+    // create an empty inset to push the scroll view down
+    let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+    scrollView.contentInset = contentInsets
+    scrollView.scrollIndicatorInsets = contentInsets
+  }
+}</code></pre>
+<ol type="1" start="7">
+<li>Run the project in an iPhone 11. Click on any of the text fields. When the keyboard appears, the view scrolls so that the text field will not be hidden. Verify it works on an iPhone 8 as well.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Self-sizing table view cells" duration="5">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithSelf-SizingTableViewCells.html#//apple_ref/doc/uid/TP40010853-CH25-SW1" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithSelf-SizingTableViewCells.html</a></li>
+<li><a href="https://www.raywenderlich.com/8549-self-sizing-table-view-cells" target="_blank">https://www.raywenderlich.com/8549-self-sizing-table-view-cells</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>ios self-sizing table view cells</li>
+</ul>
+<p><strong>Self-sizing table view cells</strong></p>
+<p>Auto Layout can be used to dynamically determine the height of a table view cell</p>
+<ul>
+<li>Provide constraints for the label to fully describe the position of the label within the cell (the bottom constraint for the label might need to use a greater than or equal relationship)</li>
+<li>Set the number of lines for the label to 0</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity05 Self-sizing table view cells" duration="15">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=xjl3YT7SnU8" target="_blank"><strong>Activity05 Self-sizing table view cells</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project Activity05 using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Set up the project as shown in the video. The text and image used in the project are given below</li>
+</ol>
+<p>Ariana Grande-Butera is an American singer, songwriter, and actress. Born in Boca Raton, Florida, Grande began her career in the 2008 Broadway musical 13. She rose to promimence for her role as Cat Valentine in the Nickelodeon television series Victorious (2010–2013) and its spin-off Sam &amp; Cat (2013–2014). After she grew interested in pursuing a music career, Grande recorded songs for the soundtrack of Victorious, and signed with Republic Records in 2011 after the label&#39;s executives discovered videos of her covering songs that she uploaded onto YouTube.</p>
+<p class="image-container"><img style="width: 205.00px" src="img/346e18c571833f4b.jpeg"></p>
+<ol type="1" start="4">
+<li>For the first portion of the demonstration, note that outDetailLabel has constraints (leading <strong>0</strong>, top <strong>0</strong>, trailing <strong>0</strong>, bottom <strong>0</strong>) and the value for <strong>Lines</strong> is <strong>0</strong>.</li>
+<li>For the second portion of the demonstration, note that the bottom constraint for outDetailLabel has a greater than or equal relationship.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise02" duration="10">
+        <p>Copy project Activity05 to a new folder called Exercise02. For project Exercise02:</p>
+<ul>
+<li>Modify or add constraints where necessary so that there is some space under the image view (similar to the space above the image view) as shown in the screenshot below</li>
+<li>Post your idea in the Microsoft Teams group chat and discuss the pros and cons of each team members idea.</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/a2506987890f348d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Size classes" duration="15">
+        <p><strong>Links</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/Size-ClassSpecificLayout.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/Size-ClassSpecificLayout.html</a></li>
+<li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></li>
+<li><a href="https://useyourloaf.com/blog/size-classes/" target="_blank">https://useyourloaf.com/blog/size-classes/</a></li>
+<li><a href="https://ryanbritton.com/2016/02/unique-layouts-for-iphone-and-ipad-with-size-classes/" target="_blank">https://ryanbritton.com/2016/02/unique-layouts-for-iphone-and-ipad-with-size-classes/</a></li>
+</ul>
+<p><strong>Google keywords search</strong></p>
+<ul>
+<li>ios size classes</li>
+</ul>
+<p><strong>Size classes</strong></p>
+<p>Size classes categorizes devices based on device type and device orientation.</p>
+<p class="image-container"><img style="width: 746.00px" src="img/cb18d766683425c4.png"></p>
+<p>It considers the width (compact or regular) and height (compact or regular). This results in 4 different concrete combinations known as Final Class Sizes.</p>
+<p><strong>Final size classes</strong></p>
+<p>The Final classes represent actual size classes displayed on devices.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Size class</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Width</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Height</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Device</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wC hC</p>
+</td><td colspan="1" rowspan="1"><p>Compact</p>
+</td><td colspan="1" rowspan="1"><p>Compact</p>
+</td><td colspan="1" rowspan="1"><p>iPhone (except Plus) in landscape </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wC hR</p>
+</td><td colspan="1" rowspan="1"><p>Compact</p>
+</td><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>iPhone in portrait</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wR hC</p>
+</td><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Compact</p>
+</td><td colspan="1" rowspan="1"><p>iPhone Plus in landscape</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wR hR</p>
+</td><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>iPad in portrait and landscape</p>
+</td></tr>
+</table>
+<p class="image-container"><img style="width: 746.00px" src="img/ed15c3b8324f1099.png"></p>
+<p><strong>Base size classes</strong></p>
+<p>These are abstract size classes that represent a combination of two or more Final Size Classes. For example, something which applies to the wAny hC base size class applies to the wC hC and wR hC final size classes.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Base size class</strong></p>
+</td><td colspan="2" rowspan="1"><p><strong>Final size classes included</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wAny <strong>hC</strong></p>
+</td><td colspan="2" rowspan="1"><p>wC <strong>hC</strong></p>
+<p>wR <strong>hC</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wAny <strong>hR</strong></p>
+</td><td colspan="2" rowspan="1"><p>wC <strong>hR</strong></p>
+<p>wR <strong>hR</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>wC </strong>hAny</p>
+</td><td colspan="2" rowspan="1"><p><strong>wC </strong>hC</p>
+<p><strong>wC </strong>hR</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>wR </strong>hAny</p>
+</td><td colspan="2" rowspan="1"><p><strong>wR </strong>hC</p>
+<p><strong>wR </strong>hR</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>wAny hAny</p>
+</td><td colspan="2" rowspan="1"><p>wC hC</p>
+<p>wC hR</p>
+<p>wR hC</p>
+<p>wR hR</p>
+</td></tr>
+</table>
+<p>Storyboards in Interface Builder use size classes. <strong>By default, the size class in Main.storyboard is wAny hAny</strong>.</p>
+<p><strong>Customizations</strong></p>
+<p>A customization modifies a user interface element depending on the size class. There are two types of customizations:</p>
+<ul>
+<li>customizations for the value of selected attributes; for example, there could be a customization to set the font color of a label to red in wC hR (iPhone in portrait) and green in wR hC (iPhone in landscape)</li>
+</ul>
+<p class="image-container"><img style="width: 518.00px" src="img/fedf3642a8f8447e.png"></p>
+<ul>
+<li>customizations to <strong>install</strong> or <strong>uninstall</strong> a <strong>view</strong> or a <strong>constraint</strong>; for example, a customization to add a view to the view hierarchy in wC hR but not in wR hC</li>
+</ul>
+<p class="image-container"><img style="width: 516.00px" src="img/f595b39cb2f70cf3.png"></p>
+<aside class="special"><p>When the system loads a scene, it instantiates all the views, controls, and constraints, and assigns these items to the appropriate outlet in the view controller (if any). These items can be accessed through their outlets, regardless of the scene&#39;s current size class. However, the system adds these items to the view hierarchy only if they are installed for the current size class.</p>
+<p>As the view&#39;s size class changes (for example, when you rotate an iPhone or switch an iPad app between full-screen and Split View), the system automatically adds items to or removes them from the view hierarchy. The system also animates any changes to the view&#39;s layout.</p>
+</aside>
+<p><strong>Working with customizations</strong></p>
+<p>Anything set in a more specific size class always overrides the more general size classes. For example, a customization for wC hAny would override a customization for wAny hAny, and a customization for wC hC would override a customization for wC hAny.</p>
+<p>Therefore, it is typically easiest to work from the most general size class to the most specific. Select the default layout for your app, and design this layout in the wAny hAny size class. Then add customizations for the other Base or Final size classes as needed.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity06 Size classes (1)" duration="15">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=S8uCAFT4jDQ" target="_blank"><strong>Activity06 Size classes (1)</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project Activity06 using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="1">
+<li>View as: <strong>iPhone 11</strong></li>
+<li>Show the preview for an iPhone 8 (or iPhone SE 2nd generation) in portrait and landscape, iPhone 8 Plus in landscape and iPad 9.7 inch</li>
+<li>Add a label to the top left hand corner of the view</li>
+<li>Select the label, in the attributes inspector, add a customization for wC hR by clicking on the <strong>+</strong> button as illustrated in the screenshot below; in the dialog, select <strong>Compact</strong> for Width and <strong>Regular</strong> for Height, click <strong>Add Variation</strong></li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/c9cb4da555db0b9d.png"></p>
+<ol type="1" start="5">
+<li>Add customizations for wC hC, wR hC and wR hR.</li>
+</ol>
+<p class="image-container"><img style="width: 516.00px" src="img/11790a048b0edd19.png"></p>
+<ol type="1" start="6">
+<li>Uncheck for wC hC, the label does not appear in iPhone landscape.</li>
+<li>Uncheck for wR hC, the label does not appear in iPhone Plus landscape.</li>
+<li>Uncheck for wC hR, the label does not appear in iPhone portrait.</li>
+<li>Uncheck for wC hR, the label does not appear in iPad.</li>
+</ol>
+<aside class="special"><p>The example above shows installing or uninstalling a view.</p>
+</aside>
+<ol type="1" start="10">
+<li>For the label, add constraints top <strong>0</strong> and leading <strong>20</strong>.</li>
+<li>Select <code>Label.leading = Safe Area.leading + 20</code> and add a customization for wR hR. Uninstall the customization for wR hR.</li>
+<li>For the label, add a constraint to center horizontally in container.</li>
+<li>Select Label.centerX = centerX and add a customization for wR hR. Uninstall the constraint for wAny hAny.</li>
+</ol>
+<p class="image-container"><img style="width: 518.00px" src="img/6b0c0ef68fcb531c.png"></p>
+<ol type="1" start="14">
+<li>From the preview, verify that for iPhone portrait and landscape, and iPhone Plus landscape the label is constrained to the top left hand corner; for iPad, the label is constrained to the top and centered horizontally </li>
+</ol>
+<aside class="special"><p>The example above shows installing or uninstalling a constraint.</p>
+</aside>
+<ol type="1" start="15">
+<li>Select the label, in the attributes inspector, for the Color, add a wR hR and wR hC customization; for the wR hR customization, select red, and for the wR hC customization, select orange</li>
+<li>From the preview, verify that for iPhone Plus landscape the label is orange; for iPad, the label is red</li>
+</ol>
+<aside class="special"><p>The example above shows customization for an attribute.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity07 Size classes (2)" duration="10">
+        <p>Watch the video <a href="https://www.youtube.com/watch?v=88Qoh6Xv9a0" target="_blank"><strong>Activity07 Size classes (2)</strong></a> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create project Activity07 using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>View as: <strong>iPhone 8</strong> (or iPhone SE 2nd generation)</li>
+<li>Show the preview for an iPhone 8 (or iPhone SE 2nd generation) in portrait and landscape, iPhone 8 Plus in landscape and iPad 9.7 inch</li>
+<li>Add an image to Assets.xcassets</li>
+<li>Add an image view to the view</li>
+<li>For the image view, add constraints top <strong>20</strong>, leading <strong>16</strong>, trailing <strong>16</strong> and aspect ratio <strong>1</strong></li>
+<li>Switch to the <strong>landscape orientation</strong>, at the View as: section, you should see wC hC.</li>
+<li>Click on <strong>Vary for Traits</strong>, in the dialog box check the checkbox next to Height, and click anywhere outside the dialog box. This will introduce variations for wAny hC. The reason for this is that we were previously in wC hC mode, and we only want variations based on the Height, which means we don&#39;t care about the width (the width can be Anything); hence we will be introducing variations for wAny hC.</li>
+</ol>
+<p class="image-container"><img style="width: 458.00px" src="img/d706f2ff45319c4c.png"></p>
+<ol type="1" start="11">
+<li>For the following constraints, add wAny hC customizations and uninstall those customizations</li>
+</ol>
+<ul>
+<li>Safe Area.trailing = Image View.trailing + 16</li>
+<li>Image View.top = Safe Area.top + 20</li>
+<li>Image View.leading = Safe Area.leading + 16</li>
+</ul>
+<ol type="1" start="12">
+<li>Resize the image view to become a square from the top left hand corner guides to the bottom guide</li>
+</ol>
+<p class="image-container"><img style="width: 746.00px" src="img/edff05ef8e05016f.png"></p>
+<ol type="1" start="13">
+<li>For the image view, add constraints top <strong>20</strong>, leading <strong>16</strong>, bottom <strong>20</strong></li>
+<li>Click on <strong>Done Varying</strong></li>
+<li>Verify that the image view appears in the upper half on iPhone portrait and iPad, and on the left side for iPhone landscape and iPhone Plus landscape</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UIImagePicker</li>
+</ul>
+<p><strong>Reference docs</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html</a></li>
+<li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html</a></li>
+<li><a href="https://medium.com/@dineshk1389/content-hugging-and-compression-resistance-in-ios-35a0e8f19118" target="_blank">https://medium.com/@dineshk1389/content-hugging-and-compression-resistance-in-ios-35a0e8f19118</a></li>
+<li><a href="https://krakendev.io/blog/autolayout-magic-like-harry-potter-but-real" target="_blank">https://krakendev.io/blog/autolayout-magic-like-harry-potter-but-real</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithScrollViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithScrollViews.html</a></li>
+<li><a href="https://useyourloaf.com/blog/scroll-view-layouts-with-interface-builder/" target="_blank">https://useyourloaf.com/blog/scroll-view-layouts-with-interface-builder/</a></li>
+<li><a href="https://fluffy.es/move-view-when-keyboard-is-shown/" target="_blank">https://fluffy.es/move-view-when-keyboard-is-shown/</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithSelf-SizingTableViewCells.html#//apple_ref/doc/uid/TP40010853-CH25-SW1" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithSelf-SizingTableViewCells.html</a></li>
+<li><a href="https://www.raywenderlich.com/8549-self-sizing-table-view-cells" target="_blank">https://www.raywenderlich.com/8549-self-sizing-table-view-cells</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/Size-ClassSpecificLayout.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/Size-ClassSpecificLayout.html</a></li>
+<li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></li>
+<li><a href="https://useyourloaf.com/blog/size-classes/" target="_blank">https://useyourloaf.com/blog/size-classes/</a></li>
+<li><a href="https://ryanbritton.com/2016/02/unique-layouts-for-iphone-and-ipad-with-size-classes/" target="_blank">https://ryanbritton.com/2016/02/unique-layouts-for-iphone-and-ipad-with-size-classes/</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

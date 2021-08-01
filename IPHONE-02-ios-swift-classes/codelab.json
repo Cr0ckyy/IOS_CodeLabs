@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-24T08:48:02Z",
+  "id": "02-ios-swift-classes",
+  "duration": 250,
+  "title": "Swift - Classes",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll learn to create and use classes in Swift",
+  "source": "1AbVlYocunjU1f3xHF49YQXp2CfC09ItcmJ6w2Dc0nQ0",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "02-ios-swift-classes"
+}

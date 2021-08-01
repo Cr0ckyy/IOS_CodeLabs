@@ -1,0 +1,173 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Xcode</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="00-ios-xcode"
+                  title="Xcode"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <aside class="special"><ul>
+<li>Available from App Store</li>
+<li>Integrated Development Environment (IDE) for macOS, iOS, watchOS, tvOS</li>
+<li>Code written in Swift or Objective-C</li>
+</ul>
+</aside>
+<h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Create and run an Xcode project</li>
+<li>Parts of the Xcode workspace</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity - Create and run an Xcode project" duration="5">
+        <p>Create a project - <a href="https://help.apple.com/xcode/mac/current/#/dev07db0e578" target="_blank">https://help.apple.com/xcode/mac/current/#/dev07db0e578</a></p>
+<p>Build and run your app - <a href="https://help.apple.com/xcode/mac/current/#/devdc0193470" target="_blank">https://help.apple.com/xcode/mac/current/#/devdc0193470</a></p>
+<ol type="1" start="1">
+<li>Launch Xcode</li>
+<li>Click <strong>Create a new Xcode project</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/f35de714a38c6623.png"></p>
+<ol type="1" start="3">
+<li>Select <strong>iOS</strong>, <strong>App</strong> and click <strong>Next</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/14259d4859b1953.png"></p>
+<ol type="1" start="4">
+<li>Enter the project information and click <strong>Next</strong>. Set the Interface as <strong>Storyboard</strong>, the Life Cycle as <strong>UIKit App Delegate</strong> and Language as <strong>Swift</strong>.  Uncheck the boxes for <em>Use Core Data</em> and <em>Include Tests.</em> For the Organization Identifier, set it as <strong>sg.edu.rp.19XXXXXX</strong> where <strong>19XXXXXX is your student number</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/aabe3200fe7a542a.png"></p>
+<ol type="1" start="5">
+<li>Select a location to save the project and click <strong>Create</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/769ee80493afc007.png"></p>
+<ol type="1" start="6">
+<li>Choose a <a href="https://help.apple.com/xcode/mac/11.0/#/dev6fd4476d7" target="_blank">scheme</a> from the scheme pop-up menu in the <a href="https://help.apple.com/xcode/mac/11.0/#/devf0d1df47a" target="_blank">toolbar</a></li>
+</ol>
+<p class="image-container"><img style="width: 370.67px" src="img/b10739b96f2840cb.png"></p>
+<ol type="1" start="7">
+<li>Choose a run destination from the scheme pop-up menu.</li>
+</ol>
+<p class="image-container"><img style="width: 518.67px" src="img/3e0b522113553d3.png"></p>
+<ol type="1" start="8">
+<li>Click the <strong>Run</strong> button in the toolbar to build, run, and debug your app.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/590535b5af2f74dc.png"></p>
+<ol type="1" start="9">
+<li>The selected simulator will launch as a separate application.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/fae164c9a46d4b14.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parts of the Xcode workspace" duration="5">
+        <p>About the main window - <a href="https://help.apple.com/xcode/mac/current/#/dev84c38774c" target="_blank">https://help.apple.com/xcode/mac/current/#/dev84c38774c</a></p>
+<p>About the editor area - <a href="https://help.apple.com/xcode/mac/current/#/dev79c94bf05" target="_blank">https://help.apple.com/xcode/mac/current/#/dev79c94bf05</a></p>
+<aside class="special"><ul>
+<li><strong>Toolbar</strong> - for managing your project</li>
+<li><strong>Editor area</strong> - for viewing and editing the contents of your project including code, user interface files, property lists, project settings, and more.</li>
+<li><strong>Navigator area</strong> - for viewing the parts of your project including files, symbols, breakpoints, and build information.</li>
+<li><strong>Debug area</strong> - for controlling the execution of your app during debugging, and for displaying variables, register, and status information.</li>
+<li><strong>Inspector area</strong> - for viewing and editing information about the selected object in the navigator or editor area, or the entire project.</li>
+</ul>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/209594b0aa63aed7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img/1704d8869d4f4786.png"></p>
+<p><strong>Adjust Editor Options popup menu</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Show Editor Only</p>
+</td><td colspan="1" rowspan="1"><p>Shows the editor without the canvas or assistant editor</p>
+</td><td colspan="1" rowspan="4"><p class="image-container"><img style="width: 194.00px" src="img/61fa7d6b8c727485.png"></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Canvas</p>
+</td><td colspan="1" rowspan="1"><p>For a file that uses SwiftUI, shows the editor with the canvas</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Assistant</p>
+</td><td colspan="1" rowspan="1"><p>Opens an assistant editor</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Layout</p>
+</td><td colspan="1" rowspan="1"><p>Choose whether to show the canvas or assistant editor on the right or below the standard editor</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Overview of project files" duration="5">
+        <table>
+<tr><td colspan="1" rowspan="1"><p><strong>Filename</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>AppDelegate.swift</p>
+</td><td colspan="1" rowspan="1"><p>Entry point into the application</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ViewController.swift</p>
+</td><td colspan="1" rowspan="1"><p>ViewController class containing the code for your app</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Main.storyboard</p>
+</td><td colspan="1" rowspan="1"><p>Storyboard file containing the user interface for your app</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Assets.xcassets</p>
+</td><td colspan="1" rowspan="1"><p>Stores project assets (e.g. images)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>LaunchScreen.storyboard</p>
+</td><td colspan="1" rowspan="1"><p>Storyboard file containing the launch screen for your app</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Info.plist</p>
+</td><td colspan="1" rowspan="1"><p>plist file containing key value pairs to configure the app</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Swift basics</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://help.apple.com/xcode/mac/current/" target="_blank">https://help.apple.com/xcode/mac/current/</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-07-05T13:40:46Z",
+  "id": "08-ios-user_defaults-settings_bundle",
+  "duration": 205,
+  "title": "UserDefaults and Settings Bundle",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1Tv74tmEPJ8ASegSMeILySShWP3HynC4UGFyMaNUZt-U",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "08-ios-user_defaults-settings_bundle"
+}

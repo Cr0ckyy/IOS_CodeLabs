@@ -1,0 +1,765 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Swift - Classes</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="02-ios-swift-classes"
+                  title="Swift - Classes"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Write and execute object oriented Swift code in a playground, which includes creating classes (with properties, methods and initialisers) and objects</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Language comparison" duration="10">
+        <h3 is-upgraded>NamedShape.java</h3>
+<pre><code>public class NamedShape {
+  int numberOfSides = 0;
+  String name = &#34;&#34;;
+
+  NamedShape(String name) {
+    this.name = name;
+  }
+
+  String simpleDescription() {
+    return &#34;A shape with &#34; + numberOfSides + &#34; sides.&#34;;
+  }
+}</code></pre>
+<h3 is-upgraded>Square.java</h3>
+<pre><code>public class Square extends NamedShape {
+  double sideLength = 0.0;
+
+  Square(String name, double sideLength) {
+    super(name);
+    this.sideLength = sideLength;
+    numberOfSides = 4;
+  }
+
+  double area() {
+    return sideLength * sideLength;
+  }
+
+  String simpleDescription() {
+    return &#34;A square with sides of length &#34; + sideLength + &#34;.&#34;;
+  }
+
+  public double perimeter() {
+    return sideLength * 4;
+  }
+}</code></pre>
+<h3 is-upgraded>MainApplication.java</h3>
+<pre><code>public class MainApplication {
+  public static void main(String[] args) {
+    Square square = new Square(&#34;my test square&#34;, 5.2);
+    System.out.println(square.area());
+    System.out.println(square.perimeter());
+    System.out.println(square.numberOfSides);
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classes" duration="15">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html</a></p>
+<aside class="special"><p>Classes are containers for data</p>
+<p>Classes have properties, methods and initialisers:</p>
+<ul>
+<li><strong>properties</strong> are data associated with the object; properties should have a logical relationship to the class it belongs to</li>
+<li><strong>methods</strong> are behaviour associated with the object</li>
+<li><strong>initialisers</strong> are used to create an object</li>
+</ul>
+</aside>
+<p><strong>Defining a class</strong></p>
+<ul>
+<li>Define a class with the <code>class</code> keyword</li>
+<li>Place the class definition within a pair of braces</li>
+</ul>
+<pre><code>class Square {
+  // class definition goes here
+}</code></pre>
+<p><strong>Defining a property</strong></p>
+<ul>
+<li>Same syntax as declaring a variable</li>
+</ul>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width = 0.0
+}</code></pre>
+<p><strong>Defining a method</strong></p>
+<ul>
+<li>Syntax will be covered in a later section</li>
+</ul>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width = 0.0
+  
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+}</code></pre>
+<p><strong>Creating an instance / object</strong></p>
+<ul>
+<li>Use the initializer syntax to create a new instance</li>
+<li>The simplest form of initializer syntax uses the type name of the class followed by empty parentheses <code>()</code></li>
+</ul>
+<pre><code>// create an instance
+var mySquare = Square()</code></pre>
+<p><strong>Accessing properties</strong></p>
+<ul>
+<li>You can access the properties of an instance using dot syntax. </li>
+<li>In dot syntax, you write the property name immediately after the instance name, separated by a period <code>.</code> without any spaces.</li>
+</ul>
+<pre><code>// accessing a property
+print(mySquare.width)</code></pre>
+<p><strong>Calling a method</strong></p>
+<ul>
+<li>You can call the method of an instance using dot syntax. </li>
+<li>In dot syntax, you write the method name immediately after the instance name, separated by a period <code>.</code> without any spaces. The method name is followed by parentheses <code>()</code></li>
+</ul>
+<pre><code>// calling a method
+print(mySquare.area())</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Defining a class and creating an instance" duration="10">
+        <ol type="1" start="1">
+<li>Create a playground in Xcode.</li>
+<li>Add the following code</li>
+</ol>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width = 0.0
+  
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+}
+
+// create an instance
+var mySquare = Square()
+// set the property value
+mySquare.width = 10
+// read the property value
+print(mySquare.width)
+// call the method
+print(mySquare.area())</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Properties" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Properties.html</a></p>
+<aside class="special"><p>Properties associate values with a class</p>
+<ul>
+<li><strong>Stored properties</strong> store constant and variable values as part of an instance</li>
+<li><strong>Computed properties</strong> calculate (rather than store) a value</li>
+</ul>
+</aside>
+<p><strong>Stored properties</strong></p>
+<ul>
+<li>A stored property is a constant (introduced by the <code>let</code> keyword) or variable (introduced by the <code>var</code> keyword) that is stored as part of an instance of a class. </li>
+</ul>
+<pre><code>class Square {
+  // class definition goes here
+
+  // stored properties
+  var width = 0.0      // variable
+  let color = &#34;white&#34;  // constant
+}</code></pre>
+<p><strong>Computed properties</strong></p>
+<ul>
+<li>Computed properties do not store a value; instead, they retrieve other properties indirectly</li>
+<li>Declare the property with a type annotation followed by a pair of braces <code>{}</code></li>
+<li>Within the braces, add a <code>return</code> statement with the value to be returned</li>
+</ul>
+<pre><code>class Square {
+  // class definition goes here
+
+  // stored properties
+  var width = 0.0      // variable
+  let color = &#34;white&#34;  // constant
+
+  // computed property
+  var area: Double {
+    return width * width
+  }
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Stored and computed properties" duration="10">
+        <ol type="1" start="1">
+<li>Create a playground in Xcode.</li>
+<li>Add the following code</li>
+</ol>
+<pre><code>class Square {
+  // class definition goes here
+
+  // stored properties
+  var width = 0.0      // variable
+  let color = &#34;white&#34;  // constant
+
+  // computed property
+  var area: Double {
+    return width * width
+  }
+}
+
+// create an instance
+var mySquare = Square()
+// set the stored property value
+mySquare.width = 10
+// read the stored property values
+print(mySquare.color)
+print(mySquare.width)
+// read the computed property
+print(mySquare.area)</code></pre>
+<ol type="1" start="3">
+<li>Try to set <code>color</code> to <code>&#34;Red&#34;</code> and observe the error because <code>color</code> is a constant</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/4bcb2bec775be497.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Functions" duration="20">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Functions.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Functions.html</a></p>
+<aside class="special"><ul>
+<li>A function is a self-contained block of code that performs a specific task</li>
+<li>The function is given a name that identifies what it does, and this name is used to &#34;call&#34; the function to perform its task when needed</li>
+<li>A function may have 0 or more parameters and 0 or one return value</li>
+</ul>
+</aside>
+<p><strong>Anatomy of a function</strong></p>
+<pre><code>func add(num1 x:Int, num2 y:Int) -&gt; Int {
+  // function body
+  return x + y
+}
+
+// call the function
+var sum = add(num1:3, num2:4)</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Example</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>func keyword</p>
+</td><td colspan="1" rowspan="1"><p><code>func</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>method name (kind of)</p>
+</td><td colspan="1" rowspan="1"><p><code>add</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>comma separated </p>
+<p>named and typed </p>
+<p>parameter list</p>
+</td><td colspan="1" rowspan="1"><p><code>(num1 x:Int, num2 y:Int)</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Indication of </p>
+<p>return type</p>
+</td><td colspan="1" rowspan="1"><p><code>-&gt; Int</code></p>
+</td></tr>
+</table>
+<p>If the function does not return any value, the section which indicates the return type is omitted</p>
+<p>Each parameter has an argument label and a parameter name:</p>
+<ul>
+<li>the argument label is used when calling the function; each argument is written in the function call with its argument label before it</li>
+<li>the parameter name is used in the implementation of the function</li>
+</ul>
+<p><strong>Parameters with explicitly declared argument label and parameter name</strong></p>
+<pre><code>// each parameter has an explicitly declared argument label and parameter name
+func add(num1 x:Int, num2 y:Int) -&gt; Int {
+  // function body
+  return x + y
+}
+
+// when calling the function, prefix the values with the argument labels
+var sum = add(num1:3, num2:4)</code></pre>
+<p><strong>Parameters with parameter name only</strong></p>
+<pre><code>// each parameter has a parameter name only
+// the parameter name is also used as the argument label
+func add(x:Int, y:Int) -&gt; Int {
+  // function body
+  return x + y
+}
+
+// when calling the function, prefix the values with the argument labels
+var sum = add(x:3, y:4)</code></pre>
+<p><strong>Parameters with argument label as _ and parameter name</strong></p>
+<pre><code>// parameter has an _ for the argument label
+func add(_ x:Int, y:Int) -&gt; Int {
+  // function body
+  return x + y
+}
+
+// when calling the function, _ means the argument label is omitted
+var sum = add(3, y:4)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Methods" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Methods.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Methods.html</a></p>
+<aside class="special"><ul>
+<li>Methods are functions that belong to a class</li>
+<li>Methods provide functionality related to the purpose of the class</li>
+<li>Methods have access to all other methods and properties in the class</li>
+</ul>
+</aside>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width = 0.0
+  
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+}
+
+// create an instance
+var mySquare = Square()
+// set the property value
+mySquare.width = 10
+// read the property value
+print(mySquare.width)
+// call the method
+print(mySquare.area())</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - Methods" duration="10">
+        <ol type="1" start="1">
+<li>Create a playground in Xcode.</li>
+<li>Add the following code. Notice how the method is defined and how the method is called.</li>
+</ol>
+<pre><code>class Square {
+  // class definition goes here
+
+  // stored properties
+  var width = 0.0      // variable
+  let color = &#34;white&#34;  // constant
+
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+}
+
+// create an instance
+var mySquare = Square()
+// set the stored property value
+mySquare.width = 10
+// read the stored property values
+print(mySquare.color)
+print(mySquare.width)
+// read the computed property
+print(mySquare.area())</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initializers" duration="20">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Initialization.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Initialization.html</a></p>
+<aside class="special"><p>Initialization prepares the object for use</p>
+<ul>
+<li>Set an initial value for each stored property</li>
+<li>Perform any other setup that is required</li>
+</ul>
+<p>A default initializer with no parameters is provided for classes with no initializers</p>
+<ul>
+<li>All properties must be initialized when declared</li>
+</ul>
+<p>When one or more initializers are declared</p>
+<ul>
+<li>No default initializer is provided</li>
+<li>All properties must be initialized when declared or in the initializer</li>
+</ul>
+</aside>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width : Double
+  
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+  
+  // initializer
+  init(width: Double) {
+    // self.width refers to the property,
+    // whereas width refers to the parameter
+    self.width = width
+  }
+}
+
+// create an instance
+var mySquare = Square(width: 10)
+// read the property value
+print(mySquare.width)
+// call the method
+print(mySquare.area())</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Initialisers" duration="10">
+        <ol type="1" start="1">
+<li>Create a playground in Xcode.</li>
+<li>Add the following code. Notice how the initialiser is defined and how the initialiser is called.</li>
+</ol>
+<pre><code>class Square {
+  // class definition goes here
+
+  // property
+  var width : Double
+  
+  // method
+  func area() -&gt; Double {
+    return width * width
+  }
+  
+  // initializer
+  init(width: Double) {
+    // self.width refers to the property,
+    // whereas width refers to the parameter
+    self.width = width
+  }
+}
+
+// create an instance
+var mySquare = Square(width: 10)
+// read the property value
+print(mySquare.width)
+// call the method
+print(mySquare.area())</code></pre>
+<ol type="1" start="3">
+<li>Try to call the default initializer for the Square class and notice the error. The default initializer does not exist once one or more initializers are defined in the class.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/bcabdf18b1e311c5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Inheritance" duration="15">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Inheritance.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Inheritance.html</a></p>
+<aside class="special"><ul>
+<li>Inheritance is when a class (the subclass) is based on another class (the parent class)</li>
+<li>The subclass inherits the initializers, properties and methods of the parent class</li>
+<li>Inheritence is known as the is a relationship; i.e. the subclass is a type of parent class (e.g. a square is a shape, a car is a vehicle, etc.)</li>
+<li>To indicate that a class is a subclass of a superclass, add a colon and the superclass name after the class name</li>
+</ul>
+</aside>
+<pre><code>class Shape {
+  var name : String
+
+  init(name : String) {
+    self.name = name
+  }
+
+  func printName() {
+    print(name)
+  }
+}
+
+// In this example:
+// superclass is Shape, subclass is Square
+// Square is based on Shape and inherits the properties,
+// initializers and methods of Shape
+class Square : Shape {
+}
+
+// the initializer for Square is inherited from Shape
+var square = Square(name: &#34;Square&#34;)
+// the name property for Square is inherited from Shape
+square.name = &#34;square&#34;
+// the printName() method for Square is inherited from Shape
+square.printName()</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Method overriding" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Inheritance.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Inheritance.html</a></p>
+<aside class="special"><p>A subclass can provide its own custom implementation of a method that it would otherwise inherit from a superclass. This is known as overriding.</p>
+<p>The subclass must add the <code>override</code> keyword in front of the method being overridden</p>
+<p>The subclass may choose to: </p>
+<ul>
+<li>replace behaviour of the superclass method, or</li>
+<li>add on behaviour to the superclass method; the subclass calls the superclass method by using the syntax <code>super.methodName()</code>- within a class, the keyword super refers to the superclass</li>
+</ul>
+</aside>
+<pre><code>class Shape {
+  var name : String = &#34;&#34;
+  
+  func printName() {
+    print(&#34;Shape name is \(name)&#34;)
+  }
+  
+  init(name : String) {
+    self.name = name
+  }
+}
+
+class Circle : Shape {
+  override func printName() {
+    // replace behaviour
+    print(&#34;Circle Shape&#34;)
+  }
+}
+
+class Rectangle : Shape {
+  override func printName() {
+    // add on behaviour
+    // call superclass method first
+    super.printName()
+    print(&#34;Rectangle Shape&#34;)
+  }
+}
+
+var myCircle = Circle(name:&#34;a circle&#34;)
+myCircle.printName()
+
+var myRectangle = Rectangle(name: &#34;a rectangle&#34;)
+myRectangle.printName()</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Inheritance and method overriding" duration="10">
+        <ol type="1" start="1">
+<li>Create a playground in Xcode.</li>
+<li>Add the following code. Notice the syntax for inheritance and method overriding.</li>
+</ol>
+<pre><code>class Shape {
+  var name : String = &#34;&#34;
+  
+  func printName() {
+    print(&#34;Shape name is \(name)&#34;)
+  }
+  
+  init(name : String) {
+    self.name = name
+  }
+}
+
+class Circle : Shape {
+  override func printName() {
+    // replace behaviour
+    print(&#34;Circle Shape&#34;)
+  }
+}
+
+class Rectangle : Shape {
+  override func printName() {
+    // add on behaviour
+    // call superclass method first
+    super.printName()
+    print(&#34;Rectangle Shape&#34;)
+  }
+}
+
+var myCircle = Circle(name:&#34;a circle&#34;)
+myCircle.printName()
+
+var myRectangle = Rectangle(name:&#34;a rectangle&#34;)
+myRectangle.printName()</code></pre>
+<ol type="1" start="3">
+<li>Notice that the printName() method in Circle <strong>overrides and replaces</strong> the behaviour of the printName() method in Shape</li>
+<li>Notice that the printName() method in Rectangle <strong>overrides and adds on</strong> to the  behaviour of the printName() method in Shape by calling the printName() method in Shape before providing its own implementation.</li>
+</ol>
+<p>Output produced is:</p>
+<pre>Circle Shape
+Shape name is a rectangle
+Rectangle Shape</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercises" duration="90">
+        <p><strong>Exercise 1</strong></p>
+<p>Create a Rectangle class which has:</p>
+<ul>
+<li>a Double property called height and a Double property called width</li>
+<li>a computed property called area which returns the area of the rectangle as a Double value</li>
+<li>an initializer with two parameters for the height and width</li>
+<li>a method with the declaration shown below. The method returns 1 if the area is larger than the area of anotherRectangle, -1 if the area is smaller than the area of anotherRectangle and 0 if the areas are equal. </li>
+</ul>
+<pre><code>func compareArea(_ anotherRectangle: Rectangle) -&gt; Int {
+}</code></pre>
+<pre>Create a Rectangle object which has a height of 6.0 and a width of 10.0.
+Write the code to:
+- Print the area of the rectangle.
+- Call the compareArea(_:) method to compare with another Rectangle object
+  which has a height of 8.0 and a width of 8.0.</pre>
+<p><strong>Exercise 2</strong></p>
+<p>Create a Circle class which has:</p>
+<ul>
+<li>a Double property called radius</li>
+<li>a computed property called area which returns the area of the circle as a Double value</li>
+<li>an initializer with one parameter for the radius</li>
+<li>a computed property called size which returns small (area less than or equal to 1), large (area more than or equal to 100) or medium (all other values)</li>
+<li>a method with the declaration shown below to return the area of a sector. This method takes in one parameter which is the angle (in degrees) of the sector.</li>
+</ul>
+<pre><code>func sectorArea(angle: Double) -&gt; Double {
+}</code></pre>
+<pre>Create a Circle object which has a radius of 5.0.
+Write the code to:
+- Print the area and the size of the circle.
+- Change the radius to 15.0.
+- Print the sector area for an angle of 60 degrees.</pre>
+<p><strong>Exercise 3</strong></p>
+<p>Create a Student class which has:</p>
+<ul>
+<li>a String property called studentID</li>
+<li>a String property called firstName</li>
+<li>a String property called lastName</li>
+<li>a computed property called fullName which returns the concatenated value of the firstName and lastName</li>
+<li>a computed property which returns the matriculation year of the student based on the first two characters of the studentID; for example, a student with a studentID of 17123456 has a matriculation year of 2017, while a student with a studentID of 18123456 has a matriculation year of 2018</li>
+<li>an initializer with three parameters for the studentID, firstName and lastName</li>
+<li>a method with the declaration shown below. The method prints the Student name, diploma and job aspiration as shown in the sample output</li>
+</ul>
+<pre>func intro(diploma d: String, job j: String) {
+}
+
+// sample output from the method above
+I am John Tan from DMSD, an aspiring Mobile Software Developer.</pre>
+<pre>Create a Student object which has a Student ID of 17123456, first name John and last name Tan.
+Write the code to:
+- Print the Student ID and full name of the Student
+- Print the matriculation year of the Student
+- Call the intro(diploma:job:) method</pre>
+<p><strong>Exercise 4</strong></p>
+<p>Create an Animal class:</p>
+<ul>
+<li>has a method called speak() which prints <strong>Unknown</strong></li>
+</ul>
+<p>Create a Dog class which:</p>
+<ul>
+<li>inherits from Animal</li>
+<li>overrides speak() and prints <strong>Woof</strong></li>
+</ul>
+<p>Create a Cat class which:</p>
+<ul>
+<li>inherits from Animal</li>
+<li>overrides speak() - calls the superclass speak() method and prints <strong>Meow</strong></li>
+</ul>
+<pre>Create a Dog object and call the speak method
+Create a Cat object and call the speak method</pre>
+<p><strong>Exercise 5</strong></p>
+<p>Convert the Java code given at the start of the lesson to Swift.</p>
+<p>Description:</p>
+<p>Create a class called NamedShape which has</p>
+<ul>
+<li>A property called numberOfSides which stores an integer value</li>
+<li>A property called name which stores a String value</li>
+<li>An initializer which has one parameter for the name</li>
+<li>A method called simpleDescription() which has no parameters and returns a String; this method returns the String &#34;A shape with x sides&#34;, where x is the value of numberOfSides.</li>
+</ul>
+<p>Create a subclass of NamedShape called Square which has</p>
+<ul>
+<li>A property called sideLength which stores a floating point value</li>
+<li>An initializer which has two parameters for the name and sideLength; the initializer will initialize the value of numberOfSides to 4</li>
+<li>A method called area() which returns the area of the Square</li>
+<li><strong>A computed property called perimeter which returns the length of the perimeter of the Square (note that in the Java code, this is a method)</strong></li>
+<li>A method called simpleDescription() which has no parameters and returns a String; this method returns the String &#34;A square with sides of length x&#34; where x is the value of sideLength.</li>
+</ul>
+<pre>Create a Square instance called square.
+The name of the square is &#34;my test square&#34; and the sideLength of the square is 5.2
+Write the code to:
+- Print out the area of the square
+- Print out the perimeter of the square
+- Print out the number of sides of the square</pre>
+<p><strong>Exercise 6</strong></p>
+<p>Create a Person class which has:</p>
+<ul>
+<li>a stored property for the first name, an example value is <strong>John</strong></li>
+<li>a stored property for the last name, an example value is <strong>Tan</strong></li>
+<li>a stored property for the age, an example value is <strong>42</strong></li>
+<li>a stored property for the gender, example values are <strong>male</strong> and <strong>female</strong></li>
+<li>a computed property which returns if the gender is male, example values are <strong>true</strong> and <strong>false</strong></li>
+<li>a computed property for the age classification which returns <strong>junior</strong> (age less than or equal to 19), <strong>senior</strong> (age more than or equal to 60) or <strong>adult</strong> (all other values)</li>
+<li>a computed property for the full name, an example value is <strong>Tan, John</strong></li>
+<li>an initializer with four parameters for all stored properties</li>
+<li>a method which calculates the number of years to retirement - this method has one parameter for the retirement age and returns the number of years to retirement (example1: if the retirement age is 62 and the age is 40, the number of years to retirement is 22) (example2: if the retirement age is 62 and the age is 65, the number of years to retirement is 0)</li>
+</ul>
+<pre>Create a Person object called person. Choose appropriate parameter values.
+Write the code to:
+- Print out the full name of the Person
+- Print out the physical description of the age of the Person
+- Print out the number of years to retirement for a minimum retirement age of 62
+
+Sample output is shown below:
+Full name : Hanks, Tom
+Description : adult
+17 years to retirement</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>IBOutlet properties and IBAction methods</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift53.epub" target="_blank">https://docs.swift.org/swift-book/TheSwiftProgrammingLanguageSwift53.epub</a></li>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

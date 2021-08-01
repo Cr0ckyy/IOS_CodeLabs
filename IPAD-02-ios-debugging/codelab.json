@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-04-26T22:10:35Z",
+  "id": "02-ios-debugging",
+  "duration": 185,
+  "title": "Debugging",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1430G-m_vn8Hyk0hkvrcfxgxYt8SyzUlEvIm0OXzlI2E",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "02-ios-debugging"
+}

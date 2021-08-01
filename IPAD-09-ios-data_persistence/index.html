@@ -1,0 +1,1158 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Persistence</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="09-ios-data_persistence"
+                  title="Data Persistence"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>Use appropriate error handling mechanisms to detect and handle errors propagated from functions to respond accordingly and communicate appropriately to the user</li>
+<li>Explain the iOS file system as it pertains to file persistence </li>
+<li>Use the FileManager to interact with the file system</li>
+<li>Create and use property lists as an application resource for application data</li>
+<li>Use appropriate encoders and decoders to persist standard and custom data types to the file system</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Persistence" duration="5">
+        <p>Data persistence means that data is saved to non-volatile storage and can be retrieved even after an app is restarted or the device running the app is rebooted.</p>
+<p>There are different ways that data can be persisted such as:</p>
+<ul>
+<li>UserDefaults - simple key-value storage, used for user settings or app states (covered in P08)</li>
+<li>Codable and FileManager - Codable enables an object to be encoded and decoded for archiving and unarchiving, while FileManager is used to interact with the file system (covered in P09)</li>
+<li>SQLite - a relational database management system (not covered in this module)</li>
+<li>CoreData - an object graph and persistence framework (not covered in this module)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - Writing and reading an array property list" duration="10">
+        <aside class="special"><p>For this activity, we will write an array to a property list, then read the array from the property list. The codelab sections following this activity explain the concepts and code in greater detail.</p>
+</aside>
+<ol type="1" start="1">
+<li>Create <strong>SampleProject01</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController. The <code>writeData()</code> function will write an array to a file called <code>sample.plist</code>. The <code>readData()</code> function will read the array from the file called <code>sample.plist</code>. <code>writeData()</code> and <code>readData()</code> are called in <code>viewDidLoad()</code>.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let sampleData = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // create and configure the encoder
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .xml
+    do {
+      // encode the data
+      let data = try encoder.encode(sampleData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // create the decoder
+    let decoder = PropertyListDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let sampleData = try decoder.decode([String].self, from: xml)
+      // print the data for debugging purposes
+      print(sampleData)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the app. In <code>viewDidLoad()</code>, the <code>writeData()</code> and <code>readData()</code> methods are called. The <code>readData()</code> function reads the array from the file <code>sample.plist</code>, and prints the array to the debug area. You should see the following in the debug area:</li>
+</ol>
+<pre>[&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]</pre>
+<ol type="1" start="4">
+<li>Read the next few sections in the codelabs, which will explain the following concepts which are used in the preceding code:</li>
+</ol>
+<ul>
+<li>Error handling</li>
+<li>File manager</li>
+<li>Property list</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Error handling" duration="15">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/ErrorHandling.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ErrorHandling.html</a></p>
+<p>Error handling is the process of responding to and recovering from error conditions</p>
+<ul>
+<li>some operations may fail due to foreseen or unforeseen circumstances</li>
+<li>when an operation fails, try to understand what caused the failure and respond accordingly</li>
+</ul>
+<p>For example, consider the task of reading and processing data from a file on disk; this task can fail if the file:</p>
+<ul>
+<li>does not exist at the specified path</li>
+<li>does not have read permissions</li>
+</ul>
+<p>Distinguishing between these error conditions allows a program to respond accordingly and communicate appropriately to the user</p>
+<p><strong>Representing Errors</strong></p>
+<p>Errors are represented by values of types that conform to the Error protocol</p>
+<p><strong>Throwing Errors</strong></p>
+<p>Throwing an error lets you indicate that something unexpected happened and the normal flow of execution cannot continue. You use a throw statement to throw an error.</p>
+<p><strong>Handling Errors</strong></p>
+<p>When an error is thrown, some surrounding piece of code must be responsible for detecting and handling the error. </p>
+<ol type="1" start="1">
+<li>You can use a <code>do-catch</code> construct - the <code>do</code> block contains the statement which has a <code>try</code> while the <code>catch</code> block handles the error; note that all code in the <code>do</code> block following the code which had an error will be bypassed</li>
+<li>You can use <code>try?</code> - the error is discarded, but an error is indicated by the presence of a <code>nil</code> return value; note that the return type automatically becomes an optional type regardless  of the declaration of the function being called</li>
+<li>You can use <code>try!</code>  - this assumes that an error will never occur, but if it does, the application will crash</li>
+</ol>
+<p><strong>do-catch </strong></p>
+<pre><code>do {
+  // the do block contains the statement which has a try
+  let value = try sampleFunction()
+  // all code in the do block following the code which had an error will be bypassed
+} catch {
+  // the catch block handles the error
+  print(error)
+}</code></pre>
+<p><strong>try?</strong></p>
+<ul>
+<li>when we use <code>try?</code>, we get a <code>nil</code> if there is an error, or we get an optional value if there is no error </li>
+</ul>
+<pre><code>// error is discarded but error is indicated by nil return value
+// the return type of the function is an optional type regardless
+// of the declaration of the function being called
+let value = try? sampleFunction()</code></pre>
+<p><strong>try!</strong></p>
+<ul>
+<li>when we use <code>try!</code>, we assume that an error will never occur, but if it does, the application will crash</li>
+</ul>
+<pre><code>// assumes an error will never occur, but if it does, the application will crash
+let value = try! sampleFunction()</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - Error handling" duration="20">
+        <aside class="special"><p>For this activity, we will investigate how errors can be handled. For illustration purposes, a custom error type called <code>SomeError</code> is used, and <code>someFunction</code> is a function which can throw an error.</p>
+</aside>
+<ol type="1" start="1">
+<li>Create <strong>SampleProject02</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+ 
+// SomeError is an enum that conforms to the Error protocol
+enum SomeError : Error {
+  case x
+}
+ 
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+     super.viewDidLoad()
+     demoDoCatch()
+     demoTryQuestionMark()
+     demoTryExclamationMark()
+   }
+
+  // someFunction is a function that can throw an error
+  func someFunction(shouldThrowError: Bool) throws -&gt; Int {
+    // throw an error if shouldThrowError is true
+    if shouldThrowError == true {
+      throw SomeError.x
+    }
+    // no error, return an Int
+    return 1
+  }
+  
+  func demoDoCatch() {
+    // handle the error using a do-catch construct
+    // return type is an Int because of function declaration
+    // value is printed out if the function does not throw an error
+    // error is printed out if the function throws an error
+ 
+    do {
+      let value = try someFunction(shouldThrowError: false)
+      print(&#34;demoDoCatch (no error) : value is \(value)&#34;)
+    } catch {
+      print(error)
+    }
+ 
+    do {
+      let value = try someFunction(shouldThrowError: true)
+      print(&#34;demoDoCatch (error) : value is \(value)&#34;)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func demoTryQuestionMark() {
+    // handle the error as an optional value using try?
+    // return type is an optional type despite function declaration
+    // value1 has an optional value if the function does not throw an error
+    // value2 has a nil value if the function throws an error
+ 
+    let value1 = try? someFunction(shouldThrowError: false)
+    print(&#34;demoTryQuestionMark (no error) : value1 is \(value1)&#34;)
+    
+    let value2 = try? someFunction(shouldThrowError: true)
+    print(&#34;demoTryQuestionMark (error) : value2 is \(value2)&#34;)
+  }
+ 
+  func demoTryExclamationMark() {
+    // assert that the error will not occur by using try!
+    // return type is an Int because of function declaration
+    // app will crash if function throws an error
+    
+    let value1 = try! someFunction(shouldThrowError: false)
+    print(&#34;demoTryExclamationMark (no error) : value1 is \(value1)&#34;)
+    
+    let value2 = try! someFunction(shouldThrowError: true)
+    print(&#34;demoTryExclamationMark (error) : value2 is \(value2)&#34;)
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the app. You should see the following in the debug area:</li>
+</ol>
+<pre>demoDoCatch (no error) : value is 1
+x
+demoTryQuestionMark (no error) : value1 is Optional(1)
+demoTryQuestionMark (error) : value2 is nil
+demoTryExclamationMark (no error) : value1 is 1
+Fatal error: &#39;try!&#39; expression unexpectedly raised an error: SampleProject02.SomeError.x: file /Users/solaradmin/Documents/SampleProject02/SampleProject02/ViewController.swift, line 69
+2020-07-13 18:25:23.245238+0800 SampleProject02[2096:28625] Fatal error: &#39;try!&#39; expression unexpectedly raised an error: SampleProject02.SomeError.x: file /Users/solaradmin/Documents/SampleProject02/SampleProject02/ViewController.swift, line 69
+(lldb) </pre>
+<ol type="1" start="4">
+<li>Explanation for <code>demoDoCatch</code></li>
+</ol>
+<ul>
+<li><code>demoDoCatch (no error) : value is 1</code> is printed out and the first catch block is ignored because there is no error. </li>
+<li><code>x</code> is printed out from the second catch block because there is an error; the second print statement to print the value is bypassed.</li>
+</ul>
+<pre>demoDoCatch (no error) : value is 1
+x</pre>
+<pre><code>func demoDoCatch() {
+  // handle the error using a do-catch construct
+  // return type is an Int because of function declaration
+  // value is printed out if the function does not throw an error
+  // error is printed out if the function throws an error
+
+  do {
+    let value = try someFunction(shouldThrowError: false)
+    print(&#34;demoDoCatch (no error) : value is \(value)&#34;)
+  } catch {
+    print(error)
+  }
+
+  do {
+    let value = try someFunction(shouldThrowError: true)
+    print(&#34;demoDoCatch (error) : value is \(value)&#34;)
+  } catch {
+    print(error)
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Explanation for <code>demoTryQuestionMark</code></li>
+</ol>
+<ul>
+<li><code>demoTryQuestionMark (no error) : value1 is Optional(1)</code> is printed out; <code>value1</code> has a non-nil value which shows there is no error</li>
+<li><code>demoTryQuestionMark (error) : value2 is nil</code> is printed out; <code>value2</code> has a <code>nil</code> value which shows there is an error</li>
+</ul>
+<pre>demoTryQuestionMark (no error) : value1 is Optional(1)
+demoTryQuestionMark (error) : value2 is nil</pre>
+<pre><code>func demoTryQuestionMark() {
+  // handle the error as an optional value using try?
+  // return type is an optional type despite function declaration
+  // value1 has an optional value if the function does not throw an error
+  // value2 has a nil value if the function throws an error
+
+  let value1 = try? someFunction(shouldThrowError: false)
+  print(&#34;demoTryQuestionMark (no error) : value1 is \(value1)&#34;)
+  
+  let value2 = try? someFunction(shouldThrowError: true)
+  print(&#34;demoTryQuestionMark (error) : value2 is \(value2)&#34;)
+}</code></pre>
+<ol type="1" start="6">
+<li>Explanation for <code>demoTryExclamationMark</code></li>
+</ol>
+<ul>
+<li><code>demoTryExclamationMark (no error) : value1 is 1</code> is printed out; <code>value1</code> has a value which shows there is no error</li>
+<li>application crashes which shows there is an error</li>
+</ul>
+<pre>demoTryExclamationMark (no error) : value1 is 1
+Fatal error: &#39;try!&#39; expression unexpectedly raised an error: SampleProject02.SomeError.x: file /Users/solaradmin/Documents/SampleProject02/SampleProject02/ViewController.swift, line 69
+2020-07-13 18:25:23.245238+0800 SampleProject02[2096:28625] Fatal error: &#39;try!&#39; expression unexpectedly raised an error: SampleProject02.SomeError.x: file /Users/solaradmin/Documents/SampleProject02/SampleProject02/ViewController.swift, line 69
+(lldb) </pre>
+<pre><code>func demoTryExclamationMark() {
+  // assert that the error will not occur by using try!
+  // return type is an Int because of function declaration
+  // app will crash if function throws an error
+  
+  let value1 = try! someFunction(shouldThrowError: false)
+  print(&#34;demoTryExclamationMark (no error) : value1 is \(value1)&#34;)
+  
+  let value2 = try! someFunction(shouldThrowError: true)
+  print(&#34;demoTryExclamationMark (error) : value2 is \(value2)&#34;)
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The iOS file system and FileManager" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html" target="_blank">https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html</a></p>
+<p><a href="https://developer.apple.com/documentation/foundation/filemanager" target="_blank">https://developer.apple.com/documentation/foundation/filemanager</a></p>
+<p><strong>iOS file system</strong></p>
+<p>iOS devices have an hierarchical file system, just like Windows and macOS machines.</p>
+<p>For security purposes, an iOS app has a limited number of places where it can write its data. When an app is installed on a device (either from iTunes or the App Store), the system creates a number of containers for the app. These containers represent the universe for that app and contain everything the app can access directly. One such container is the Documents directory, which is used to store user-generated content. The contents of this directory can be made available to the user through file sharing; therefore, this directory should only contain files that you may wish to expose to the user.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/f3487ec72604aecf.png"></p>
+<p>On an iOS device, the path to the Documents directory looks similar to the path shown below.</p>
+<pre>/var/mobile/Containers/Data/Application/01C10AB7-78FF-4078-85E4-780FDF8D700E/Documents/</pre>
+<p>On an iOS simulator, the filesystem of the iOS device maps onto the host macOS file system and looks similar to the path shown below. This allows us to inspect the files in our app.</p>
+<pre>/Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/01C10AB7-78FF-4078-85E4-780FDF8D700E/Documents/</pre>
+<p><strong>FileManager</strong></p>
+<p>A file manager object lets you examine the contents of the file system and make changes to it. The <code>FileManager</code> class provides convenient access to a shared file manager object that is suitable for most types of file-related manipulations. A file manager object is typically your primary mode of interaction with the file system. You use it to locate, create, copy, and move files and directories. You also use it to get information about a file or directory or change some of its attributes.</p>
+<p>For this lesson, we use the <code>FileManager</code> primarily to obtain a path to a file in the Documents directory.</p>
+<p>Use the code shown below to get the <code>FileManager</code> object.</p>
+<pre><code>// get the FileManager object
+let fmgr = FileManager.default</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - The iOS file system and FileManager" duration="15">
+        <aside class="special"><p>For this activity, we will use the macOS file system to view the files which we create on the iOS simulator file system.</p>
+</aside>
+<ol type="1" start="1">
+<li>Create <strong>SampleProject03</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // data to be written
+    let colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;colors.plist&#34;)
+    // print the url for debugging purposes
+    print(url)
+    // create and configure the encoder
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .xml
+    do {
+      // encode the data
+      let data = try encoder.encode(colors)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the app. You should something similar in the debug area:</li>
+</ol>
+<pre>file:///Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/76B9CD1E-C9AC-48D9-A3BF-F6CBF2CBF1B1/Documents/colors.plist</pre>
+<ol type="1" start="4">
+<li>Copy the path from the debug area (CMD-C) - leave out the leading <code>file://</code> and the trailing <code>colors.plist</code>. <strong>Note that your path will be different from my path.</strong></li>
+</ol>
+<pre>/Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/76B9CD1E-C9AC-48D9-A3BF-F6CBF2CBF1B1/Documents/</pre>
+<ol type="1" start="5">
+<li>Use spotlight to search for and start the <code>Terminal</code> program.</li>
+<li>In the terminal window, type <code>cd</code> and paste your path (CMD-V), then press <code>Enter</code> on the keyboard. This command will change directory to the path of the file. Note that there is a space between <code>cd</code> and your path.</li>
+</ol>
+<pre>cd /Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/01C10AB7-78FF-4078-85E4-780FDF8D700E/Documents/</pre>
+<p class="image-container"><img style="width: 585.00px" src="img/ec36019e4f78a164.png"></p>
+<ol type="1" start="7">
+<li>In the terminal window, type <code>ls</code> to list the contents of the directory. You should see the file <code>colors.plist</code> listed.</li>
+</ol>
+<pre>ls</pre>
+<p class="image-container"><img style="width: 585.00px" src="img/8f2c9b6a33a3623a.png"></p>
+<ol type="1" start="8">
+<li>In the terminal window, type <code>more colors.plist</code> to show the contents of the file.</li>
+</ol>
+<pre>more colors.plist</pre>
+<p class="image-container"><img style="width: 585.00px" src="img/e72f3bb2ac420e04.png"></p>
+<aside class="special"><p><strong>Notes</strong></p>
+<p>We use the <code>FileManager</code> to create the URL to the file; we specify that we want to use the Documents directory by specifying <code>.documentDirectory</code> and specify the filename as <code>colors.plist</code></p>
+<p><code>let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(&#34;colors.plist&#34;)</code></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Property Lists" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html" target="_blank">https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html</a></p>
+<p>Property lists (plist) are stored as XML or binary and can be used to store:</p>
+<ul>
+<li>primitive values - strings, numbers, binary data, dates, and Boolean values</li>
+<li>containers of values - arrays and dictionaries; containers can contain other containers as well as primitive types. For example, you could have an array of dictionaries, or a dictionary of arrays, or any other combination of containers and values.</li>
+</ul>
+<p><strong>The root object of a property list is always an array or a dictionary.</strong></p>
+<p>The <code>Settings.bundle</code> which is used by the Settings app is a property list, which you edited previously by using the property list editor in Xcode.</p>
+<p>You can create property lists in your project, which will be stored as an application resource. The path to the plist files can be obtained via <code>Bundle.main</code> (<a href="https://developer.apple.com/documentation/foundation/bundle/1410786-main" target="_blank">https://developer.apple.com/documentation/foundation/bundle/1410786-main</a>). </p>
+<p>The screenshots below show property list files which have been created within the Xcode project.</p>
+<p>Property list - root object is a dictionary (XML view)</p>
+<p class="image-container"><img style="width: 624.00px" src="img/dad8260427398931.png"></p>
+<p>Property list - root object is a dictionary (property list view)</p>
+<p class="image-container"><img style="width: 624.00px" src="img/2c627f1ddabf76c2.png"></p>
+<p>Property list - root object is an array (XML view)</p>
+<p class="image-container"><img style="width: 624.00px" src="img/96511bd25c53e5c1.png"></p>
+<p>Property list - root object is an array (property list view)</p>
+<p class="image-container"><img style="width: 624.00px" src="img/63e1fa7a5a25c8e4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - Creating and using a property list resource" duration="20">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject04</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In Project Navigator</strong></p>
+<ol type="1" start="2">
+<li>Create a new file. Select <code>iOS</code>,  <code>Resource</code>,  <code>Property List</code>. Save the file as <code>myPlist01</code>.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/46b6e96853e2f434.png"></p>
+<ol type="1" start="3">
+<li>Select <code>myPlist01</code> and it will appear in the editor window. Set the root object type as <code>Dictionary</code>. Follow the steps shown in the video <strong>create_dictionay_plist.mp4</strong> to add the key-value pairs shown in the table below:</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>key</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>value</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>firstName</p>
+</td><td colspan="1" rowspan="1"><p>John</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>lastName</p>
+</td><td colspan="1" rowspan="1"><p>Tan</p>
+</td></tr>
+</table>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="4">
+<li>Add the code in <code>viewDidLoad()</code> to read <code>myPlist01.plist</code> and print out the contents.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // create url to the file
+    if let url = Bundle.main.url(forResource: &#34;myPlist01&#34;, withExtension: &#34;plist&#34;) {
+      // create the decoder
+      let decoder = PropertyListDecoder()
+      do {
+        // read the data
+        let xml = try Data(contentsOf: url)
+        // decode the data, note that the first parameter of the decode function
+        // is [String : String].self to indicate we are decoding a [String : String]
+        // dictionary
+        let plistData = try decoder.decode([String : String].self, from: xml)
+        // print the data for debugging purposes
+        print(plistData)
+      } catch {
+        print(error)
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project, you should see the following output in the debug area.</li>
+</ol>
+<pre>[&#34;firstName&#34;: &#34;John&#34;, &#34;lastName&#34;: &#34;Tan&#34;]</pre>
+<aside class="special"><p><strong>Notes</strong></p>
+<p>In the previous activity:</p>
+<ul>
+<li>the plist file was in the Documents directory</li>
+<li>we used <code>FileManager</code> to create the URL to the file</li>
+</ul>
+<p>For this activity:</p>
+<ul>
+<li>the plist file is an application resource</li>
+<li>we use <code>Bundle.main</code> to create the URL to the file</li>
+</ul>
+<p>Also note that when calling the <code>PropertyListDecoder</code> <code>decode</code> function, the first parameter must specify what is being decoded; for example:</p>
+<ul>
+<li>use <code>[String : String].self</code> when decoding a <code>[String : String]</code> dictionary</li>
+<li>use <code>[String].self</code> when decoding a <code>String</code> array</li>
+<li>use <code>[Int].self</code> when decoding an <code>Int</code> array</li>
+</ul>
+</aside>
+<p><strong>In Project Navigator</strong></p>
+<ol type="1" start="6">
+<li>Create <code>myPlist02</code>. Set the root object type as <code>Array</code>. Follow the steps shown in the video <strong>create_array_plist.mp4</strong> to add the items <code>orange</code> and <code>red</code>.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="7">
+<li>Add the code in <code>viewDidLoad()</code> to read <code>myPlist02.plist</code> and print out the contents.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // create url to the file
+    if let url = Bundle.main.url(forResource: &#34;myPlist01&#34;, withExtension: &#34;plist&#34;) {
+      // create the decoder
+      let decoder = PropertyListDecoder()
+      do {
+        // read the data
+        let xml = try Data(contentsOf: url)
+        // decode the data, note that the first parameter of the decode function
+        // is [String : String].self to indicate we are decoding a [String : String]
+        // dictionary
+        let plistData = try decoder.decode([String : String].self, from: xml)
+        // print the data for debugging purposes
+        print(plistData)
+      } catch {
+        print(error)
+      }
+    }
+
+    // create url to the file
+    if let url = Bundle.main.url(forResource: &#34;myPlist02&#34;, withExtension: &#34;plist&#34;) {
+      // create the decoder
+      let decoder = PropertyListDecoder()
+      do {
+        // read the data
+        let xml = try Data(contentsOf: url)
+        // decode the data, note that the first parameter of the decode function
+        // is [String].self to indicate we are decoding a String array
+        let plistData = try decoder.decode([String].self, from: xml)
+        // print the data for debugging purposes
+        print(plistData)
+      } catch {
+        print(error)
+      }
+    }
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project, you should see the following output in the debug area.</li>
+</ol>
+<pre>[&#34;firstName&#34;: &#34;John&#34;, &#34;lastName&#34;: &#34;Tan&#34;]
+[&#34;orange&#34;, &#34;red&#34;]</pre>
+<aside class="special"><p><strong>Notes</strong></p>
+<p>The code for reading <code>myPlist02.plist</code> is very similar to the code for reading <code>myPlist01.plist</code>, except:</p>
+<ul>
+<li>Changing the name of the resource</li>
+<li>Letting the decoder know we are decoding to a <code>[String]</code> data type</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Writing and reading an array property list" duration="15">
+        <aside class="special"><p>For this section, we will revisit the code used in Activity01.</p>
+</aside>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let sampleData = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // create and configure the encoder
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .xml
+    do {
+      // encode the data
+      let data = try encoder.encode(sampleData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // create the decoder
+    let decoder = PropertyListDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let sampleData = try decoder.decode([String].self, from: xml)
+      // print the data for debugging purposes
+      print(sampleData)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<p><strong>writeData()</strong></p>
+<pre><code>func writeData() {
+  // data to be written
+  let sampleData = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+  // create url to the file
+  let url = FileManager.default.urls(for: .documentDirectory, 
+    in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+  // create and configure the encoder
+  let encoder = PropertyListEncoder()
+  encoder.outputFormat = .xml
+  do {
+    // encode the data
+    let data = try encoder.encode(sampleData)
+    // write the data
+    try data.write(to: url)
+  } catch {
+    print(error)
+  }
+}</code></pre>
+<ol type="1" start="1">
+<li>The data to be written is an array, hence the resultant plist file will have a root object which is an array</li>
+<li>The <code>FileManager</code> is used to get a URL for a file called <code>sample.plist</code> in the Documents directory</li>
+<li>A <code>PropertyListEncoder</code> object is an object that encodes instances of data types to a property list; encoding is the act of converting the data from one form to another; in this case, the array will be converted into a property list.</li>
+<li>The <code>PropertyListEncoder</code> <code>outputFormat</code> is set as <code>xml</code>; without this line of code, the resultant property list would be in binary format (which will be demonstrated in the next activity)</li>
+<li>The <code>PropertyListEncoder</code> object encodes the swift array into a <a href="https://developer.apple.com/documentation/foundation/data" target="_blank"><code>Data</code></a> object by using the <code>encode</code> method; this method might throw an error, so a <code>do-catch</code> construct is used; the instruction is written in the <code>do</code> block and preceded with the <code>try</code> keyword</li>
+<li>The <a href="https://developer.apple.com/documentation/foundation/data" target="_blank"><code>Data</code></a> class is provided in Apple&#39;s library and has a method called <code>write</code> to write to a URL; this method might throw an error, so a <code>do-catch</code> construct is used; the instruction is written in the <code>do</code> block and preceded with the <code>try</code> keyword</li>
+</ol>
+<p><strong>readData()</strong></p>
+<pre><code>func readData() {
+  // create url to the file
+  let url = FileManager.default.urls(for: .documentDirectory, 
+    in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+  // create the decoder
+  let decoder = PropertyListDecoder()
+  do {
+    // read the data
+    let xml = try Data(contentsOf: url)
+    // decode the data
+    let sampleData = try decoder.decode([String].self, from: xml)
+    // print the data for debugging purposes
+    print(sampleData)
+  } catch {
+    print(error)
+  }
+}</code></pre>
+<ol type="1" start="1">
+<li>The <code>FileManager</code> is used to get a URL for a file called <code>sample.plist</code> in the Documents directory</li>
+<li>A <code>PropertyListDecoder</code> object is an object that decodes instances of data types from a property list; decoding is the act of converting encoded data back to its original form</li>
+<li>The <a href="https://developer.apple.com/documentation/foundation/data" target="_blank"><code>Data</code></a> class is provided in Apple&#39;s library and has an initialiser which reads the contents from a URL; the initializer might throw an error, so a <code>do-catch</code> construct is used; the instruction is written in the <code>do</code> block and preceded with the <code>try</code> keyword</li>
+<li>The <code>PropertyListDecoder</code> object has a method called <code>decode</code> which decodes the plist file back to its original form; this method might throw an error, so a <code>do-catch</code> construct is used; the instruction is written in the <code>do</code> block and preceded with the <code>try</code> keyword</li>
+<li>The first parameter for the <code>decode</code> method is <code>[String].self</code> to indicate we are decoding a <code>String</code> array, while the second parameter is the <a href="https://developer.apple.com/documentation/foundation/data" target="_blank"><code>Data</code></a> object which has the contents of the plist file</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - Writing and reading an array property list in binary format" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject05</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController. Print out the url and comment out the line to configure the <code>outputFormat</code> to xml.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let sampleData = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // print the url for debugging purposes
+    print(url)
+    // create and configure the encoder
+    let encoder = PropertyListEncoder()
+    // comment out the outputFormat to use binary by default
+    // encoder.outputFormat = .xml
+    do {
+      // encode the data
+      let data = try encoder.encode(sampleData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.plist&#34;)
+    // create the decoder
+    let decoder = PropertyListDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let sampleData = try decoder.decode([String].self, from: xml)
+      // print the data for debugging purposes
+      print(sampleData)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ol type="1" start="3">
+<li>Run the app. You should see something similar in the debug area:</li>
+</ol>
+<pre>file:///Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/C39F77BC-BBCB-4659-921F-BD8082AA2249/Documents/sample.plist
+[&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]</pre>
+<ol type="1" start="4">
+<li>In the terminal window, use the <code>cd</code> command to change directory to the path of the file. </li>
+<li>In the terminal window, use the <code>more</code> command to show the contents of the file; note that <code>sample.plist</code> has been saved in binary format and is not human-readable. </li>
+</ol>
+<p class="image-container"><img style="width: 585.00px" src="img/933f4d3a79f14905.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Encoding and Decoding Custom Types" duration="10">
+        <p><a href="https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types" target="_blank">https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types</a></p>
+<p>Types in Swift declare conformance to <code>Encodable</code> to support encoding, and <code>Decodable</code> to support decoding. If a type chooses to support both encoding and decoding, it can declare conformance to <code>Codable</code>.</p>
+<p>Standard library types like <code>String</code>, <code>Int</code>, and <code>Double</code>; and Foundation types like <code>Date</code>, <code>Data</code>, and <code>URL</code> conform to <code>Encodable</code> and <code>Decodable</code>, which allows encoders and decoders such as <code>PropertyListEncoder</code> and <code>PropertyListDecoder</code> to encode and decode those data types.</p>
+<p>When creating a custom type, encoding and decoding is supported if:</p>
+<ol type="1" start="1">
+<li>The custom type declares conformance to <code>Encodable</code> and <code>Decodable</code> (or just <code>Codable</code>)</li>
+<li>The types of the properties in the custom type also conform to <code>Encodable</code> and <code>Decodable</code></li>
+</ol>
+<p>In the example below, <code>Landmark</code> meets the two requirements stated above:</p>
+<ol type="1" start="1">
+<li><code>Landmark</code> declares conformance to <code>Codable</code></li>
+<li>The types of the properties in <code>Landmark</code> (<code>String</code>, <code>Int</code> and <code>Coordinate</code>) also conform to <code>Codable</code>.</li>
+</ol>
+<pre><code>struct Coordinate: Codable {
+    var latitude: Double
+    var longitude: Double
+}
+
+struct Landmark: Codable {
+    // Double, String, and Int all conform to Codable.
+    var name: String
+    var foundingYear: Int
+    
+    // Adding a property of a custom Codable type maintains overall Codable conformance.
+    var location: Coordinate
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - Encoding and Decoding Custom Types" duration="15">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject06</strong> using the Single View Application template.</li>
+<li>Create a file <strong>MyData.swift</strong> and add the code shown below:</li>
+</ol>
+<pre><code>import Foundation
+class MyData : Codable {
+  var aString = &#34;Good Day&#34;
+  var anInt = 1
+}</code></pre>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="3">
+<li>Update ViewController. </li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let myData = MyData()
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;data.plist&#34;)
+    // print the url for debugging purposes
+    print(url)
+    // create and configure the encoder
+    let encoder = PropertyListEncoder()
+    encoder.outputFormat = .xml
+    do {
+      // encode the data
+      let data = try encoder.encode(myData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;data.plist&#34;)
+    // create the decoder
+    let decoder = PropertyListDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let myData = try decoder.decode(MyData.self, from: xml)
+      // print the data for debugging purposes
+      print(myData.anInt)
+      print(myData.aString)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the app. You should see something similar in the debug area:</li>
+</ol>
+<pre>file:///Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/CE13AEFB-50AC-47CA-B470-61ABD99214EE/Documents/data.plist
+1
+Good Day</pre>
+<ol type="1" start="5">
+<li>In the terminal window, use the <code>cd</code> command to change directory to the path of the file. </li>
+<li>In the terminal window, use the <code>more</code> command to show the contents of the file; note that the root object of the property list is a dictionary, and the properties and associated values of the MyData object are stored as key-value pairs in the dictionary.</li>
+</ol>
+<p class="image-container"><img style="width: 585.00px" src="img/b3cfd3fe4cb5742d.png"></p>
+<p><strong>In MyData.swift</strong></p>
+<ol type="1" start="7">
+<li>Update MyData to remove the declaration of conformance to <code>Codable</code>.</li>
+</ol>
+<pre><code>import Foundation
+class MyData {
+  var aString = &#34;Good Day&#34;
+  var anInt = 1
+}</code></pre>
+<ol type="1" start="8">
+<li>Build the application (CMD-B). Xcode will report two errors:</li>
+</ol>
+<ul>
+<li>Instance method ‘encode&#39; requires that ‘MyData&#39; conform to ‘Encodable&#39;</li>
+<li>Instance method ‘decode(_:from:)&#39; requires that ‘MyData&#39; conform to ‘Decodable&#39;</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/572ffca56cce6160.png"></p>
+<p><strong>In MyData.swift</strong></p>
+<ol type="1" start="9">
+<li>Update MyData to declare that <code>MyData</code> conforms to <code>Codable</code>.</li>
+</ol>
+<pre><code>import Foundation
+class MyData : Codable {
+  var aString = &#34;Good Day&#34;
+  var anInt = 1
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Encoders and Decoders" duration="5">
+        <p>In all the examples so far, we have been using <code>PropertyListEncoder</code> and <code>PropertyListDecoder</code>. In the next lesson on networking in Swift, we will be sending and receiving json data. The code that we have used so far is still applicable, and we simply need to replace <code>PropertyListEncoder</code> with <code>JSONEncoder</code>, and replace <code>PropertyListDecoder</code> with <code>JSONDecoder</code>.</p>
+<p>Refer to the relevant documentation for more information on the classes:</p>
+<p><code>PropertyListDecoder</code> - An object that decodes instances of data types from a property list.</p>
+<p><a href="https://developer.apple.com/documentation/foundation/propertylistdecoder" target="_blank">https://developer.apple.com/documentation/foundation/propertylistdecoder</a></p>
+<p><code>PropertyListEncoder</code> - An object that encodes instances of data types to a property list.</p>
+<p><a href="https://developer.apple.com/documentation/foundation/propertylistencoder" target="_blank">https://developer.apple.com/documentation/foundation/propertylistencoder</a></p>
+<p><code>JSONEncoder</code> - An object that encodes instances of a data type as JSON objects.</p>
+<p><a href="https://developer.apple.com/documentation/foundation/jsonencoder" target="_blank">https://developer.apple.com/documentation/foundation/jsonencoder</a></p>
+<p><code>JSONDecoder</code> - An object that decodes instances of a data type from JSON objects.</p>
+<p><a href="https://developer.apple.com/documentation/foundation/jsondecoder" target="_blank">https://developer.apple.com/documentation/foundation/jsondecoder</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 7 - Writing and reading json (ordered list)" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject07</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController to use <code>JSONEncoder</code> and <code>JSONDecoder</code>.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let sampleData = [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.json&#34;)
+    // print the url for debugging purposes
+    print(url)
+    // create the encoder
+    let encoder = JSONEncoder()
+    do {
+      // encode the data
+      let data = try encoder.encode(sampleData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.json&#34;)
+    // create the decoder
+    let decoder = JSONDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let sampleData = try decoder.decode([String].self, from: xml)
+      // print the data for debugging purposes
+      print(sampleData)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ul>
+<li>Run the app. You should see something similar in the debug area:</li>
+</ul>
+<pre>file:///Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/FF8EAC6B-89AE-4582-8C79-8B00890134ED/Documents/sample.json
+[&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]</pre>
+<ul>
+<li>In the terminal window, use the <code>cd</code> command to change directory to the path of the file. </li>
+<li>In the terminal window, use the <code>more</code> command to show the contents of the file; note that the json is shown as an ordered list of values.</li>
+</ul>
+<p class="image-container"><img style="width: 585.00px" src="img/af3cd094c8263160.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 8 - Writing and reading json (collection)" duration="10">
+        <ol type="1" start="1">
+<li>Create <strong>SampleProject08</strong> using the Single View Application template.</li>
+</ol>
+<p><strong>In ViewController.swift</strong></p>
+<ol type="1" start="2">
+<li>Update ViewController to write a dictionary instead of an array.</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    writeData()
+    readData()
+  }
+  
+  func writeData() {
+    // data to be written
+    let sampleData = [&#34;a&#34; : &#34;apple&#34;, &#34;b&#34; : &#34;boy&#34;, &#34;c&#34; : &#34;cat&#34;]
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.json&#34;)
+    // print the url for debugging purposes
+    print(url)
+    // create the encoder
+    let encoder = JSONEncoder()
+    do {
+      // encode the data
+      let data = try encoder.encode(sampleData)
+      // write the data
+      try data.write(to: url)
+    } catch {
+      print(error)
+    }
+  }
+  
+  func readData() {
+    // create url to the file
+    let url = FileManager.default.urls(for: .documentDirectory, 
+      in: .userDomainMask)[0].appendingPathComponent(&#34;sample.json&#34;)
+    // create the decoder
+    let decoder = JSONDecoder()
+    do {
+      // read the data
+      let xml = try Data(contentsOf: url)
+      // decode the data
+      let sampleData = try decoder.decode([String : String].self, from: xml)
+      // print the data for debugging purposes
+      print(sampleData)
+    } catch {
+      print(error)
+    }
+  }
+}</code></pre>
+<ul>
+<li>Run the app. You should see something similar in the debug area:</li>
+</ul>
+<pre>file:///Users/solaradmin/Library/Developer/CoreSimulator/Devices/B628CFC7-F9A2-4457-8C4C-BCA46228FF09/data/Containers/Data/Application/40502960-4F59-4E05-8E39-BE4D1EB4E1CD/Documents/sample.json
+[&#34;c&#34;: &#34;cat&#34;, &#34;a&#34;: &#34;apple&#34;, &#34;b&#34;: &#34;boy&#34;]</pre>
+<ul>
+<li>In the terminal window, use the <code>cd</code> command to change directory to the path of the file. </li>
+<li>In the terminal window, use the <code>more</code> command to show the contents of the file; note that the json is shown as a collection of name/value pairs.</li>
+</ul>
+<p class="image-container"><img style="width: 585.00px" src="img/8f25276c9e435cb9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="15">
+        <ul>
+<li>Create project <strong>Exercise01</strong>.</li>
+<li>Rewrite the code from Activity01 to use <code>try?</code> Instead of the <code>do-catch</code> construct.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2" duration="25">
+        <aside class="warning"><p><strong>Submit a video of yourself doing this exercise</strong></p>
+<ul>
+<li>Only the first 20 minutes of this video will be counted towards your grade</li>
+<li>The recording must be recorded straight through (i.e. you are not allowed to pause and resume) </li>
+<li>You may refer to the codelabs or to your own notes</li>
+<li>No other Xcode projects should be open</li>
+<li>You are required to type the code and use auto-complete - <strong>no copy-paste is allowed</strong></li>
+<li>You are allowed to try several times and submit only the best attempt</li>
+</ul>
+</aside>
+<ul>
+<li>Create project <strong>Exercise02</strong>.</li>
+<li>For this project, create a property list resource called <code>dict.plist</code> with the key-value pairs shown in the table below</li>
+<li>Read the contents of <code>dict.plist</code> to a property called <code>items</code> and display the content of <code>items</code> (using sorted keys) in a table view; each cell should show the key in the upper label and the value in the lower label </li>
+<li>Write the contents of <code>items</code> to an XML property list file in the Documents directory called <code>myData.plist</code></li>
+<li>Use the <code>Terminal</code> app to show the contents of <code>myData.plist</code> (take a screenshot and submit it together with the project)</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Key</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Value</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Paris</p>
+</td><td colspan="1" rowspan="1"><p>Eiffel Tower</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Australia</p>
+</td><td colspan="1" rowspan="1"><p>Great Barrier Reef</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Italy</p>
+</td><td colspan="1" rowspan="1"><p>Leaning Tower of Pisa</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>China</p>
+</td><td colspan="1" rowspan="1"><p>Great Wall of China</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="20">
+        <ul>
+<li>Create project <strong>Exercise03</strong>.</li>
+<li>Create a property list as shown</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/1926560258fe27e2.png"></p>
+<ul>
+<li>Read the data from the property list and display it in the UI shown below.</li>
+<li>The UI should have all the necessary autolayout constraints</li>
+<li>The list of gadgets is shown in a table view</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/88b4c485279b3121.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Networking in Swift</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/ErrorHandling.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/ErrorHandling.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html" target="_blank">https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/filemanager" target="_blank">https://developer.apple.com/documentation/foundation/filemanager</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html" target="_blank">https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types" target="_blank">https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/propertylistdecoder" target="_blank">https://developer.apple.com/documentation/foundation/propertylistdecoder</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/propertylistencoder" target="_blank">https://developer.apple.com/documentation/foundation/propertylistencoder</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/jsonencoder" target="_blank">https://developer.apple.com/documentation/foundation/jsonencoder</a></li>
+<li><a href="https://developer.apple.com/documentation/foundation/jsondecoder" target="_blank">https://developer.apple.com/documentation/foundation/jsondecoder</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,647 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Adaptable Interfaces - Autolayout</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="04-ios-autolayout"
+                  title="Adaptable Interfaces - Autolayout"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 is-upgraded><strong>At the conclusion of this lesson, participants will be able to:</strong></h2>
+<ol type="1" start="1">
+<li>use Auto Layout to build adaptive user interfaces to respond to variations in screen size and orientation</li>
+<li>use Stack Views to build adaptive user interfaces with complex layouts</li>
+</ol>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS (Mojave or Catalina)</li>
+<li>Xcode 11</li>
+</ul>
+<h2 is-upgraded><strong>Videos for the activities can be obtained from:</strong></h2>
+<ul>
+<li>LEO2</li>
+<li>Dropbox (<a href="https://www.dropbox.com/sh/mn1oqi1ajlqfca9/AACM_4DK5MW_pDA0VbNgPFx-a?dl=0" target="_blank">https://www.dropbox.com/sh/mn1oqi1ajlqfca9/AACM_4DK5MW_pDA0VbNgPFx-a?dl=0</a>)</li>
+<li>Google Drive (<a href="https://drive.google.com/open?id=111i4J6EBWYFIVcyJTXLb5VDKXXD7he1z" target="_blank">https://drive.google.com/open?id=111i4J6EBWYFIVcyJTXLb5VDKXXD7he1z</a>)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Auto Layout" duration="10">
+        <p><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></p>
+<aside class="special"><p><strong>Why we need adaptive interfaces</strong></p>
+<ul>
+<li>iOS devices come in a variety of screen sizes and can be used in either portrait or landscape orientation</li>
+<li>The user interface for the iOS app needs to be adaptive to provide a great experience in any environment</li>
+</ul>
+</aside>
+<p><strong>Auto Layout</strong></p>
+<p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html</a></p>
+<ul>
+<li>a development tool for constructing adaptive interfaces</li>
+<li><strong>dynamically</strong> calculates the <strong>size</strong> and <strong>position</strong> of all views in the view hierarchy based on <strong>constraints</strong></li>
+</ul>
+<p>In the figure below, the blue I-bars represent constraints. Taking the upper rectangle as an example, the constraints act as rules to tell iOS that there should be a space of 20 on the left, right and top. These rules help to ensure the layout remains consistent across different device sizes. We will learn more about constraints in a later section.</p>
+<p class="image-container"><img style="width: 576.00px" src="img/4af7578d2aaef99d.png"></p>
+<aside class="warning"><p><strong>Coordinate system</strong></p>
+<p>Since auto layout calculates the position, it is important to know that the (0, 0) point is in the top left hand corner. That means that the x value increases as you move to the right and the y value increases as you move to the bottom.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The root view object" duration="5">
+        <ul>
+<li>A <code>UIView</code> object is a <strong>container</strong> which can contain other <code>UIView</code> objects (note that all user interface objects inherit from <code>UIView</code>)</li>
+<li>All view controllers have a <strong>root view object</strong> which is accessible via the property <code>view : UIView!</code> </li>
+<li>The root view object contains the user interface objects the view controller will control</li>
+<li>In Interface Builder, the <strong>Document Outline</strong> shows the <strong>view hierarchy</strong> which starts with the root view object at the top and then the view objects it contains below</li>
+</ul>
+<p>The screenshot below (taken from the document outline) shows a view hierarchy:</p>
+<ul>
+<li>The View Controller has a root view object called View. </li>
+<li>This root view object contains two UIView objects: TopView and BottomView. </li>
+<li>TopView contains two UILabel objects: TopLabel and CenterLabel. </li>
+</ul>
+<p class="image-container"><img style="width: 402.00px" src="img/9f359d3b7a8b79b4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity01 Introduction to autolayout" duration="15">
+        <p>Watch the video <strong>Activity01 - Introduction to autolayout</strong> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Create SampleProject01 using the Single View App template. <strong>Update the Organization Identifier with your studentid (e.g. sg.edu.rp.18184723)</strong></li>
+<li>Change the simulator to <strong>iPhone 8</strong></li>
+<li>Select <strong>Main.storyboard</strong></li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="4">
+<li>Change the <strong>View as:</strong> to <strong>iPhone 8</strong> or <strong>iPhone SE (2nd generation)</strong></li>
+<li>From the menu, select <strong>Editor</strong>, <strong>Canvas</strong>. Ensure that <strong>Layout Rectangles</strong> and <strong>Bounds Rectangles</strong> are checked.</li>
+<li>Add a UILabel to the center of the view; you should see layout guides which indicate the vertical and horizontal centers of the view</li>
+<li>Run the project. Verify the label is in the center when the iPhone 8 is in portrait mode, but is not in the center when in landscape mode.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="8">
+<li>Select the label, check the <strong>size inspector</strong>. Verify the values for X and Y are 166 and 323 respectively and the values for Width and Height are 42 and 21 respectively.</li>
+<li>Select the label, click on the <strong>align tool</strong> and check <strong>Horizontally in Container</strong> and <strong>Vertically in Container</strong>, click <strong>Add 2 constraints</strong>.</li>
+<li>View the constraints in the Document Outline.</li>
+<li>Run the project. Verify the label is in the center when the iPhone 8 is in portrait mode and landscape mode.</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="12">
+<li>Show the <a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/PreviewingYourUserInterface.html" target="_blank"><strong>Preview</strong></a> via the <strong>Adjust Editor Options</strong> button</li>
+<li>In the preview panel, use the add button to add an iPhone 8 device twice to get one in portrait mode and one in landscape mode. Delete any other devices from the preview panel.</li>
+</ol>
+<aside class="warning"><p><a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/PreviewingYourUserInterface.html" target="_blank"><strong>Preview</strong></a></p>
+<ul>
+<li>Use the built-in preview assistant editor to see how your user interface appears on different devices and in different languages without compiling your app.</li>
+<li>You can open multiple preview editors to see different devices, orientations, and languages. </li>
+<li>Changes made in the storyboard editor are instantly reflected in the preview.</li>
+<li>Double click on an empty space to zoom in and out; on a trackpad, use a two finger pinch to zoom in or out</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Constraints (Part 1)" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html#//apple_ref/doc/uid/TP40010853-CH9-SW1" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html</a></p>
+<p>In the previous activity, we used the align tool to create 2 constraints (Horizontally in Container and Vertically in Container) for a label. As a result, we saw two constraints in the document outline:</p>
+<p><code>Label.centerX = centerX</code></p>
+<p><code>Label.centerY = centerY</code></p>
+<p>In this section, we will learn:</p>
+<ul>
+<li>What is an auto layout attribute</li>
+<li>What is a constraint and how is it interpreted</li>
+</ul>
+<p><strong>Auto layout attributes</strong></p>
+<p class="image-container"><img style="width: 731.00px" src="img/7cdb6548bdebcacb.png"></p>
+<p>An auto layout attribute is a feature that can be constrained. There are 9 in total:</p>
+<ul>
+<li>Leading (Left)</li>
+<li>Trailing (Right)</li>
+<li>Top</li>
+<li>Bottom</li>
+<li>Center vertically (Center Y)</li>
+<li>Center horizontally (Center X)</li>
+<li>Baseline</li>
+<li>Height</li>
+<li>Width</li>
+</ul>
+<p>Other than height and width, which are related to the <strong>size</strong>, the other attributes are related to <strong>position</strong>. Top, Center Y, Bottom and Baseline are related to the position along the y-axis, while Leading, Center X and Trailing are related to the position along the x-axis.</p>
+<p><strong>Constraints</strong></p>
+<p>A constraint is a rule which affects the size or position of a view. The constraint is always represented by an equation. </p>
+<p>There are 3 broad categories for constraints:</p>
+<ul>
+<li>a constraint can define a <strong>constant value for an attribute</strong>; e.g. an item&#39;s height or width</li>
+<li>a constraint can define a <strong>relationship</strong> between <strong>two attributes of a single item</strong>; e.g. aspect ratio between an item&#39;s height and width</li>
+<li>a constraint can define a <strong>relationship</strong> between <strong>attributes of two items</strong>; the items can be <strong>views</strong> or <strong>layout guides</strong></li>
+</ul>
+<p>There are 3 types of <strong>relationships</strong>:</p>
+<ul>
+<li>equal</li>
+<li>greater than or equal</li>
+<li>less than or equal</li>
+</ul>
+<p><strong>Example</strong></p>
+<p>The example below shows two UIView objects (RedView and BlueView) and the constraint that exists between them. This constraint is an example of a <strong>relationship</strong> between <strong>attributes of two items</strong>, and in this case the relationship is an <strong>equal</strong> relationship<strong>.</strong></p>
+<p class="image-container"><img style="width: 746.00px" src="img/d88b1b46f1215b89.png"></p>
+<p>Consider a simpler version of the constraint without the multiplier:</p>
+<p><code>RedView.Leading = BlueView.trailing + 8.0</code></p>
+<p>This constraint partially defines the x-position for the two objects. It can be read as the x-position of the left side of RedView is <strong>equal</strong> to the x-position of the right side of BlueView + 8.0. This is one way that you can interpret the equation and visualise the result.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity02 Constraints (Part 1)" duration="15">
+        <p>Watch the video <strong>Activity02 Constraints (Part 1)</strong> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with SampleProject01</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Delete the existing constraints.</li>
+<li>Add a second label to the right of the first label.</li>
+<li>In the document outline, rename the left label to BlueView and the right label to RedView.</li>
+<li>Set the background color of BlueView to blue and the background color of RedView to red.</li>
+<li>Right-click drag from the BlueView to the RedView and select <strong>Horizontal Spacing</strong></li>
+<li>Notice the red circle in the top right corner of the Document Outline. Click on the red circle to see the errors.</li>
+<li>In the document outline</li>
+</ol>
+<ul>
+<li>right-click drag from BlueView to View and select <strong>Top Space to Safe Area</strong></li>
+<li>right-click drag from BlueView to View and select <strong>Leading Space to Safe Area</strong></li>
+<li>right-click drag from RedView to View and select <strong>Top Space to Safe Area</strong></li>
+</ul>
+<ol type="1" start="9">
+<li>View the preview panel. Verify the position of the two labels.</li>
+<li>Edit the text in the blue label to <strong>This is a longer label</strong>. Verify the blue label is longer than before and the left side of the red label still maintains a distance of 8 from the right side of the blue label.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Layout Guides and Safe Area" duration="10">
+        <p><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank">https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide</a></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area" target="_blank">https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area</a></p>
+<p><strong>Layout Guides</strong></p>
+<p class="image-container"><img style="width: 682.00px" src="img/8939655d8e476b60.png"></p>
+<p>You might have noticed some blue color lines in the root view object (e.g. on the left and right side), and some dotted blue color lines when you try to position a user interface component. These lines are layout guides which aid with the positioning, alignment, and spacing of content. The system includes predefined layout guides that make it easy to apply standard margins around content and restrict the width of text for optimal readability.</p>
+<p><strong>Safe Area</strong></p>
+<p>The safe area is a layout guide that indicates where it is &#34;safe&#34; to place the user interface objects.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/6313a28af6ca4da7.png"></p>
+<p>The screenshot above shows the area defined by the root view (image on the left) and the area defined by the safe area (image on the right). If a user interface object is constrained to the top of the view, it will overlap with the status bar; this overlap will not happen if it is constrained to the top of the safe area.</p>
+<p>Applying constraints relative to the safe area prevents display problems when a status bar, navigation bar, toolbar or tab bar is present. The screenshots below show examples of this.</p>
+<p class="image-container"><img style="width: 624.00px" src="img/95dfc2144f26f317.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating constraints" duration="15">
+        <p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithConstraintsinInterfaceBuidler.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithConstraintsinInterfaceBuidler.html</a></p>
+<p>Refer to the documentation at the URL above on how constraints can be created via:</p>
+<ul>
+<li>control-drag between views</li>
+<li>the Pin and Align tools</li>
+</ul>
+<p>While the documentation does mention that you can let Interface Builder set up the constraints for you, the resulting layout may not behave the way you want. Further, the skill of identifying the constraints to tweak, and actually tweaking those constraints may not be that straightforward as well.</p>
+<aside class="warning"><p>Note that it is important to manually position the user interface objects at the desired locations (and lining them up with the layout guides if present) before creating the constraints. This will result in constraints that require little to no tweaking to achieve the desired layout.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Auto Layout tools" duration="5">
+        <p class="image-container"><img style="width: 286.00px" src="img/da9d2dd0fb99073c.png"></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 40.00px" src="img/ff645f285e083afd.png"></p>
+</td><td colspan="1" rowspan="1"><p>Update Frames</p>
+</td><td colspan="1" rowspan="1"><p>Updates the frames of the user interface objects based on the constraints</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 40.00px" src="img/3ffce07174366847.png"></p>
+</td><td colspan="1" rowspan="1"><p>Align</p>
+</td><td colspan="1" rowspan="1"><p>Create alignment constraints, such as aligning the leading edges of two user interface objects</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 40.00px" src="img/4fb3f7cee126db21.png"></p>
+</td><td colspan="1" rowspan="1"><p>Add New Constraints</p>
+</td><td colspan="1" rowspan="1"><p>Create spacing constraints, such as defining the distance between two user interface objects</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 40.00px" src="img/adb31e303cea3cd2.png"></p>
+</td><td colspan="1" rowspan="1"><p>Resolve Auto Layout Issues</p>
+</td><td colspan="1" rowspan="1"><p>For updating, resetting, clearing or adding system generated constraints</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img style="width: 40.00px" src="img/711303361b2891bc.png"></p>
+</td><td colspan="1" rowspan="1"><p>Embed In</p>
+</td><td colspan="1" rowspan="1"><p>Embed selected view in a view, a view without inset, a scroll view or a stack view</p>
+</td></tr>
+</table>
+<p><strong>Update Frames</strong></p>
+<ul>
+<li>Frame of user interface object in canvas does not match the size or position based on the constraints (upper screenshot) which is indicated by the orange I-bars; pressing <strong>update frames</strong> updates the object in the canvas to match the size or position based on the constraints (lower screenshot)</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/abd4fd407846154d.png"></p>
+<p class="image-container"><img style="width: 746.00px" src="img/76cabd4d23ddbf7c.png"></p>
+<p><strong>Align</strong></p>
+<ul>
+<li>All options except Horizontally in Container and Vertically in Container requires two objects to be selected before the <strong>Align</strong> tool is clicked</li>
+</ul>
+<p class="image-container"><img style="width: 600.00px" src="img/da8188569632f7f6.png"></p>
+<p><strong>Add New Constraints</strong></p>
+<ul>
+<li>The dotted I-bar must be clicked to change it to a solid I-bar </li>
+<li>A solid I-bar indicates a constraint to be added</li>
+</ul>
+<p class="image-container"><img style="width: 535.00px" src="img/4a83ac5d5fbd9e86.png"></p>
+<p><strong>Resolve Auto Layout Issues</strong></p>
+<p class="image-container"><img style="width: 488.00px" src="img/65a2d5e87a578f1.png"></p>
+<p><strong>Embed In</strong></p>
+<p class="image-container"><img style="width: 386.00px" src="img/bab6ce57003a5559.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity03 Creating constraints" duration="15">
+        <p>Watch the video <strong>Activity03 Creating constraints</strong> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with SampleProject01</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Delete the existing constraints.</li>
+<li>Select BlueLabel, use the <strong>add new constraints tool</strong> to create top (20), left (16) and right (8).</li>
+<li>Select BlueLabel and RedLabel, use the <strong>align tool</strong> to align <strong>Top Edges</strong>.</li>
+<li>Edit the text in the blue label to <strong>Yet another successful experiment</strong>. </li>
+<li>View the preview panel. Verify the layout.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Constraints (Part 2)" duration="20">
+        <p><strong>Selecting a constraint</strong></p>
+<ul>
+<li>From the document outline</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/e324125dff8e1aff.png"></p>
+<ul>
+<li>From the storyboard canvas (constraint appears as a blue I-bar)</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/e5bcfc0705f9342c.png"></p>
+<ul>
+<li>From the size inspector (select the item of interest, size inspector shows all constraints affecting that item)</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/79cc0b44c4c5890b.png"></p>
+<p><strong>Modifying constraint properties</strong></p>
+<ol type="1" start="1">
+<li>Select the constraint</li>
+<li>Use the attributes inspector or size inspector to modify the constraint properties</li>
+</ol>
+<p><strong>Multiplier and constant property</strong></p>
+<p class="image-container"><img style="width: 746.00px" src="img/d88b1b46f1215b89.png"></p>
+<p>In the earlier section, we disregarded the multiplier in the constraint to simplify the explanation. In practice, do consider the effect of the multiplier on the constraint.</p>
+<p>The multiplier can be expressed as a whole number, a decimal number or a ratio.</p>
+<p>Both the multiplier and constant property can be edited by selecting the constraint and using the attributes inspector or size inspector.</p>
+<p><strong>Equal widths constraint</strong></p>
+<p>It is important to note that because constraints have a multiplier property, <strong>the equal widths constraint does not always result in two items which have the same width</strong>.</p>
+<p><code>RedView.width = BlueView.Width</code></p>
+<p>The constraint above will result in RedView having the same width as BlueView.</p>
+<p><code>RedView.width = 2 x BlueView.Width</code></p>
+<p>The constraint above will result in RedView having double the width of BlueView.</p>
+<p><strong>Aspect ratio constraint</strong></p>
+<p>This is an example of a constraint which defines a <strong>relationship</strong> between <strong>two attributes of a single item</strong>; in this case, it is the aspect ratio between an item&#39;s width and height.</p>
+<ul>
+<li>The multiplier property can be used to change the ratio</li>
+</ul>
+<p class="image-container"><img style="width: 516.00px" src="img/5ea9f844db8bea6.png"></p>
+<ul>
+<li>In the document outline, this constraint is found under the item that is identified in this constraint</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/513ddf7a87da7eac.png"></p>
+<p><strong>Height and Width constraint</strong></p>
+<p>These are examples of constraints which define a <strong>constant value for an attribute</strong></p>
+<p class="image-container"><img style="width: 518.00px" src="img/2e2c46f45167350.png"></p>
+<p class="image-container"><img style="width: 518.00px" src="img/b66c7638d1f436c6.png"></p>
+<ul>
+<li>In the document outline, this constraint is found under the item that is identified in this constraint</li>
+</ul>
+<p class="image-container"><img style="width: 746.00px" src="img/8d7d80597ab1bdc8.png"></p>
+<p><strong>Reverse first and second item</strong></p>
+<p>The following two constraints are equivalent:</p>
+<p><code>RedView.width = 2 x BlueView.Width</code></p>
+<p><code>BlueView.width = 0.5 x RedView.Width</code></p>
+<p>Choose the equation that is easier to understand.</p>
+<p>To go from one form to another, use <strong>Reverse First and Second Item</strong>:</p>
+<ol type="1" start="1">
+<li>Select the constraint</li>
+<li>Use the attributes inspector or size inspector</li>
+<li>Select <strong>Reverse First and Second Item</strong> from either First Item or Second Item</li>
+</ol>
+<p class="image-container"><img style="width: 567.00px" src="img/28d615f8b6523b07.png"></p>
+<p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/TypesofErrors.html" target="_blank"><strong>Errors</strong></a></p>
+<p>The layout of the view hierarchy is achieved through a set of non-conflicting constraints which resolve to only one possible unambiguous layout. A red circle in the document outline indicates an <a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/TypesofErrors.html" target="_blank">error</a> which may be easily resolved or require further <a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/DebuggingTricksandTips.html" target="_blank">debugging</a><strong>.</strong></p>
+<aside class="warning"><p><strong>Renaming components via the document outline</strong></p>
+<p>A best practice is to rename the components so that each component has a unique name. This makes it easier to read and interpret the constraints from the document outline. </p>
+<p>To rename the component, select it in the document outline, then press the Enter key on the keyboard, and rename the component.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity04 Constraints (Part 2)" duration="15">
+        <p>Watch the video <strong>Activity04 Constraints (Part 2)</strong> and read the instructions below concurrently.</p>
+<ol type="1" start="1">
+<li>Continue with SampleProject01</li>
+</ol>
+<p><strong>In Main.storyboard:</strong></p>
+<ol type="1" start="2">
+<li>Select BlueLabel and RedLabel, use the <strong>add new constraints tool</strong> to create an <strong>Equal Widths</strong> constraint.</li>
+<li>Select the equal widths constraint and use the attributes inspector to change the multiplier to <strong>2</strong>. From the document outline, verify the constraint is <code>RedView.width = 2 x BlueView.width</code></li>
+<li>View the preview panel. Verify the length of RedLabel is two times the length of BlueLabel.</li>
+<li>Select the equal widths constraint and use the attributes inspector to select <strong>Reverse First and Second Item</strong>. From the document outline, verify the constraint is <code>BlueView.width = 0.5 x RedView.width</code></li>
+<li>View the preview panel. Verify the length of BlueLabel is half the length of RedLabel.</li>
+<li>Select the constraint BlueView.leading = Safe Area.leading + 16. Use the attributes inspector to set the <strong>Constant</strong> to 40. From the preview panel, verify the labels have shifted to the right. Change the <strong>Constant</strong> back to 16.</li>
+<li>Select RedLabel, use the <strong>add new constraints tool</strong> to create an <strong>Aspect Ratio</strong> constraint.</li>
+<li>From the document outline, select the aspect ratio constraint and set the multiplier to 1:1. From the preview panel, verify RedLabel is now a square.</li>
+<li>Select BlueLabel, use the <strong>add new constraints tool</strong> to create a <strong>Width</strong> constraint of <strong>50</strong>. Select RedLabel and use the size inspector to verify the width is 100.</li>
+<li>Select RedLabel, use the <strong>add new constraints tool</strong> to create a <strong>Width</strong> constraint of <strong>120</strong>. Verify an error shows in the document outline.</li>
+<li>Run the project. Verify application runs but there are messages in the debug area.</li>
+<li>Click the red error circle in the document outline.</li>
+<li>Click the red error circle next to the conflicting constraint. Check the box next to the <code>width = 120</code> constraint and click <strong>Delete Constraints.</strong></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity05 Nested UIView" duration="15">
+        <p>Watch the video <strong>Activity05 Nested UIView</strong>.</p>
+<ol type="1" start="1">
+<li>Create a project Activity05 to duplicate the project shown in the demo</li>
+<li>Zip up this project as Activity06.zip.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stack view" duration="20">
+        <p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html</a></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uistackview" target="_blank">https://developer.apple.com/documentation/uikit/uistackview</a></p>
+<p>Stack views are a powerful tool for quickly and easily designing your user interfaces. Their attributes allow a high degree of control over how they lay out their arranged views.</p>
+<p>A stack view manages a collection of user interface objects in a single row or column. A stack view arranges user interface objects based on the following properties:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Axis</strong></p>
+</td><td colspan="1" rowspan="1"><p>defines the stack view&#39;s orientation, either horizontal (row) or vertical (column)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Distribution</strong></p>
+</td><td colspan="1" rowspan="1"><p>defines the layout of the views along the axis</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Alignment</strong></p>
+</td><td colspan="1" rowspan="1"><p>defines the layout of the views perpendicular to the stack view&#39;s axis</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Spacing</strong></p>
+</td><td colspan="1" rowspan="1"><p>defines the space between adjacent views</p>
+</td></tr>
+</table>
+<p><strong>Horizontal Axis</strong></p>
+<p class="image-container"><img style="width: 746.00px" src="img/deb841d9cded11bd.png"></p>
+<ul>
+<li>Distribution is along the x-axis</li>
+<li>Alignment is along the y-axis</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Alignment</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fill</p>
+</td><td colspan="1" rowspan="1"><p>All items have the same height as the stack view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Top</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the top of the stack view and retain their default height.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Center</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the center of the stack view and retain their default height.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Bottom</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the bottom of the stack view and retain their default height.</p>
+</td></tr>
+</table>
+<p><strong>Vertical Axis</strong></p>
+<p class="image-container"><img style="width: 746.00px" src="img/4975409d1bbdbdeb.png"></p>
+<ul>
+<li>Distribution is along the y-axis</li>
+<li>Alignment is along the x-axis</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Alignment</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fill</p>
+</td><td colspan="1" rowspan="1"><p>All items have the same width as the stack view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Leading</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the left of the stack view and retain their default width.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Center</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the center of the stack view and retain their default width.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Trailing</p>
+</td><td colspan="1" rowspan="1"><p>All items are aligned to the right of the stack view and retain their default width.</p>
+</td></tr>
+</table>
+<p><strong>Distribution</strong></p>
+<p><a href="https://www.hackingwithswift.com/example-code/uikit/what-are-the-different-uistackview-distribution-types" target="_blank">https://www.hackingwithswift.com/example-code/uikit/what-are-the-different-uistackview-distribution-types</a></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Distribution</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fill</p>
+</td><td colspan="1" rowspan="1"><p>Makes one subview take up most of the space, while the others remain at their natural size. It decides which view to stretch by examining the content hugging priority for each of the subviews</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fill Equally</p>
+</td><td colspan="1" rowspan="1"><p>Adjusts each subview so that it takes up equal amount of space in the stack view. All space will be used up</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fill Proportionally</p>
+</td><td colspan="1" rowspan="1"><p>Ensures subviews remain the same size relative to each other, but still stretches them to fit the available space. For example, if one view is 100 across and another is 200, and the stack view decides to stretch them to take up more space, the first view might stretch to 150 and the other to 300 – both going up by 50%</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Equal Spacing</p>
+</td><td colspan="1" rowspan="1"><p>Adjusts the spacing between subviews without resizing the subviews themselves</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Equal Centering</p>
+</td><td colspan="1" rowspan="1"><p>Attempts to ensure the centers of each subview are equally spaced, irrespective of how far the edge of each subview is positioned</p>
+</td></tr>
+</table>
+<p><strong>Constraints</strong></p>
+<p>Although a stack view allows you to layout its contents without using Auto Layout directly, you still need to use Auto Layout to position the stack view itself. In general, this means pinning at least two, adjacent edges of the stack view to define its position. Without additional constraints, the system calculates the size of the stack view based on its contents. You can provide additional constraints to specify the stack view&#39;s height, width, or both. In these cases, the stack view adjusts the layout and size of its arranged views to fill the specified area.</p>
+<p class="image-container"><img style="width: 746.00px" src="img/b63a59660975a36a.png"></p>
+<p><strong>Nested Stack Views</strong></p>
+<p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html</a></p>
+<p>By nesting stack views, complex layouts can be easily achieved. The nested stack views activity will demonstrate this.</p>
+<aside class="warning"><p>In general, use stack views to manage as much of your layout as possible. Resort to creating constraints only when you cannot achieve your desired layout with stack views alone.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity06 Stack view" duration="15">
+        <p>Watch the video <strong>Activity06 Stack view</strong>. </p>
+<ol type="1" start="1">
+<li>Create a project Activity06 to duplicate the project shown in the demo</li>
+<li><strong>Note that the stack view must be constrained to the root view</strong></li>
+<li>Zip up this project as Activity06.zip.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity07 Nested stack views" duration="20">
+        <p>Watch the video <strong>Activity07 Nested stack views</strong>.</p>
+<p><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html</a></p>
+<ol type="1" start="1">
+<li>Create a project Activity07 to duplicate the project shown in the demo</li>
+<li><strong>Note that the URL for the tutorial shown in the demo is given above</strong></li>
+<li>Zip up this project as Activity07.zip.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise01" duration="15">
+        <p class="image-container"><img style="width: 746.00px" src="img/bbdc226ebf19e99e.png"></p>
+<p>Create project Exercise01 with the user interface shown and all necessary constraints created. Note the following:</p>
+<ol type="1" start="1">
+<li>For this exercise, <strong>stack views are not allowed</strong>.</li>
+<li>All colored views have equal width</li>
+<li>No spacing between the views</li>
+<li>For the views on the left, the view at the top takes up 25% of the height, and the view at the bottom takes up 75% of the height</li>
+<li>For the views on the right, the view at the top takes up 75% of the height, and the view at the bottom takes up 25% of the height</li>
+</ol>
+<ul>
+<li>Where insufficient information has been provided to you, make a best guess based on the screenshot shown and by following the system predefined layout guides and safe area.</li>
+<li>Where possible, avoid creating width and height constraints.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise02" duration="15">
+        <p class="image-container"><img style="width: 746.00px" src="img/e9c3705c7133e229.png"></p>
+<p>Create project Exercise02 with the user interface shown and all necessary constraints created. Note the following:</p>
+<ol type="1" start="1">
+<li>For this exercise, <strong>stack views are not allowed</strong>.</li>
+<li>The grey UIView object has a width of 128 and an aspect ratio of 1:1</li>
+<li>LabelD always has the same width as the grey UIView object</li>
+<li>LabelC always has twice the width of LabelD</li>
+<li>The grey UIView object, LabelC and LabelD are all centrally aligned</li>
+<li>LabelA and LabelB always have the same width</li>
+</ol>
+<ul>
+<li>Where insufficient information has been provided to you, make a best guess based on the screenshot shown and by following the system predefined layout guides and safe area.</li>
+<li>Where possible, avoid creating width and height constraints.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise03" duration="15">
+        <p class="image-container"><img style="width: 746.00px" src="img/e9c3705c7133e229.png"></p>
+<p>Create project Exercise03 with the user interface shown and all necessary constraints created. Note the following:</p>
+<ol type="1" start="1">
+<li>For this exercise, <strong>you must use nested stack views</strong>.</li>
+<li><strong>The root view object can only directly contain one root stack view</strong>.</li>
+<li>The grey UIView object has a width of 128 and an aspect ratio of 1:1</li>
+<li>LabelD always has the same width as the grey UIView object</li>
+<li>LabelC always has twice the width of LabelD</li>
+<li>The grey UIView object, LabelC and LabelD are all centrally aligned</li>
+<li>LabelA and LabelB always have the same width</li>
+</ol>
+<ul>
+<li>Where insufficient information has been provided to you, make a best guess based on the screenshot shown and by following the system predefined layout guides and safe area.</li>
+<li>Where possible, avoid creating width and height constraints.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise04" duration="30">
+        <p class="image-container"><img style="width: 746.00px" src="img/983e74f22718941.png"></p>
+<aside class="warning"><p><strong>Submit a video of yourself doing this exercise</strong></p>
+<ul>
+<li>Only the first 20 minutes of this video will be counted towards your grade</li>
+<li>The video must be recorded straight through (i.e. you are not allowed to pause and resume)</li>
+<li>The video must include your webcam video (i.e. can see you while you are doing the exercise)</li>
+<li>You are allowed to try several times and submit only the best attempt</li>
+</ul>
+</aside>
+<p>Create project Exercise04 with the user interface shown and all necessary constraints created. Note the following:</p>
+<ol type="1" start="1">
+<li>For this exercise you are free to use any approach.</li>
+<li>The application icons are provided in icons.zip in your student package.</li>
+<li>Each application icon is displayed in an image view.</li>
+<li>For the label which displays Android Studio, use the attributes inspector to set Lines to 2.</li>
+<li>The bottom most item is a Go button with a red background and white text.</li>
+<li>The devices in the screenshot are iPhone SE, iPhone 8 Plus, iPhone 11 Pro and iPhone 11 Pro Max.</li>
+</ol>
+<ul>
+<li>Where insufficient information has been provided to you, make a best guess based on the screenshot shown and by following the system predefined layout guides and safe area.</li>
+<li>Where possible, avoid creating width and height constraints.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>Adaptable Interfaces - Size classes</li>
+</ul>
+<p><strong>Reference docs</strong></p>
+<ul>
+<li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/PreviewingYourUserInterface.html" target="_blank">https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/PreviewingYourUserInterface.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AnatomyofaConstraint.html</a></li>
+<li><a href="https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/" target="_blank">https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide" target="_blank">https://developer.apple.com/documentation/uikit/uiview/2891102-safearealayoutguide</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area" target="_blank">https://developer.apple.com/documentation/uikit/uiview/positioning_content_relative_to_the_safe_area</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithConstraintsinInterfaceBuidler.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithConstraintsinInterfaceBuidler.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/TypesofErrors.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/TypesofErrors.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/DebuggingTricksandTips.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/DebuggingTricksandTips.html</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uistackview" target="_blank">https://developer.apple.com/documentation/uikit/uistackview</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html" target="_blank">https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/LayoutUsingStackViews.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

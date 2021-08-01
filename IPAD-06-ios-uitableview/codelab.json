@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-05-28T15:25:43Z",
+  "id": "06-ios-uitableview",
+  "duration": 0,
+  "title": "UITableView",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1aZOWYV9mV-jgrALj6IY5g5n0h6cZyWkJSsAS50-a9gY",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "06-ios-uitableview"
+}

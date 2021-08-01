@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-05-25T16:52:21Z",
+  "id": "05-ios-advancedautolayout",
+  "duration": 160,
+  "title": "Adaptable Interfaces - Advanced Auto Layout",
+  "authors": "Ryan Low",
+  "summary": "",
+  "source": "1-Rx2-xfu0gI_mcp14VdePStn1TTGbd6C4Lmvh1rMj9c",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "05-ios-advancedautolayout"
+}

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-16T21:48:15Z",
+  "id": "00-ios-xcode",
+  "duration": 15,
+  "title": "Xcode",
+  "authors": "Ryan Low",
+  "summary": "In this codelab, you'll gain an overview of Xcode, create and run an Xcode project",
+  "source": "1_yrVGvurVTn1X2CHZ-GTvOUGWiMmIQ4wdUahWqkuZak",
+  "theme": "web",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Web"
+  ],
+  "tags": [
+    "kiosk",
+    "web"
+  ],
+  "feedback": "mailto:ryan_low@rp.edu.sg",
+  "url": "00-ios-xcode"
+}

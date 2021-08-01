@@ -1,0 +1,870 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>UIDatePicker and UIPickerView</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="06-ios-uipickerview"
+                  title="UIDatePicker and UIPickerView"
+                  environment="web"
+                  feedback-link="mailto:ryan_low@rp.edu.sg">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h2 class="checklist" is-upgraded><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Define an enum with a group of related values</li>
+<li>Create and configure a UIDatePicker to display a date and capture date input from the user</li>
+<li>Create and configure a UIPickerView by implementing UIPickerViewDataSource and UIPickerViewDelegate protocol methods to display String values and capture selection information from the user</li>
+</ul>
+<h2 is-upgraded><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>Mac running macOS Catalina</li>
+<li>Xcode 12</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enum" duration="10">
+        <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Enumerations.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Enumerations.html</a></p>
+<aside class="special"><p>An enumeration defines a common type for a group of related values and enables you to work with those values in a type-safe way within your code.</p>
+</aside>
+<pre><code>enum CompassPoint {
+  case north
+  case south
+  case east
+  case west
+}
+
+// type is inferred from value
+let direction1 = CompassPoint.north
+
+// type is explicit, can use shorter dot syntax
+let direction2 : CompassPoint = .north</code></pre>
+<p>Enumerations allow you to create a new type with a fixed set of allowed values.</p>
+<p>Many UI components have enum properties for configuration.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIDatePicker" duration="5">
+        <p><a href="https://developer.apple.com/documentation/uikit/uidatepicker" target="_blank">https://developer.apple.com/documentation/uikit/uidatepicker</a></p>
+<aside class="special"><p>A control used for the inputting of date and time values.</p>
+</aside>
+<p><strong>Wheels style</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/1cfed198f8cf8ce9.png"></p>
+<p><strong>Inline style</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/f3999a71f8af259b.png"></p>
+<p><strong>Compact style</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/5f8d73965bdcffcc.png"></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uidatepicker#topics" target="_blank">https://developer.apple.com/documentation/uikit/uidatepicker#topics</a></p>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var date: Date</code> - The date displayed by the date picker.</li>
+<li><code>var minimumDate: Date?</code> - The minimum date that a date picker can show.</li>
+<li><code>var maximumDate: Date?</code> - The maximum date that a date picker can show.</li>
+<li><code>var minuteInterval: Int</code> - The interval at which the date picker should display minutes.</li>
+<li><code>var datePickerMode: UIDatePicker.Mode</code> - The mode of the date picker.</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p>time</p>
+</td><td colspan="1" rowspan="1"><p>A mode that displays the date in hours, minutes, and (optionally) an AM/PM designation.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>date</p>
+</td><td colspan="1" rowspan="1"><p>A mode that displays the date in months, days of the month, and years.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>dateAndTime</p>
+</td><td colspan="1" rowspan="1"><p>A mode that displays the date as unified day of the week, month, and day of the month values, plus hours, minutes, and (optionally) an AM/PM designation.</p>
+</td></tr>
+</table>
+<p class="image-container"><img style="width: 519.00px" src="img/28d1aca796801472.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 1 - UIDatePicker" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject01</code></li>
+<li>Add a UIDatePicker (IBOutlet <code>outDatePicker</code>), UILabel (IBOutlet <code>outLabel</code>) and UIButton (IBAction <code>actButton</code>) to Main.storyboard</li>
+<li>Set the <strong>Preferred Style</strong> to <strong>Wheels</strong></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/bbc227ae20b6cf85.png"></p>
+<ol type="1" start="4">
+<li>Add the code to <code>actButton</code> to read the date from the UIDatePicker and display it in the UILabel</li>
+</ol>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outDatePicker: UIDatePicker!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // the data type of datePickerMode is an enum called UIDatePicker.Mode
+    outDatePicker.datePickerMode = .dateAndTime
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    // read the date from the date picker
+    let date = outDatePicker.date
+    // display the date in the label
+    outLabel.text = &#34;\(date)&#34;
+  }
+}</code></pre>
+<ol type="1" start="5">
+<li>Run the project. Press the button and observe the date shown in the label.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/63ba8a9d61b0ccd3.png"></p>
+<aside class="special"><p>Use DateFormatter to format the date to be displayed</p>
+<p>Refer to <a href="https://nsdateformatter.com/" target="_blank">https://nsdateformatter.com/</a> for details on format strings</p>
+</aside>
+<pre><code>import UIKit
+class ViewController: UIViewController {
+  @IBOutlet weak var outDatePicker: UIDatePicker!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // the data type of datePickerMode is an enum called UIDatePicker.Mode
+    outDatePicker.datePickerMode = .dateAndTime
+  }
+
+  @IBAction func actButton(_ sender: UIButton) {
+    // read the date from the date picker
+    let date = outDatePicker.date
+    
+    // create a DateFormatter object
+    let dateFormatter = DateFormatter()
+    // specify the format string
+    dateFormatter.dateFormat = &#34;dd-MM-YYYY HH:mm&#34;
+    // use the DateFormatter to create a String object from the Date object
+    let strDate = dateFormatter.string(from: date)
+    
+    // display the date in the label
+    outLabel.text = strDate
+  }
+}</code></pre>
+<p class="image-container"><img style="width: 624.00px" src="img/35e3509576fbdb7a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIPickerView" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uipickerview" target="_blank">https://developer.apple.com/documentation/uikit/uipickerview</a></p>
+<aside class="special"><ul>
+<li>A view that uses a spinning-wheel or slot-machine metaphor to show one or more sets of values.</li>
+<li>Users select values by rotating the wheels so that the desired row of values aligns with a selection indicator</li>
+<li>UIPickerView requires a delegate object which implements protocol methods to configure the values to be shown and to respond to user interaction with the picker view</li>
+</ul>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/9e4d2980a93fa5ad.png"></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uipickerview#topics" target="_blank">https://developer.apple.com/documentation/uikit/uipickerview#topics</a></p>
+<p><strong>Properties / Attributes</strong> (refer to documentation for other properties / attributes)</p>
+<ul>
+<li><code>var dataSource: UIPickerViewDataSource?</code> - The data source for the picker view.</li>
+<li><code>var delegate: UIPickerViewDelegate?</code> - The delegate for the picker view.</li>
+</ul>
+<p><strong>Methods</strong> (refer to documentation for other methods)</p>
+<ul>
+<li><code>func reloadAllComponents()</code> - Reloads all components of the picker view. Used when there is a change in the data to be displayed in the components of the picker view.</li>
+<li><code>func reloadComponent(Int)</code> - Reloads a particular component of the picker view. Used when there is a change in the data to be displayed in one component of the picker view.</li>
+<li><code>func selectRow(Int, inComponent: Int, animated: Bool)</code> - Selects a row in a specified component of the picker view.</li>
+<li><code>func selectedRow(inComponent: Int) -&gt; Int</code> - Returns the index of the selected row in a given component.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIPickerViewDataSource protocol" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uipickerviewdatasource" target="_blank">https://developer.apple.com/documentation/uikit/uipickerviewdatasource</a></p>
+<aside class="special"><ul>
+<li>The UIPickerViewDataSource protocol must be adopted by an object that mediates between a UIPickerView object and your application&#39;s data model for that picker view.</li>
+<li>The data source provides the picker view with the number of components, and the number of rows in each component, for displaying the picker view data. </li>
+<li>Both methods in this protocol are required.</li>
+</ul>
+</aside>
+<pre><code>// Called by the picker view when it needs the number of components.
+func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+  // return the number of components in the picker view
+  return 0
+}</code></pre>
+<pre><code>// Called by the picker view when it needs the number of rows
+// for a specified component.
+func pickerView(_ pickerView: UIPickerView,
+                numberOfRowsInComponent component: Int) -&gt; Int {
+  // return the number of rows for a specified component
+  return 0
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UIPickerViewDelegate protocol" duration="10">
+        <p><a href="https://developer.apple.com/documentation/uikit/uipickerviewdelegate" target="_blank">https://developer.apple.com/documentation/uikit/uipickerviewdelegate</a></p>
+<aside class="special"><ul>
+<li>The delegate of a UIPickerView object must adopt this protocol and implement at least some of its methods to provide the picker view with the data it needs to construct itself.</li>
+</ul>
+</aside>
+<pre><code>// Called by the picker view when it needs the title to use
+// for a given row in a given component.
+func pickerView(_ pickerView: UIPickerView,
+                titleForRow row: Int,
+                forComponent component: Int) -&gt; String? {
+  // return the title for the given row in the given component
+  return &#34;&#34;
+}</code></pre>
+<pre><code>// Called by the picker view when the user selects a row in
+// a component.
+func pickerView(_ pickerView: UIPickerView,
+                didSelectRow row: Int,
+                inComponent component: Int) {
+  // row and component indicates which item was selected
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 2 - UIPickerView (single component)" duration="10">
+        <aside class="special"><p>Delegation design pattern review:</p>
+<ol type="1" start="1">
+<li>define a protocol with methods which correspond to the responsibilities of the delegating class</li>
+<li>create a delegate class which conforms to the protocol</li>
+<li>attach an instance of the delegate class to the delegating class</li>
+</ol>
+</aside>
+<ol type="1" start="1">
+<li>Create project <code>SampleProject02</code></li>
+<li>Add a <code>UIPickerView</code> (IBOutlet outPickerView) object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/5758424d08847f3.png"></p>
+<ol type="1" start="3">
+<li>Declare that ViewController conforms to the <code>UIPickerViewDataSource</code> and <code>UIPickerViewDelegate</code> protocol</li>
+<li>Attach an instance of the delegate class to the delegating class. In this case, the delegate class is <code>ViewController</code> and the delegating class is <code>UIPickerView</code>. The attachment is done via the <code>dataSource</code> and <code>delegate</code> property in <code>UIPickerView</code>.</li>
+<li>Declare an array of data to be shown in the first component</li>
+<li>Implement the <code>UIPickerViewDataSource</code> methods</li>
+<li>Implement the <code>UIPickerViewDelegate</code> methods</li>
+</ol>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+
+   // Declare an array of data to be shown in the first component
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+
+  // Implement the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return fruits.count
+  }
+  
+  // Implement the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    return fruits[row]
+  }
+}</code></pre>
+<ol type="1" start="8">
+<li>Run the project. There should be a UIPickerView with one component. The component shows the items from the array called <code>fruits</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9e4d2980a93fa5ad.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 3 - UIPickerView (multiple components)" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject03</code></li>
+<li>Add a <code>UIPickerView</code> (IBOutlet outPickerView) object to Main.storyboard</li>
+<li>Declare that ViewController conforms to the <code>UIPickerViewDataSource</code> and <code>UIPickerViewDelegate</code> protocol</li>
+<li>Attach an instance of the delegate class to the delegating class. In this case, the delegate class is <code>ViewController</code> and the delegating class is <code>UIPickerView</code>. The attachment is done via the <code>dataSource</code> and <code>delegate</code> property in <code>UIPickerView</code>.</li>
+<li>Declare an array of data to be shown in the first component</li>
+<li>Declare an array of data to be shown in the second component</li>
+<li>Implement the <code>UIPickerViewDataSource</code> methods</li>
+<li>Implement the <code>UIPickerViewDelegate</code> methods</li>
+</ol>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+
+   // Declare an array of data to be shown in the first component
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  
+  // Declare an array of data to be shown in the second component
+  var colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+
+  // Update the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 2
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    if (component == 0) {
+      return fruits.count
+    } else {
+      return colors.count
+    }
+  }
+  
+  // Update the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    if (component == 0) {
+      return fruits[row]
+    } else {
+      return colors[row]
+    }
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. There should be a UIPickerView with two components. The first component shows the items from the array called <code>fruits</code> while the second component shows the items from the array called <code>colors</code></li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/3d8cd64256a87a4d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 4 - UIPickerView (user selection delegate method)" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject03</code></li>
+<li>Add a <code>UILabel</code> (IBOutlet outLabel) object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/dd601d38454a7243.png"></p>
+<ol type="1" start="3">
+<li>Add the <code>UIPickerViewDelegate</code> <code>pickerView(_:didSelectRow:inComponent:)</code> method </li>
+</ol>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outLabel: UILabel!
+  
+  // Declare an array of data to be shown in the first component
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  
+  // Declare an array of data to be shown in the second component
+  var colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+  
+  // Update the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 2
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    if (component == 0) {
+      return fruits.count
+    } else {
+      return colors.count
+    }
+  }
+  
+  // Update the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    if (component == 0) {
+      return fruits[row]
+    } else {
+      return colors[row]
+    }
+  }
+
+  // add the UIPickerViewDelegate pickerView(_:didSelectRow:inComponent:) method
+  func pickerView(_ pickerView: UIPickerView,
+                  didSelectRow row: Int,
+                  inComponent component: Int) {
+    var item = &#34;&#34;
+    if (component == 0) {
+      item = fruits[row]
+    } else {
+      item = colors[row]
+    }
+    outLabel.text = item
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. When an item in the picker is selected, the label is updated with the selected item.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/b9802b6194ff9ffc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 5 - UIPickerView (checking user selection)" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject03</code></li>
+<li>Add a <code>UILabel</code> (IBOutlet <code>outStatus</code>) and a <code>UIButton</code> (IBAction <code>actShowSelection</code>, title <code>Show Selection</code>) object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/da320aa08055cafc.png"></p>
+<ol type="1" start="3">
+<li>Update the IBAction <code>actShowSelection</code> method to </li>
+</ol>
+<ul>
+<li>check the selections for each component</li>
+<li>get the corresponding items</li>
+<li>display the items in the label</li>
+</ul>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outLabel: UILabel!
+  @IBOutlet weak var outStatus: UILabel!
+  
+  // Declare an array of data to be shown in the first component
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  
+  // Declare an array of data to be shown in the second component
+  var colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+  
+  // Update the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 2
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    if (component == 0) {
+      return fruits.count
+    } else {
+      return colors.count
+    }
+  }
+  
+  // Update the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    if (component == 0) {
+      return fruits[row]
+    } else {
+      return colors[row]
+    }
+  }
+
+  // add the UIPickerViewDelegate pickerView(_:didSelectRow:inComponent:) method
+  func pickerView(_ pickerView: UIPickerView,
+                  didSelectRow row: Int,
+                  inComponent component: Int) {
+    var item = &#34;&#34;
+    if (component == 0) {
+      item = fruits[row]
+    } else {
+      item = colors[row]
+    }
+    outLabel.text = item
+  }
+  
+  @IBAction func actShowSelection(_ sender: UIButton) {
+    // get the selected row in component 0
+    var row0 = outPickerView.selectedRow(inComponent: 0)
+    // get the selected row in component 1
+    var row1 = outPickerView.selectedRow(inComponent: 1)
+
+    // get the item from fruits array
+    var item0 = fruits[row0]
+
+    // get the item from colors array
+    var item1 = colors[row1]
+    
+    // display the items in outStatus
+    outStatus.text = &#34;\(item0) \(item1)&#34;
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. Select items in the picker view. Press the Show Selection button and the label will show the selected items.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/a018729d4b2b69d4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 6 - UIPickerView (performing selection)" duration="10">
+        <ol type="1" start="1">
+<li>Continue with <code>SampleProject03</code></li>
+<li>Add a <code>UIButton</code> (IBAction <code>actReset</code>, title <code>Reset</code>) object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/4dbac776724f1040.png"></p>
+<ol type="1" start="3">
+<li>Update the IBAction <code>actReset</code> method to </li>
+</ol>
+<ul>
+<li>select row 0 in component 0</li>
+<li>select row 0 in component 1</li>
+</ul>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outLabel: UILabel!
+  @IBOutlet weak var outStatus: UILabel!
+  
+  // Declare an array of data to be shown in the first component
+  var fruits = [&#34;apple&#34;, &#34;banana&#34;, &#34;carrot&#34;]
+  
+  // Declare an array of data to be shown in the second component
+  var colors = [&#34;red&#34;, &#34;orange&#34;, &#34;yellow&#34;, &#34;green&#34;, &#34;blue&#34;, &#34;indigo&#34;, &#34;violet&#34;]
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+  
+  // Update the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 2
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    if (component == 0) {
+      return fruits.count
+    } else {
+      return colors.count
+    }
+  }
+  
+  // Update the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    if (component == 0) {
+      return fruits[row]
+    } else {
+      return colors[row]
+    }
+  }
+
+  // add the UIPickerViewDelegate pickerView(_:didSelectRow:inComponent:) method
+  func pickerView(_ pickerView: UIPickerView,
+                  didSelectRow row: Int,
+                  inComponent component: Int) {
+    var item = &#34;&#34;
+    if (component == 0) {
+      item = fruits[row]
+    } else {
+      item = colors[row]
+    }
+    outLabel.text = item
+  }
+  
+  @IBAction func actShowSelection(_ sender: UIButton) {
+    // get the selected row in component 0
+    var row0 = outPickerView.selectedRow(inComponent: 0)
+    // get the selected row in component 1
+    var row1 = outPickerView.selectedRow(inComponent: 1)
+
+    // get the item from fruits array
+    var item0 = fruits[row0]
+
+    // get the item from colors array
+    var item1 = colors[row1]
+    
+    // display the items in outStatus
+    outStatus.text = &#34;\(item0) \(item1)&#34;
+  }
+  
+  @IBAction func actReset(_ sender: UIButton) {
+    // select row 0 in component 0
+    outPickerView.selectRow(0, inComponent: 0, animated: true)
+    // select row 0 in component 1
+    outPickerView.selectRow(0, inComponent: 1, animated: true)
+  }
+}</code></pre>
+<ol type="1" start="4">
+<li>Run the project. Select different items in the two components. Press the Reset button and observe that row 0 of each component becomes selected.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/623c365bc35ec408.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Activity 7 - UIPickerView (reloadAllComponents)" duration="10">
+        <ol type="1" start="1">
+<li>Create project <code>SampleProject07</code></li>
+<li>Add a <code>UIPickerView</code> (IBOutlet <code>outPickerView</code>), <code>UITextField</code> (IBOutlet <code>outTextField</code>) and <code>UIButton</code> (IBAction <code>actAdd</code>) object to Main.storyboard</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img/9940aebab35439b7.png"></p>
+<ol type="1" start="3">
+<li>Declare that ViewController conforms to the <code>UIPickerViewDataSource</code> and <code>UIPickerViewDelegate</code> protocol</li>
+<li>Attach an instance of the delegate class to the delegating class. In this case, the delegate class is <code>ViewController</code> and the delegating class is <code>UIPickerView</code>. The attachment is done via the <code>dataSource</code> and <code>delegate</code> property in <code>UIPickerView</code>.</li>
+<li>Declare a String array to be shown in the first component</li>
+<li>Implement the <code>UIPickerViewDataSource</code> methods</li>
+<li>Implement the <code>UIPickerViewDelegate</code> methods</li>
+<li>Implement the <code>actAdd</code> IBAction method to </li>
+</ol>
+<ul>
+<li>read from the text field</li>
+<li>append to the array</li>
+<li>reload the UIPickerView</li>
+</ul>
+<pre><code>import UIKit
+// Declare that ViewController conforms to the UIPickerViewDataSource
+// and UIPickerViewDelegate protocol
+class ViewController: UIViewController, UIPickerViewDataSource,
+UIPickerViewDelegate {
+  @IBOutlet weak var outPickerView: UIPickerView!
+  @IBOutlet weak var outTextField: UITextField!
+  
+  // Declare a String array to be shown in the first component
+  var items : [String] = []
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // Attach an instance of the delegate class to the delegating class.
+    // In this case, the delegate class is ViewController and the
+    // delegating class is UIPickerView. The attachment is done via
+    // the dataSource and delegate property in UIPickerView.
+    outPickerView.dataSource = self
+    outPickerView.delegate = self
+  }
+  
+  // Implement the UIPickerViewDataSource methods
+  func numberOfComponents(in pickerView: UIPickerView) -&gt; Int {
+    return 1
+  }
+  
+  func pickerView(_ pickerView: UIPickerView,
+                  numberOfRowsInComponent component: Int) -&gt; Int {
+    return items.count
+  }
+  
+  // Implement the UIPickerViewDelegate methods
+  func pickerView(_ pickerView: UIPickerView,
+                  titleForRow row: Int,
+                  forComponent component: Int) -&gt; String? {
+    return items[row]
+  }
+  
+  @IBAction func actAdd(_ sender: UIButton) {
+    // read from the text field
+    if let text = outTextField.text {
+      // append to the array
+      items.append(text)
+      // reload the UIPickerView
+      outPickerView.reloadAllComponents()
+    }
+  }
+}</code></pre>
+<ol type="1" start="9">
+<li>Run the project. The array is initially empty, so nothing is shown in the picker view. Enter a value to the text field and press Add. The value is added to the array and the picker is reloaded to reflect the changes in the array.</li>
+</ol>
+<aside class="warning"><p>Note that the picker view needs to be reloaded when the data to be displayed changes.</p>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img/9a3cca538d2c52f7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 1" duration="15">
+        <p>Write a function called findMedian(numberArray:) which takes in an unsorted Int array as the parameter and returns the median value of the array. The function returns nil if the array is empty. <strong>Do not search the Internet for a solution, try to come up with the code yourself.</strong></p>
+<p>The median of a set of data is the middlemost number in the set. The median is also the number that is halfway into the set. To find the median, the data should be arranged in order from least to greatest. If there is an even number of items in the data set, then the median is found by taking the mean (average) of the two middlemost numbers. (<a href="https://www.mathgoodies.com/lessons/vol8/median" target="_blank">https://www.mathgoodies.com/lessons/vol8/median</a>)</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Sorted array of numbers</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Median value</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>[2, 4, 8]</p>
+</td><td colspan="1" rowspan="1"><p>4</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>[5, 8, 9, 10, 12]</p>
+</td><td colspan="1" rowspan="1"><p>9</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>[1, 3, 5, 7, 11, 12]</p>
+</td><td colspan="1" rowspan="1"><p>6</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2 (easier)" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>the app consists of a UIPickerView, UILabel and a UIButton</li>
+<li>the UIPickerView has 1 component which shows a list of names</li>
+<li>the names are stored in an array called names; there should be 5 or more values in names</li>
+<li>when the button is pressed</li>
+</ul>
+<ol type="1" start="1">
+<li>a random name will be selected</li>
+<li>the picker will scroll to the selected name</li>
+<li>the label will display the selected random name</li>
+</ol>
+<p>Hint:</p>
+<pre><code>// generates a random number between 1 and 9 (inclusive)
+var index = Int.random(in: 1..&lt;10)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 2 (harder)" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>the app consists of a UIPickerView, UILabel and a UIButton</li>
+<li>the UIPickerView has 2 components which shows a list of first names and last names in component 0 and 1 respectively</li>
+<li>the first names and last names are stored in firstNameArray and lastNameArray respectively; there should be 3 or more values in firstNameArray and 5 or more values in lastNameArray</li>
+<li>when the button is pressed</li>
+</ul>
+<ol type="1" start="4">
+<li>a random first name and a random last name will be selected</li>
+<li>the picker will scroll to the selected random first name and selected random last name</li>
+<li>the label will display the selected random first name and selected random last name</li>
+</ol>
+<p>Hint:</p>
+<pre><code>// generates a random number between 1 and 9 (inclusive)
+var index = Int.random(in: 1..&lt;10)</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 3" duration="15">
+        <p><strong>Create an app with the following software requirements:</strong></p>
+<ul>
+<li>the UIDatePicker allows the user to pick a date</li>
+<li>when the user presses the button, the label shows the date (see screenshot for the format) and states how many days away it is from the current date</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img/b3dec8d320d5f2b0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 4" duration="15">
+        <p>Define an enum called <strong>CarBrand</strong> which contains the values <strong>honda</strong>, <strong>nissan</strong> and <strong>toyota</strong>.</p>
+<p>Define a class called <strong>Car</strong> with the 2 stored properties shown in the table below. The class must have an initializer which has 2 parameters for the 2 stored properties.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Property Name</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Property Type</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>licensePlate</code></p>
+</td><td colspan="1" rowspan="1"><p><code>String</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>brand</code></p>
+</td><td colspan="1" rowspan="1"><p><code>CarBrand</code></p>
+</td></tr>
+</table>
+<p>Create a <strong>Car</strong> object and store it in a variable called <strong>myCar</strong>. The brand should be <strong>honda</strong> and the license plate should be <strong>SLJ125</strong>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exercise 5" duration="15">
+        <p><strong>Create an application with the user interface shown below.</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img/4f68d0527a1b184.png"></p>
+<p><strong>Project requirements:</strong></p>
+<ul>
+<li>a calculator which calculates using the chosen values and mathematical operator when the Calculate button is pressed</li>
+<li>the numbers for the operands are from 1 to 9</li>
+<li>the operators are +, -, * and /</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next" duration="0">
+        <ul>
+<li>UITextField input view and UIAlertController</li>
+</ul>
+<h2 is-upgraded><strong>Reference docs</strong></h2>
+<ul>
+<li><a href="https://docs.swift.org/swift-book/LanguageGuide/Enumerations.html" target="_blank">https://docs.swift.org/swift-book/LanguageGuide/Enumerations.html</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uidatepicker" target="_blank">https://developer.apple.com/documentation/uikit/uidatepicker</a></li>
+<li><a href="https://nsdateformatter.com/" target="_blank">https://nsdateformatter.com/</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uipickerview" target="_blank">https://developer.apple.com/documentation/uikit/uipickerview</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uipickerviewdatasource" target="_blank">https://developer.apple.com/documentation/uikit/uipickerviewdatasource</a></li>
+<li><a href="https://developer.apple.com/documentation/uikit/uipickerviewdelegate" target="_blank">https://developer.apple.com/documentation/uikit/uipickerviewdelegate</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
